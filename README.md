@@ -1,36 +1,163 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# fabnow — Semiconductor Supply & AI Demand Intelligence
+
+> **fabnow** tracks semiconductor wafer/node supply, HBM4/CoWoS advanced packaging bottlenecks, and frontier/neocloud AI compute demand — built on the **pstui** Human-centric Liquid Glass design system (`Next.js 16`, `React 19`, `Tailwind CSS v4`, `DaisyUI 5`) and configured for **Cloudflare Workers** via **vinext**.
+
+---
+
+## Key Capabilities & Routes
+
+- **Unified Intelligence Workbench (`/`)**: Interactive semiconductor fab capacity, Foundry/Memory/Packaging supply constraints, and Frontier Lab & Neocloud GPU cluster demand tracker (`app/page.tsx`).
+- **Parallel Intercepting Report Preview (`/@modal/(.)preview/[id]` & `/preview/[id]`)**: In-app modal report preview with full standalone SSR fallback across 26 tracked fab/packaging/AI entities (e.g., `/preview/tsmc-n3p-logic`, `/preview/tsmc-n2-ramp`).
+- **Progressive RSC Streaming & Keyboard Navigation**: Server-side telemetry metrics (`lib/server/metrics.ts`) streamed through `<Suspense>` with a global `⌘K` / `Ctrl+K` command menu (`components/ui/CommandMenu.tsx`).
+- **pstui Liquid Glass & WCAG AA/AAA Tokens**: Floating translucent chrome (`AppShell`, `Sidebar`, `TabBar`), solid content surfaces (`Card`, tables, forms), soft pastel high-contrast accents, `NanumSquareNeo` webfont, and `prefers-reduced-motion` support (`styles/pstui-tokens.css`, `DESIGN.md`).
+- **SEO, Feeds & PWA Assets**:
+  - Dynamic routes: `/robots.txt` (`app/robots.ts`), `/sitemap.xml` (`app/sitemap.ts`), `/feed.xml` (`app/feed.xml/route.ts`), `/rss.xml` (`app/rss.xml/route.ts`), `/manifest.webmanifest` (`app/manifest.ts`)
+  - Static assets under `public/`: `robots.txt`, `sitemap.xml`, `manifest.json`, `llms.txt`, `llms-full.txt`, `humans.txt`, `sw.js`, `ads.txt`
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+| :--- | :--- |
+| **App Framework** | Next.js `16.4.3` App Router (`cacheComponents`, `partialPrefetching`) & React `^19.3.1` |
+| **Edge Runtime (Cloudflare)** | `vinext` (`^1.4.5`), `@vinext/cloudflare` (`^1.3.4`), Vite `^8.3.0`, `@cloudflare/vite-plugin`, `cf` CLI |
+| **Styling & Design System** | Tailwind CSS `v4` (`@tailwindcss/postcss` + `@tailwindcss/turbopack`), DaisyUI `5.7.50`, `pstui` Liquid Glass tokens |
+| **State & UX** | `nuqs`, `next-view-transitions`, `@tanstack/react-virtual`, `server-only` |
+
+---
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+- Node.js `>= 20.0.0` (verified on Node `v26.5.0`)
+- npm
+
+### Install Dependencies
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Run Locally (Next.js vs. vinext)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+# Next.js dev server (Turbopack)
+npm run dev
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# vinext Vite dev server on port 3001
+npm run dev:vinext
+```
 
-## Learn More
+### Verification & Builds
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+# Compatibility scan for Cloudflare Workers / vinext
+npx vinext check
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Lint & TypeScript checks
+npm run lint
+npm run typecheck
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# Production build (Next.js)
+npm run build
 
-## Deploy on Vercel
+# Production Worker bundle build (Vite + vinext + Cloudflare)
+npm run build:vinext
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Local Cloudflare Workers preview runtime
+npm run start:vinext
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Combined validation gates
+npm run check
+npm run check:vinext
+
+# Project asset & token integrity check (23 items)
+npm run setup -- --check
+```
+
+---
+
+## Cloudflare Workers Architecture (`vinext`)
+
+`fabnow` runs natively on Cloudflare Workers using `vinext` and `@cloudflare/vite-plugin` while preserving full `next build` compatibility:
+
+- **`vite.config.ts`**: Configures `vinext({ cache: { cdn: workersCacheCdnAdapter() } })` alongside `cloudflare({ viteEnvironment: { name: "rsc", childEnvironments: ["ssr"] } })`.
+- **`cloudflare.config.ts`**: Declares the Worker (`name: "fabnow"`, `entrypoint: "vinext/server/fetch-handler"`, `compatibilityDate: "2026-11-14"`, `compatibilityFlags: ["nodejs_compat"]`), static `ASSETS` binding (`runWorkerFirst: ["/*", "!/_next/static/*", "!/*/_next/static/*"]`), `createWorkersCacheConfig()`, and Workers Observability (logs & sampled traces).
+- **`postcss.config.mjs`**: Enables `@tailwindcss/postcss` so Tailwind CSS v4 and DaisyUI 5 compile identically under Vite/PostCSS (`vite build`) and Next.js Turbopack (`next build`).
+- **`next.config.ts`**: Keeps `images: { unoptimized: true }` for Cloudflare edge delivery without Node-only image optimizer binaries, along with security `headers()` and `experimental.optimizePackageImports`.
+- **`tsconfig.json` & `eslint.config.mjs`**: Includes `.cloudflare/types` in TypeScript checks and ignores `.cloudflare/**`, `.vinext/**`, and `dist/**` during linting.
+
+### Deploy to Cloudflare Workers
+
+1. Authenticate with Cloudflare (`npx cf login` or configure `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID`).
+2. Generate Worker binding types if needed and verify compatibility:
+
+```bash
+npx cf workers types
+npx vinext check
+```
+
+3. Build and deploy:
+
+```bash
+npm run deploy:vinext
+```
+
+(`vinext-cloudflare deploy` builds the Worker bundle into `.cloudflare/output/` and publishes via `cf` using `cloudflare.config.ts`.)
+
+---
+
+## Project Structure
+
+```text
+fabnow/
+├── app/
+│   ├── @modal/(.)preview/[id]/page.tsx  # Intercepting modal report view
+│   ├── preview/[id]/page.tsx            # Standalone entity detail route
+│   ├── feed.xml/route.ts                # Atom/RSS feed endpoint
+│   ├── rss.xml/route.ts                 # RSS feed endpoint
+│   ├── manifest.ts                      # Web App Manifest route
+│   ├── robots.ts                        # Dynamic robots.txt route
+│   ├── sitemap.ts                       # Dynamic XML sitemap (sections + 26 entity slugs)
+│   ├── globals.css                      # Tailwind v4, DaisyUI 5, NanumSquareNeo, pstui token import
+│   ├── layout.tsx                       # Root layout & font/metadata configuration
+│   └── page.tsx                         # Main fabnow dashboard (RSC)
+├── components/
+│   ├── fabnow/                          # Semiconductor supply & AI demand intelligence modules
+│   ├── layout/                          # AppShell, WorkbenchClient & responsive Liquid Glass chrome
+│   ├── providers/                       # Client runtime guard & providers
+│   └── ui/                              # pstui core components
+├── context/                             # OverlayContext & shared client contexts
+├── lib/
+│   ├── data/fabnow.ts                   # Tracked foundry, memory, packaging & AI demand dataset
+│   └── server/metrics.ts                # Server-only cached telemetry & KPI helpers
+├── public/                              # robots.txt, sitemap.xml, llms.txt, llms-full.txt, humans.txt, sw.js, icons
+├── styles/
+│   └── pstui-tokens.css                 # Standalone pstui Liquid Glass & theme token stylesheet
+├── cloudflare.config.ts                 # Cloudflare Workers configuration (cf/config)
+├── vite.config.ts                       # Vite + vinext + @cloudflare/vite-plugin configuration
+├── postcss.config.mjs                   # @tailwindcss/postcss configuration for Vite builds
+├── next.config.ts                       # Next.js 16 configuration
+├── setup.mjs                            # pstui manifest & asset integrity CLI
+├── DESIGN.md                            # Design principles & token reference
+└── AGENTS.md                            # Engineering rules for pstui / fabnow
+```
+
+---
+
+## pstui CLI Utilities
+
+`setup.mjs` also manages manifest hashes and downstream component exports for the underlying `pstui` design system:
+
+- `npm run setup -- --check` — Verify dependencies, design tokens, Cloudflare configs, and 23 production SEO/PWA assets.
+- `npm run manifest` — Recompute SHA-256 hashes in `pstui.manifest.json`.
+- `npm run export` / `npm run sync` / `npm run update` — Export or non-destructively synchronize `pstui` components into another Next.js project.
+
+---
+
+## License & Disclaimer
+
+Licensed under the **Apache License 2.0** (see [LICENSE](LICENSE) and [NOTICE](NOTICE)).
+
+> **Trademark Disclaimer**: This project (`fabnow` and the underlying `pstui` design system) is an independent open-source software project and is **not affiliated with, endorsed by, or sponsored by Apple Inc.** References to Liquid Glass or Human Interface concepts describe general modern spatial UI conventions.

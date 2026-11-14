@@ -1,0 +1,344 @@
+"use client";
+
+import React from "react";
+import Link from "next/link";
+import {
+  Badge,
+  Button,
+  EmptyState,
+  IconArrowUpRight,
+  IconChip,
+  IconPulse,
+  IconServer,
+  Progress,
+} from "@/components/ui";
+import { getEntityBySlug } from "@/lib/data/fabnow";
+import { triggerHaptic } from "@/lib/haptics";
+import {
+  RiskBadge,
+  SignedDelta,
+  SparklineSvg,
+} from "./FabnowPrimitives";
+
+export function EntityDetailModalContent({
+  slug,
+  onClose,
+}: {
+  slug: string;
+  onClose: () => void;
+}) {
+  const entity = getEntityBySlug(slug);
+
+  if (!entity) {
+    return (
+      <EmptyState
+        size="sm"
+        title="엔티티 정보를 찾을 수 없습니다"
+        description={`요청하신 식별자(${slug})에 해당하는 공급·수요 데이터가 없습니다.`}
+        action={
+          <Button size="sm" variant="primary" onClick={onClose}>
+            닫기
+          </Button>
+        }
+      />
+    );
+  }
+
+  return (
+    <div className="space-y-4 text-base-content">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="inline-flex items-center gap-2">
+          <span className="p-2 rounded-2xl bg-primary/14 text-accent-primary shrink-0">
+            {entity.kind === "fab" ? (
+              <IconChip className="w-4 h-4" />
+            ) : entity.kind === "customer" ? (
+              <IconServer className="w-4 h-4" />
+            ) : (
+              <IconPulse className="w-4 h-4" />
+            )}
+          </span>
+          <span className="text-xs font-bold" style={{ color: "var(--label-secondary)" }}>
+            {entity.subtitle}
+          </span>
+        </div>
+        <RiskBadge risk={entity.riskLevel} size="sm" />
+      </div>
+
+      {entity.kind === "fab" && (
+        <>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+            <div className="material-regular rounded-2xl p-3">
+              <span className="text-[11px] font-medium block" style={{ color: "var(--label-secondary)" }}>
+                월간 출하량
+              </span>
+              <strong className="text-sm font-extrabold tabular-nums">
+                {entity.record.monthlyOutputValue} {entity.record.unitLabel}
+              </strong>
+            </div>
+            <div className="material-regular rounded-2xl p-3">
+              <span className="text-[11px] font-medium block" style={{ color: "var(--label-secondary)" }}>
+                MoM / QoQ
+              </span>
+              <div className="flex items-center gap-1.5 text-xs">
+                <SignedDelta value={entity.record.momDeltaPct} />
+                <span style={{ color: "var(--label-tertiary)" }}>/</span>
+                <SignedDelta value={entity.record.qoqDeltaPct} />
+              </div>
+            </div>
+            <div className="material-regular rounded-2xl p-3">
+              <span className="text-[11px] font-medium block" style={{ color: "var(--label-secondary)" }}>
+                가동률 · 수율
+              </span>
+              <strong className="text-sm font-extrabold tabular-nums">
+                {entity.record.utilizationPct.toFixed(1)}% · {entity.record.yieldPct.toFixed(1)}%
+              </strong>
+            </div>
+            <div className="material-regular rounded-2xl p-3">
+              <span className="text-[11px] font-medium block" style={{ color: "var(--label-secondary)" }}>
+                리드타임 · AI 배정
+              </span>
+              <strong className="text-sm font-extrabold tabular-nums">
+                {entity.record.leadTimeWeeks}주 · {entity.record.aiAllocationPct}%
+              </strong>
+            </div>
+          </div>
+
+          <div className="material-regular rounded-2xl p-3.5 space-y-2">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-xs font-bold">2025 Q1 – 2026 Q2 분기 출하 궤적</span>
+              <SparklineSvg
+                points={entity.record.quarterlyHistory.map((pt) => ({
+                  quarter: pt.quarter,
+                  value: pt.shipmentOrDemand,
+                }))}
+                label={`${entity.record.company} 분기별 출하 추이`}
+                width={132}
+                height={32}
+              />
+            </div>
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5 text-center">
+              {entity.record.quarterlyHistory.map((pt) => (
+                <div
+                  key={pt.quarter}
+                  className="rounded-xl px-2 py-1.5 bg-base-200/70 border border-base-content/10"
+                >
+                  <span className="text-[10px] block font-medium" style={{ color: "var(--label-secondary)" }}>
+                    {pt.quarter}
+                  </span>
+                  <strong className="text-xs tabular-nums font-bold">
+                    {pt.shipmentOrDemand}
+                  </strong>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="material-thin rounded-2xl p-3.5 space-y-2">
+            <p className="text-xs font-bold">핵심 병목 공정 및 거점</p>
+            <p className="text-xs font-medium leading-relaxed" style={{ color: "var(--label-secondary)" }}>
+              {entity.record.bottleneckStage} · 거점: {entity.record.primarySites}
+            </p>
+            <p className="text-xs leading-relaxed text-base-content">{entity.record.summaryKo}</p>
+            <div className="flex flex-wrap gap-1.5 pt-1">
+              {entity.record.keyCustomers.map((cust) => (
+                <Badge key={cust} variant="outline" size="xs">
+                  {cust}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+
+      {entity.kind === "customer" && (
+        <>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+            <div className="material-regular rounded-2xl p-3">
+              <span className="text-[11px] font-medium block" style={{ color: "var(--label-secondary)" }}>
+                GPU 환산 수요
+              </span>
+              <strong className="text-sm font-extrabold tabular-nums">
+                {entity.record.monthlyGpuEquivalentK}k /월
+              </strong>
+            </div>
+            <div className="material-regular rounded-2xl p-3">
+              <span className="text-[11px] font-medium block" style={{ color: "var(--label-secondary)" }}>
+                HBM 월간 수요
+              </span>
+              <strong className="text-sm font-extrabold tabular-nums">
+                {entity.record.monthlyHbmDemandTB.toLocaleString("en-US")} TB
+              </strong>
+            </div>
+            <div className="material-regular rounded-2xl p-3">
+              <span className="text-[11px] font-medium block" style={{ color: "var(--label-secondary)" }}>
+                수주 잔고 · 전력
+              </span>
+              <strong className="text-sm font-extrabold tabular-nums">
+                {entity.record.backlogMonths.toFixed(1)}개월 · {entity.record.committedPowerMW.toLocaleString("en-US")}MW
+              </strong>
+            </div>
+            <div className="material-regular rounded-2xl p-3">
+              <span className="text-[11px] font-medium block" style={{ color: "var(--label-secondary)" }}>
+                미충족 수급 갭
+              </span>
+              <div className="text-sm">
+                <SignedDelta value={entity.record.supplyGapPct} />
+              </div>
+            </div>
+          </div>
+
+          <div className="material-regular rounded-2xl p-3.5 space-y-2">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-xs font-bold">분기별 GPU 환산 수요 램프업</span>
+              <SparklineSvg
+                points={entity.record.quarterlyDemand.map((pt) => ({
+                  quarter: pt.quarter,
+                  value: pt.shipmentOrDemand,
+                }))}
+                tone="secondary"
+                label={`${entity.record.name} 분기별 수요 추이`}
+                width={132}
+                height={32}
+              />
+            </div>
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5 text-center">
+              {entity.record.quarterlyDemand.map((pt) => (
+                <div
+                  key={pt.quarter}
+                  className="rounded-xl px-2 py-1.5 bg-base-200/70 border border-base-content/10"
+                >
+                  <span className="text-[10px] block font-medium" style={{ color: "var(--label-secondary)" }}>
+                    {pt.quarter}
+                  </span>
+                  <strong className="text-xs tabular-nums font-bold">
+                    {pt.shipmentOrDemand}k
+                  </strong>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="material-thin rounded-2xl p-3.5 space-y-2">
+            <p className="text-xs leading-relaxed text-base-content">{entity.record.summaryKo}</p>
+            <div className="flex flex-wrap gap-1.5 pt-1">
+              {entity.record.preferredNodes.map((node) => (
+                <Badge key={node} variant="primary" size="xs">
+                  {node}
+                </Badge>
+              ))}
+              {entity.record.primarySuppliers.map((sup) => (
+                <Badge key={sup} variant="outline" size="xs">
+                  {sup}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+
+      {entity.kind === "bottleneck" && (
+        <>
+          <div className="grid grid-cols-3 gap-2.5">
+            <div className="material-regular rounded-2xl p-3">
+              <span className="text-[11px] font-medium block" style={{ color: "var(--label-secondary)" }}>
+                공정 포화도
+              </span>
+              <strong className="text-base font-extrabold tabular-nums">
+                {entity.record.saturationPct.toFixed(1)}%
+              </strong>
+            </div>
+            <div className="material-regular rounded-2xl p-3">
+              <span className="text-[11px] font-medium block" style={{ color: "var(--label-secondary)" }}>
+                평균 리드타임
+              </span>
+              <strong className="text-base font-extrabold tabular-nums">
+                {entity.record.leadTimeWeeks}주
+              </strong>
+            </div>
+            <div className="material-regular rounded-2xl p-3">
+              <span className="text-[11px] font-medium block" style={{ color: "var(--label-secondary)" }}>
+                MoM 압력 변동
+              </span>
+              <div className="text-sm">
+                <SignedDelta value={entity.record.momPressureDeltaPct} invertPolarity />
+              </div>
+            </div>
+          </div>
+
+          <Progress
+            value={entity.record.saturationPct}
+            max={100}
+            taskDescription={`${entity.record.stageName} 캐파 포화도`}
+            color={
+              entity.record.riskLevel === "tight"
+                ? "error"
+                : entity.record.riskLevel === "constrained"
+                ? "warning"
+                : "success"
+            }
+          />
+
+          <div className="material-thin rounded-2xl p-3.5 space-y-2">
+            <p className="text-xs font-bold">병목 완화 전략 (Mitigation)</p>
+            <p className="text-xs leading-relaxed text-base-content">{entity.record.mitigationKo}</p>
+            <div className="flex flex-wrap gap-1.5 pt-1">
+              {entity.record.primarySuppliers.map((sup) => (
+                <Badge key={sup} variant="secondary" size="xs">
+                  {sup}
+                </Badge>
+              ))}
+              {entity.record.primaryDrivers.map((drv) => (
+                <Badge key={drv} variant="outline" size="xs">
+                  {drv}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+
+      {entity.links.length > 0 && (
+        <div className="material-regular rounded-2xl p-3.5 space-y-2">
+          <p className="text-xs font-bold">연결된 공급-수요 할당 링크 ({entity.links.length}건)</p>
+          <ul className="divide-y divide-base-content/10">
+            {entity.links.map((link) => (
+              <li key={link.id} className="py-2 flex flex-wrap items-center justify-between gap-2 text-xs">
+                <div className="min-w-0">
+                  <p className="font-bold truncate">
+                    {link.supplierLabel} → {link.customerLabel}
+                  </p>
+                  <p className="text-[11px]" style={{ color: "var(--label-secondary)" }}>
+                    {link.technologyLabel}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2.5 shrink-0">
+                  <span className="tabular-nums font-semibold">
+                    {link.monthlyActualShippedUnits}/{link.monthlyCommittedUnits} {link.unitLabel}
+                  </span>
+                  <SignedDelta value={link.gapPct} />
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <div className="flex items-center justify-end gap-2 pt-2 border-t" style={{ borderColor: "var(--separator)" }}>
+        <Button size="sm" variant="ghost" onClick={onClose}>
+          닫기
+        </Button>
+        <Link
+          href={`/preview/${entity.slug}`}
+          onClick={() => {
+            triggerHaptic("selection");
+            onClose();
+          }}
+          className="btn btn-sm btn-primary rounded-2xl pst-press font-semibold inline-flex items-center gap-1.5"
+        >
+          <span>전용 프리뷰 페이지 열기</span>
+          <IconArrowUpRight className="w-4 h-4 shrink-0" />
+        </Link>
+      </div>
+    </div>
+  );
+}

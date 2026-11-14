@@ -1,0 +1,17 @@
+/* TEAM */
+  Project: fabnow — Semiconductor Supply & AI Compute Demand Intelligence
+  Architecture: Next.js 16 App Router + Cloudflare Workers (vinext) + pstui Liquid Glass
+  Location: Seoul, Korea
+
+/* THANKS */
+  Cloudflare Workers & vinext: https://github.com/cloudflare/vinext
+  DaisyUI Team: https://daisyui.com
+  Tailwind Labs: https://tailwindcss.com
+  Next.js Team: https://nextjs.org
+  NanumSquare Neo (Naver Clova): https://github.com/naver/nanumsquare
+
+/* SITE */
+  Standards: HTML5, CSS4, Next.js 16 App Router, React 19, WCAG AAA
+  Domain: Foundry, HBM, CoWoS Supply & Frontier Lab / Neocloud Demand Telemetry
+  Runtime: Cloudflare Workers Edge SSR (workerd) via Vite & vinext
+  License: Apache License 2.0

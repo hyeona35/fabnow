@@ -1,0 +1,38 @@
+# fabnow Full Technical Reference for LLMs
+
+## 1. Domain & Product Scope
+**fabnow** (`fabnow — 반도체 출하 지표 · AI 수요 인텔리전스`) is a Korean-first, industry-standard technical intelligence dashboard tracking:
+1. **Semiconductor Supply (`fabs`)**: Monthly output, MoM/QoQ/YoY deltas, fab utilization %, yield %, lead time (weeks), AI allocation %, and quarterly trajectory (2025 Q1–2026 Q2) across:
+   - **TSMC**: N3E/N3P Logic, N2 Ramp, CoWoS-L/CoWoS-S Advanced Packaging
+   - **SK hynix**: HBM3E 12-Hi, HBM4 Ramp
+   - **Samsung Electronics**: HBM3E/HBM4 DS Memory, SF4X/SF2 GAA Foundry
+   - **Micron**: HBM3E / HBM4
+   - **Intel Foundry**: 18A / Foveros Advanced Packaging
+2. **Frontier AI Labs & Neocloud Demand (`labs`, `neoclouds`)**: Monthly GPU-equivalent demand (k-units), HBM monthly TB demand, backlog (months), committed power (MW), unmet supply gap %, preferred nodes, and primary suppliers across:
+   - **Frontier Labs**: OpenAI, Anthropic, Google DeepMind, xAI, Meta AI
+   - **Neoclouds**: CoreWeave, Nebius, Lambda, Crusoe, TensorWave
+3. **Supply Chain Chokepoints (`bottlenecks`)**: Saturation %, lead time (weeks), MoM pressure delta, primary drivers, and mitigation notes across CoWoS-L, HBM3E 12-Hi, HBM4 Base Die, N2/N3P EUV, ABF/Glass Substrate, and Liquid-Cooled Rack Power.
+
+## 2. Architecture & Runtime Stack
+- **Framework**: Next.js 16 App Router + React 19
+- **Cloudflare Workers Runtime**: `vinext` + `@vinext/cloudflare` + `@cloudflare/vite-plugin` (`vite.config.ts` + `cloudflare.config.ts`, `cf` CLI)
+- **Design System**: pstui (Human-Centric Interaction + Liquid Glass + Tailwind CSS v4 + DaisyUI 5)
+- **Zero-Login Edge SSR**: No user authentication or database dependencies required; edge-cached static & streamed RSC telemetry (`lib/server/metrics.ts` using `React.cache()` and `server-only`).
+- **Navigation Shell**: Single-level adaptive shell (`Sidebar` >= 768px + mobile `TabBar` < 768px + `⌘K` `CommandMenu`).
+
+## 3. Routes & Feeds
+- `/` — Main interactive dashboard shell (`overview`, `fabs`, `labs`, `neoclouds`, `bottlenecks`)
+- `/preview/[slug]` — Individual entity or bottleneck detail page (`generateStaticParams` prerendered; intercepted modal via `@modal/(.)preview/[id]`)
+- `/api/fabnow` — Live market quotes, industry news RSS, and SEC EDGAR filings edge endpoint (`s-maxage=300`)
+- `/feed.xml` (and `/rss.xml` 308 redirect) — RSS 2.0 live intelligence feed
+- `/sitemap.xml` & `/robots.txt` — Crawler index
+- `/manifest.webmanifest` & `/manifest.json` — PWA manifest
+- `/sw.js` — Service worker for offline static shell resilience
+
+## 4. Build, Check & Cloudflare Deployment Commands
+- `npm run dev` — Next.js development server
+- `npm run build` — Next.js production build
+- `npm run dev:vinext` — Vite + Cloudflare Workers local dev server (`workerd`)
+- `npm run build:vinext` — Multi-environment RSC/SSR/Client Vite build for Cloudflare Workers
+- `npm run deploy:vinext` — Deploy built Worker + static assets to Cloudflare Workers via `vinext-cloudflare deploy`
+- `npx vinext check` — Next.js-to-vinext compatibility audit

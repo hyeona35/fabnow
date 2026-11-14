@@ -1,26 +1,96 @@
 {
-  "name": "pstui",
-  "version": "0.1.0",
-  "private": true,
+  "name": "fabnow",
+  "version": "0.2.0",
+  "description": "Semiconductor Fab Supply & Frontier/Neocloud AI Demand Intelligence — built on pstui, Next.js 16, Tailwind CSS v4, DaisyUI 5, and Cloudflare Workers (vinext)",
+  "license": "Apache-2.0",
+  "author": "fabnow & pstui Contributors",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pstui/pstui.git"
+  },
+  "bugs": {
+    "url": "https://github.com/pstui/pstui/issues"
+  },
+  "homepage": "https://github.com/pstui/pstui#readme",
+  "keywords": [
+    "fabnow",
+    "semiconductor",
+    "ai-infrastructure",
+    "cloudflare-workers",
+    "vinext",
+    "liquid-glass",
+    "daisyui",
+    "tailwind",
+    "nextjs",
+    "react"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "typecheck": "next typegen && tsc --noEmit",
+    "check": "eslint && next typegen && tsc --noEmit && next build",
+    "setup": "node setup.mjs",
+    "export": "node setup.mjs --export",
+    "sync": "node setup.mjs --sync",
+    "update": "node setup.mjs --update",
+    "diff": "node setup.mjs --diff",
+    "manifest": "node setup.mjs --manifest",
+    "dev:vinext": "vite dev --port 3001",
+    "build:vinext": "vite build && next typegen",
+    "start:vinext": "vite preview",
+    "deploy:vinext": "vinext-cloudflare deploy",
+    "check:vinext": "vinext check && eslint && next typegen && tsc --noEmit && vite build"
+  },
+  "bin": {
+    "pstui": "./setup.mjs"
+  },
+  "exports": {
+    ".": "./components/ui/index.ts",
+    "./ui": "./components/ui/index.ts",
+    "./components/*": "./components/*",
+    "./layout/*": "./components/layout/*",
+    "./context/*": "./context/*",
+    "./providers/*": "./components/providers/*",
+    "./lib/*": "./lib/*",
+    "./styles/*": "./styles/*",
+    "./tokens": "./styles/pstui-tokens.css",
+    "./manifest": "./pstui.manifest.json"
+  },
+  "engines": {
+    "node": ">=20.0.0"
   },
   "dependencies": {
+    "@tanstack/react-virtual": "^3.14.22",
+    "@vinext/cloudflare": "^1.3.4",
+    "firebase": "^13.1.0",
     "next": "16.4.3",
-    "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "next-view-transitions": "^0.3.5",
+    "nuqs": "^2.10.2",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-server-dom-webpack": "^19.3.1",
+    "server-only": "^0.0.1",
+    "vinext": "^1.4.5"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^2.0.0-beta.v.17",
+    "@next/bundle-analyzer": "^16.4.3",
+    "@tailwindcss/postcss": "^4.3.5",
     "@tailwindcss/turbopack": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^6.3.0",
+    "@vitejs/plugin-rsc": "^0.5.39",
+    "cf": "^1.0.0-beta.32",
+    "daisyui": "^5.7.50",
     "eslint": "^9",
     "eslint-config-next": "16.4.3",
     "tailwindcss": "^4",
-    "typescript": "^5"
-  }
+    "typescript": "^5",
+    "vite": "^8.3.0"
+  },
+  "type": "module"
 }

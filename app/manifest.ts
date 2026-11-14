@@ -1,0 +1,33 @@
+import type { MetadataRoute } from "next";
+
+export default function manifest(): MetadataRoute.Manifest {
+  return {
+    name: "fabnow — 반도체 출하 지표 · AI 수요 인텔리전스",
+    short_name: "fabnow",
+    description:
+      "파운드리·HBM 반도체 공급 출하 지표와 프론티어 AI 랩·네오클라우드 컴퓨트 수요 병목을 추적하는 Cloudflare Workers Edge SSR 인텔리전스 대시보드",
+    start_url: "/",
+    display: "standalone",
+    background_color: "#09070e",
+    theme_color: "#db528d",
+    icons: [
+      {
+        src: "/favicon.ico",
+        sizes: "any",
+        type: "image/x-icon",
+      },
+      {
+        src: "/icon-192.png",
+        sizes: "192x192",
+        type: "image/png",
+        purpose: "maskable",
+      },
+      {
+        src: "/icon-512.png",
+        sizes: "512x512",
+        type: "image/png",
+        purpose: "maskable",
+      },
+    ],
+  };
+}

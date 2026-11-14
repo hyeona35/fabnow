@@ -1,0 +1,33 @@
+# fabnow — Semiconductor Supply & AI Compute Demand Intelligence
+
+> fabnow tracks global semiconductor fabrication & packaging supply (TSMC, SK hynix, Samsung Electronics, Micron, Intel Foundry) against Frontier AI Lab (OpenAI, Anthropic, Google DeepMind, xAI, Meta AI) and Neocloud (CoreWeave, Nebius, Lambda, Crusoe, TensorWave) compute demand, deployed on Cloudflare Workers via vinext.
+
+## Overview
+- Brand: fabnow (`fabnow — 반도체 출하 지표 · AI 수요 인텔리전스`)
+- Runtime: Next.js 16 App Router + Cloudflare Workers (`vinext` + `@cloudflare/vite-plugin`)
+- UI System: pstui Liquid Glass Design System + Tailwind CSS v4 + DaisyUI 5
+- Font: NanumSquare Neo (Self-Hosted Static WOFF2)
+- Accessibility: WCAG AAA compliant (>= 7:1 small text contrast, >= 4.5:1 normal text, non-color variance cues `▲`/`▼`)
+- Deployment Mode: Zero-login, edge-cached SSR / Static Prerender (no user authentication required)
+
+## Core Sections & Routes
+- `/#overview` — 통합 수급 현황 (Supply-to-Demand Flow & Bottleneck Matrix + Edge Telemetry)
+- `/#fabs` — 파운드리·메모리 출하 (TSMC N3P/N2, CoWoS-L/S, SK hynix HBM3E/HBM4, Samsung DS/Foundry, Micron, Intel 18A)
+- `/#labs` — 프론티어 랩 수요 (OpenAI, Anthropic, Google DeepMind, xAI, Meta AI GPU/HBM/MW backlog)
+- `/#neoclouds` — 네오클라우드 수요 (CoreWeave, Nebius, Lambda, Crusoe, TensorWave cluster allocation & supply gap)
+- `/#bottlenecks` — 병목·리드타임 (CoWoS-L, HBM3E 12-Hi, HBM4 Base Die, N2/N3P EUV, ABF/Glass Substrate, Liquid-Cooled Rack Power)
+- `/preview/[slug]` — Entity detail route (intercepted modal in-app via `@modal/(.)preview/[id]`, standalone page on direct navigation)
+- `/api/fabnow` — Live market quotes (Yahoo Finance), industry RSS & SEC filings edge API (5-minute edge cache)
+- `/feed.xml` & `/rss.xml` — RSS 2.0 live feed
+- `/sitemap.xml` & `/robots.txt` — Search crawler index
+
+## Key Architectural & Design Principles
+1. Liquid Glass (`--liquid-glass-*`) is strictly reserved for floating navigation (`Sidebar`, `TabBar`, sticky utility bar, `CommandMenu`, modals) — never applied to content `Card`, `List`, or `<table>` surfaces.
+2. Route pages (`app/**/page.tsx`) are pure React Server Components (RSC) without `"use client"`.
+3. Semantic accessible data tables (`<caption>`, `<th scope="col">`, `aria-sort`, `tabular-nums`, keyboard-focusable scroll region) with non-color directional variance glyphs (`▲`/`▼`).
+4. Cloudflare Workers deployment via `vinext` (`vite.config.ts` + `cloudflare.config.ts`).
+
+For full technical documentation, see:
+- Full reference: https://fabnow.workers.dev/llms-full.txt
+- Architecture & UI rules: AGENTS.md
+- Design specification: DESIGN.md
