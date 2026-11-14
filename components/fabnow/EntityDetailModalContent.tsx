@@ -3,13 +3,9 @@
 import React from "react";
 import Link from "next/link";
 import {
-  Badge,
   Button,
   EmptyState,
   IconArrowUpRight,
-  IconChip,
-  IconPulse,
-  IconServer,
   Progress,
 } from "@/components/ui";
 import { getEntityBySlug } from "@/lib/data/fabnow";
@@ -47,20 +43,9 @@ export function EntityDetailModalContent({
   return (
     <div className="space-y-4 text-base-content">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="inline-flex items-center gap-2">
-          <span className="p-2 rounded-2xl bg-primary/14 text-accent-primary shrink-0">
-            {entity.kind === "fab" ? (
-              <IconChip className="w-4 h-4" />
-            ) : entity.kind === "customer" ? (
-              <IconServer className="w-4 h-4" />
-            ) : (
-              <IconPulse className="w-4 h-4" />
-            )}
-          </span>
-          <span className="text-xs font-bold" style={{ color: "var(--label-secondary)" }}>
-            {entity.subtitle}
-          </span>
-        </div>
+        <span className="text-xs font-bold" style={{ color: "var(--label-secondary)" }}>
+          {entity.subtitle}
+        </span>
         <RiskBadge risk={entity.riskLevel} size="sm" />
       </div>
 
@@ -139,13 +124,10 @@ export function EntityDetailModalContent({
               {entity.record.bottleneckStage} · 거점: {entity.record.primarySites}
             </p>
             <p className="text-xs leading-relaxed text-base-content">{entity.record.summaryKo}</p>
-            <div className="flex flex-wrap gap-1.5 pt-1">
-              {entity.record.keyCustomers.map((cust) => (
-                <Badge key={cust} variant="outline" size="xs">
-                  {cust}
-                </Badge>
-              ))}
-            </div>
+            <p className="text-[11px] font-medium pt-1 border-t border-base-content/10" style={{ color: "var(--label-secondary)" }}>
+              <strong className="font-semibold text-base-content">주요 고객</strong>{" "}
+              {entity.record.keyCustomers.join(" · ")}
+            </p>
           </div>
         </>
       )}
@@ -218,20 +200,26 @@ export function EntityDetailModalContent({
             </div>
           </div>
 
-          <div className="material-thin rounded-2xl p-3.5 space-y-2">
+          <div className="material-thin rounded-2xl p-3.5 space-y-2.5">
             <p className="text-xs leading-relaxed text-base-content">{entity.record.summaryKo}</p>
-            <div className="flex flex-wrap gap-1.5 pt-1">
-              {entity.record.preferredNodes.map((node) => (
-                <Badge key={node} variant="primary" size="xs">
-                  {node}
-                </Badge>
-              ))}
-              {entity.record.primarySuppliers.map((sup) => (
-                <Badge key={sup} variant="outline" size="xs">
-                  {sup}
-                </Badge>
-              ))}
-            </div>
+            <dl className="pt-2 border-t border-base-content/10 space-y-1 text-[11px]">
+              <div className="flex items-baseline justify-between gap-2">
+                <dt className="font-semibold shrink-0" style={{ color: "var(--label-secondary)" }}>
+                  선호 공정
+                </dt>
+                <dd className="font-semibold text-base-content text-end">
+                  {entity.record.preferredNodes.join(" · ")}
+                </dd>
+              </div>
+              <div className="flex items-baseline justify-between gap-2">
+                <dt className="font-semibold shrink-0" style={{ color: "var(--label-secondary)" }}>
+                  주요 공급사
+                </dt>
+                <dd className="font-medium text-end" style={{ color: "var(--label-secondary)" }}>
+                  {entity.record.primarySuppliers.join(" · ")}
+                </dd>
+              </div>
+            </dl>
           </div>
         </>
       )}
@@ -278,21 +266,27 @@ export function EntityDetailModalContent({
             }
           />
 
-          <div className="material-thin rounded-2xl p-3.5 space-y-2">
+          <div className="material-thin rounded-2xl p-3.5 space-y-2.5">
             <p className="text-xs font-bold">병목 완화 전략 (Mitigation)</p>
             <p className="text-xs leading-relaxed text-base-content">{entity.record.mitigationKo}</p>
-            <div className="flex flex-wrap gap-1.5 pt-1">
-              {entity.record.primarySuppliers.map((sup) => (
-                <Badge key={sup} variant="secondary" size="xs">
-                  {sup}
-                </Badge>
-              ))}
-              {entity.record.primaryDrivers.map((drv) => (
-                <Badge key={drv} variant="outline" size="xs">
-                  {drv}
-                </Badge>
-              ))}
-            </div>
+            <dl className="pt-2 border-t border-base-content/10 space-y-1 text-[11px]">
+              <div className="flex items-baseline justify-between gap-2">
+                <dt className="font-semibold shrink-0" style={{ color: "var(--label-secondary)" }}>
+                  공급 축
+                </dt>
+                <dd className="font-semibold text-base-content text-end">
+                  {entity.record.primarySuppliers.join(" · ")}
+                </dd>
+              </div>
+              <div className="flex items-baseline justify-between gap-2">
+                <dt className="font-semibold shrink-0" style={{ color: "var(--label-secondary)" }}>
+                  수요 동인
+                </dt>
+                <dd className="font-medium text-end" style={{ color: "var(--label-secondary)" }}>
+                  {entity.record.primaryDrivers.join(" · ")}
+                </dd>
+              </div>
+            </dl>
           </div>
         </>
       )}

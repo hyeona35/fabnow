@@ -1,0 +1,30 @@
+name: Bug Report
+description: Report a UI, data feed, PWA, or Cloudflare Workers compatibility issue in fabnow
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe the issue and expected behavior.
+    validations:
+      required: true
+  - type: dropdown
+    id: runtime
+    attributes:
+      label: Runtime / Environment
+      options:
+        - Next.js (`npm run build` / `npm start`)
+        - vinext (`vinext dev` / Cloudflare Workers)
+        - Installed PWA (Desktop / Mobile)
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Navigate to '...'
+        2. Toggle '...'
+        3. Observe console / layout issue

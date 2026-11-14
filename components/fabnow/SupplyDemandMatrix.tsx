@@ -3,12 +3,8 @@
 import React, { useMemo, useState } from "react";
 import Link from "next/link";
 import {
-  Badge,
   Button,
   IconArrowUpRight,
-  IconChip,
-  IconPulse,
-  IconServer,
   Tabs,
 } from "@/components/ui";
 import {
@@ -291,19 +287,20 @@ export function SupplyDemandMatrix({
       {/* Matrix Header + Controls */}
       <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 pb-4 border-b" style={{ borderColor: "var(--separator)" }}>
         <div className="space-y-1 min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="p-2 rounded-2xl bg-primary/14 text-accent-primary shrink-0">
-              <IconPulse className="w-5 h-5" />
-            </span>
+          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
             <h2
               id="supply-demand-matrix-heading"
               className="text-lg sm:text-xl font-extrabold tracking-tight text-base-content"
             >
-              글로벌 공급망 ↔ AI 수요 할당 매트릭스
+              글로벌 공급망 · AI 수요 할당 매트릭스
             </h2>
-            <Badge variant="primary" size="sm">
+            <span
+              className="inline-flex items-center gap-1.5 text-xs font-medium"
+              style={{ color: "var(--label-secondary)" }}
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" aria-hidden="true" />
               {DATA_SYNC_LABEL}
-            </Badge>
+            </span>
           </div>
           <p className="text-xs sm:text-sm font-medium" style={{ color: "var(--label-secondary)" }}>
             5대 파운드리·메모리 공급사(TSMC·SK하이닉스·삼성전자·마이크론·인텔)의 선단 노드 출하량과 10대 AI 수요처(프론티어 랩·네오클라우드) 간 할당 갭을 교차 추적합니다.
@@ -461,9 +458,9 @@ export function SupplyDemandMatrix({
                       {sup.outboundLinks.length > 0 ? (
                         <SignedDelta value={sup.netGapPct} className="text-xs" />
                       ) : (
-                        <Badge variant="info" size="xs">
+                        <span className="text-[11px] font-bold text-status-info tabular-nums">
                           18A 램프업
-                        </Badge>
+                        </span>
                       )}
                     </>
                   )}
@@ -769,15 +766,7 @@ export function SupplyDemandMatrix({
       {/* Bottom Interactive Inspector Card */}
       <div className="bg-base-100 rounded-3xl p-4 sm:p-5 border border-base-content/15 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="flex items-start gap-3 min-w-0">
-            <span className="p-2.5 rounded-2xl bg-primary/14 text-accent-primary shrink-0">
-              {selectedCustomerNode ? (
-                <IconServer className="w-5 h-5" />
-              ) : (
-                <IconChip className="w-5 h-5" />
-              )}
-            </span>
-            <div className="min-w-0">
+          <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
                 <h3 className="text-sm sm:text-base font-extrabold text-base-content truncate">
                   {inspectedTitle}
@@ -801,7 +790,6 @@ export function SupplyDemandMatrix({
                   ? `${selectedSupplierNode.lines.length}개 핵심 팹 라인 (${selectedSupplierNode.techSummary}) · ${activeLinks.length}건 AI 고객 할당 연결`
                   : `총 ${activeLinks.length}개 주요 공급-수요 연결 경로가 활성화되어 있습니다.`}
               </p>
-            </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-2 shrink-0">

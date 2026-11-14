@@ -46,9 +46,9 @@ export default function ErrorBoundary({
         </div>
 
         <div className="space-y-2">
-          <span className="badge badge-sm badge-error badge-soft font-semibold">
+          <p className="text-xs font-bold tracking-wide text-status-error">
             {isChunkError ? "버전 업데이트 감지" : "오류 발생"}
-          </span>
+          </p>
           <h1 className="text-2xl font-bold tracking-tight text-base-content">
             {isChunkError
               ? "새 데이터 버전이 배포되었습니다"

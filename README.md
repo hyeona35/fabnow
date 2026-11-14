@@ -6,13 +6,17 @@
 
 ## Key Capabilities & Routes
 
-- **Unified Intelligence Workbench (`/`)**: Interactive semiconductor fab capacity, Foundry/Memory/Packaging supply constraints, and Frontier Lab & Neocloud GPU cluster demand tracker (`app/page.tsx`).
+- **Unified Intelligence Workbench (`/`)**: Interactive semiconductor fab capacity, Foundry/Memory/Packaging supply constraints, and Frontier Lab & Neocloud GPU cluster demand tracker (`app/page.tsx`) with live `/api/fabnow` auto-refresh controls.
 - **Parallel Intercepting Report Preview (`/@modal/(.)preview/[id]` & `/preview/[id]`)**: In-app modal report preview with full standalone SSR fallback across 26 tracked fab/packaging/AI entities (e.g., `/preview/tsmc-n3p-logic`, `/preview/tsmc-n2-ramp`).
-- **Progressive RSC Streaming & Keyboard Navigation**: Server-side telemetry metrics (`lib/server/metrics.ts`) streamed through `<Suspense>` with a global `⌘K` / `Ctrl+K` command menu (`components/ui/CommandMenu.tsx`).
+- **Progressive RSC Streaming**: Server-side telemetry metrics (`lib/server/metrics.ts`) streamed smoothly through React 19 `<Suspense>` boundaries (`StreamingSkeleton.tsx`).
+- **Installable Offline-First PWA**:
+  - Full Web App Manifest (`app/manifest.ts` -> `/manifest.webmanifest` & `public/manifest.json`) with stable `id: "/"`, app shortcuts, wide/narrow Rich Install UI screenshots, SVG + PNG + maskable icons, and Apple touch icon (`public/apple-touch-icon.png`).
+  - Resilient Service Worker (`public/sw.js`) with precached offline fallback (`public/offline.html`), stale-while-revalidate icons/manifest, cache-first immutable `/_next/static/` & `/assets/`, and network-first `/api/fabnow` live feed fallback caching.
+  - Non-intrusive header install trigger (`AppShell.tsx` + `ClientRuntimeProvider.tsx`) supporting Web Install API (`navigator.install()`) and `beforeinstallprompt`.
 - **pstui Liquid Glass & WCAG AA/AAA Tokens**: Floating translucent chrome (`AppShell`, `Sidebar`, `TabBar`), solid content surfaces (`Card`, tables, forms), soft pastel high-contrast accents, `NanumSquareNeo` webfont, and `prefers-reduced-motion` support (`styles/pstui-tokens.css`, `DESIGN.md`).
-- **SEO, Feeds & PWA Assets**:
+- **SEO, Feeds & Open Graph**:
   - Dynamic routes: `/robots.txt` (`app/robots.ts`), `/sitemap.xml` (`app/sitemap.ts`), `/feed.xml` (`app/feed.xml/route.ts`), `/rss.xml` (`app/rss.xml/route.ts`), `/manifest.webmanifest` (`app/manifest.ts`)
-  - Static assets under `public/`: `robots.txt`, `sitemap.xml`, `manifest.json`, `llms.txt`, `llms-full.txt`, `humans.txt`, `sw.js`, `ads.txt`
+  - Static assets under `public/`: `robots.txt`, `sitemap.xml`, `manifest.json`, `offline.html`, `sw.js`, `icon.svg`, `icon-192.png`, `icon-512.png`, `apple-touch-icon.png`, `favicon.ico`, `og-image.png`, `llms.txt`, `llms-full.txt`, `humans.txt`, `ads.txt`
 
 ---
 
@@ -72,8 +76,16 @@ npm run start:vinext
 npm run check
 npm run check:vinext
 
-# Project asset & token integrity check (23 items)
+# Project asset & token integrity check (27 items)
 npm run setup -- --check
+```
+
+### Environment Variables (Optional)
+
+`fabnow` works out of the box with zero required secrets. For optional Firebase Auth or canonical site origin overrides, copy [`.env.example`](.env.example) to `.env.local`:
+
+```bash
+cp .env.example .env.local
 ```
 
 ---
@@ -146,11 +158,20 @@ fabnow/
 
 ---
 
+## Open Source & Project Governance
+
+- **Repository**: `https://github.com/hyeona35/fabnow`
+- **Contributing**: See [CONTRIBUTING.md](CONTRIBUTING.md) for local verification steps and design guidelines.
+- **Security**: See [SECURITY.md](SECURITY.md) for responsible vulnerability reporting.
+- **CI**: Automated checks (`setup.mjs --check`, `typecheck`, `lint`, `vinext check`, `build`, `build:vinext`) run via [ci.yml](.github/workflows/ci.yml).
+
+---
+
 ## pstui CLI Utilities
 
 `setup.mjs` also manages manifest hashes and downstream component exports for the underlying `pstui` design system:
 
-- `npm run setup -- --check` — Verify dependencies, design tokens, Cloudflare configs, and 23 production SEO/PWA assets.
+- `npm run setup -- --check` — Verify dependencies, design tokens, Cloudflare configs, and 27 production SEO/PWA assets.
 - `npm run manifest` — Recompute SHA-256 hashes in `pstui.manifest.json`.
 - `npm run export` / `npm run sync` / `npm run update` — Export or non-destructively synchronize `pstui` components into another Next.js project.
 

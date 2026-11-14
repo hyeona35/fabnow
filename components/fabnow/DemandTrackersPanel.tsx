@@ -2,12 +2,9 @@
 
 import React, { useMemo, useState } from "react";
 import {
-  Badge,
   Button,
   EmptyState,
-  IconServer,
   Tabs,
-  type SearchToken,
 } from "@/components/ui";
 import {
   DEMAND_CUSTOMERS,
@@ -55,35 +52,32 @@ const SERIES_STYLES = [
 function DeploymentBadge({ status }: { status: DeploymentStatus }) {
   if (status === "backlog-capped") {
     return (
-      <Badge variant="error" size="xs">
+      <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-status-error whitespace-nowrap">
+        <span className="w-1.5 h-1.5 rounded-full bg-error shrink-0" aria-hidden="true" />
         수주 상한 제약
-      </Badge>
+      </span>
     );
   }
   if (status === "ramping") {
     return (
-      <Badge variant="warning" size="xs">
+      <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-status-warning whitespace-nowrap">
+        <span className="w-1.5 h-1.5 rounded-full bg-warning shrink-0" aria-hidden="true" />
         급속 램프업
-      </Badge>
+      </span>
     );
   }
   return (
-    <Badge variant="success" size="xs">
+    <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-status-success whitespace-nowrap">
+      <span className="w-1.5 h-1.5 rounded-full bg-success shrink-0" aria-hidden="true" />
       대규모 증설 중
-    </Badge>
+    </span>
   );
 }
 
 export function DemandTrackersPanel({
   initialSegment = "all",
-  searchQuery = "",
-  searchTokens = [],
-  onResetSearch,
 }: {
   initialSegment?: "all" | CustomerSegment;
-  searchQuery?: string;
-  searchTokens?: SearchToken[];
-  onResetSearch?: () => void;
 }) {
   const { openModal, closeModal } = useModal();
   const { getQuoteForEntity } = useFabnowLive();
@@ -117,25 +111,8 @@ export function DemandTrackersPanel({
   };
 
   const filteredAndSorted = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase();
-    const tokenValues = searchTokens.map((t) => t.value.toLowerCase());
-
     const filtered = DEMAND_CUSTOMERS.filter((cust) => {
       if (segment !== "all" && cust.segment !== segment) return false;
-
-      const haystack = [
-        cust.name,
-        cust.nameKo,
-        cust.segment,
-        cust.focusCompute,
-        ...cust.preferredNodes,
-        ...cust.primarySuppliers,
-      ]
-        .join(" ")
-        .toLowerCase();
-
-      if (q && !haystack.includes(q)) return false;
-      if (tokenValues.some((tv) => !haystack.includes(tv))) return false;
       return true;
     });
 
@@ -148,7 +125,7 @@ export function DemandTrackersPanel({
       }
       return sortDirection === "ascending" ? cmp : -cmp;
     });
-  }, [segment, searchQuery, searchTokens, sortKey, sortDirection]);
+  }, [segment, sortKey, sortDirection]);
 
   const aggregateStats = useMemo(() => {
     const count = filteredAndSorted.length;
@@ -270,19 +247,19 @@ export function DemandTrackersPanel({
         style={{ borderColor: "var(--separator)" }}
       >
         <div className="space-y-1 min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="p-2 rounded-2xl bg-secondary/14 text-accent-secondary shrink-0">
-              <IconServer className="w-5 h-5" />
-            </span>
+          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
             <h2
               id="demand-trackers-heading"
               className="text-lg sm:text-xl font-extrabold tracking-tight text-base-content"
             >
               {headingTitle}
             </h2>
-            <Badge variant="secondary" size="sm">
+            <span
+              className="text-xs font-semibold tabular-nums"
+              style={{ color: "var(--label-secondary)" }}
+            >
               {aggregateStats.count}개 기관
-            </Badge>
+            </span>
           </div>
           <p
             className="text-xs sm:text-sm font-medium"
@@ -558,14 +535,13 @@ export function DemandTrackersPanel({
         <EmptyState
           size="md"
           title="조건에 일치하는 AI 수요처가 없습니다"
-          description="세그먼트 필터나 검색어를 초기화하여 프론티어 랩 및 네오클라우드 전체 목록을 확인하세요."
+          description="세그먼트 필터를 초기화하여 프론티어 랩 및 네오클라우드 전체 목록을 확인하세요."
           action={
             <Button
               size="sm"
               variant="primary"
               onClick={() => {
                 setSegment("all");
-                onResetSearch?.();
               }}
             >
               전체 수요처 보기
@@ -677,14 +653,14 @@ export function DemandTrackersPanel({
                           {cust.nameKo}
                         </span>
                       </div>
-                      <div className="flex flex-wrap items-center gap-1.5">
+                      <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
                         <DeploymentBadge status={cust.deploymentStatus} />
                         {quote && quote.status === "live" && quote.dayChangePct !== null && (
                           <span
-                            className={`text-[10px] font-bold px-1.5 py-0.5 rounded-lg tabular-nums ${
+                            className={`text-[11px] font-semibold tabular-nums ${
                               quote.dayChangePct >= 0
-                                ? "bg-success/12 text-status-success"
-                                : "bg-error/12 text-status-error"
+                                ? "text-status-success"
+                                : "text-status-error"
                             }`}
                             title={`${quote.symbol} 연동 시장 지표`}
                           >

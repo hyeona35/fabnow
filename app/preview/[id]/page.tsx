@@ -2,7 +2,6 @@ import React, { Suspense } from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { Badge } from "@/components/ui/Display";
 import {
   IconLayers,
   IconChevronLeft,
@@ -47,23 +46,27 @@ export async function generateMetadata({
 
 function getRiskMeta(risk: RiskLevel): {
   label: string;
-  variant: "error" | "warning" | "success";
+  dotClass: string;
+  textClass: string;
 } {
   if (risk === "tight") {
     return {
       label: "고압 · 긴장 (Tight)",
-      variant: "error",
+      dotClass: "bg-error",
+      textClass: "text-status-error",
     };
   }
   if (risk === "constrained") {
     return {
       label: "수급 제약 (Constrained)",
-      variant: "warning",
+      dotClass: "bg-warning",
+      textClass: "text-status-warning",
     };
   }
   return {
     label: "안정 · 균형 (Balanced)",
-    variant: "success",
+    dotClass: "bg-success",
+    textClass: "text-status-success",
   };
 }
 
@@ -82,18 +85,18 @@ function getSectionDestination(entity: FabnowEntity): {
   return { sectionId: "bottlenecks", sectionLabel: "병목·리드타임" };
 }
 
-function getDeltaBadgeVariant(
+function getDeltaToneClass(
   value: number,
   isBottleneckPressure: boolean
-): "success" | "warning" | "error" {
+): "text-status-success" | "text-status-warning" | "text-status-error" {
   if (isBottleneckPressure) {
-    if (value >= 5) return "error";
-    if (value > 0.05) return "warning";
-    return "success";
+    if (value >= 5) return "text-status-error";
+    if (value > 0.05) return "text-status-warning";
+    return "text-status-success";
   }
-  if (value > 0.05) return "success";
-  if (value < -0.05) return "error";
-  return "warning";
+  if (value > 0.05) return "text-status-success";
+  if (value < -0.05) return "text-status-error";
+  return "text-status-warning";
 }
 
 interface MetricCardItem {
@@ -253,7 +256,7 @@ async function StandaloneEntityContent({
       : entity.kind === "customer"
       ? entity.record.momDemandDeltaPct
       : entity.record.momPressureDeltaPct;
-  const deltaVariant = getDeltaBadgeVariant(
+  const deltaToneClass = getDeltaToneClass(
     primaryDelta,
     entity.kind === "bottleneck"
   );
@@ -275,24 +278,21 @@ async function StandaloneEntityContent({
               <IconChevronLeft className="w-5 h-5" aria-hidden="true" />
             </Link>
             <div className="min-w-0 space-y-1.5">
-              <div className="flex flex-wrap items-center gap-2">
-                <Badge variant={riskMeta.variant} size="sm">
+              <div
+                className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs font-medium"
+                style={{ color: "var(--label-secondary)" }}
+              >
+                <span className={`inline-flex items-center gap-1.5 font-semibold ${riskMeta.textClass}`}>
+                  <span className={`w-1.5 h-1.5 rounded-full ${riskMeta.dotClass}`} aria-hidden="true" />
                   {riskMeta.label}
-                </Badge>
-                <Badge
-                  variant={deltaVariant}
-                  size="sm"
-                  className="tabular-nums"
-                >
+                </span>
+                <span aria-hidden="true">·</span>
+                <span className={`font-bold tabular-nums ${deltaToneClass}`}>
                   {entity.kind === "bottleneck" ? "압력 MoM" : "월간 변동"}{" "}
                   {formatSignedPercent(primaryDelta)}
-                </Badge>
-                <span
-                  className="text-xs font-medium tabular-nums"
-                  style={{ color: "var(--label-secondary)" }}
-                >
-                  {DATA_SYNC_LABEL}
                 </span>
+                <span aria-hidden="true">·</span>
+                <span className="tabular-nums">{DATA_SYNC_LABEL}</span>
               </div>
               <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-base-content break-keep">
                 {entity.title}
@@ -306,9 +306,12 @@ async function StandaloneEntityContent({
             </div>
           </div>
 
-          <Badge variant="outline" size="sm" className="shrink-0">
+          <span
+            className="text-xs font-semibold shrink-0"
+            style={{ color: "var(--label-secondary)" }}
+          >
             {sectionLabel}
-          </Badge>
+          </span>
         </header>
 
         {/* Key Numeric Telemetry Grid (Standard Material surface) */}
@@ -353,13 +356,13 @@ async function StandaloneEntityContent({
           <p className="text-sm font-medium leading-relaxed text-base-content/90 break-keep">
             {summaryText}
           </p>
-          <div className="flex flex-wrap gap-1.5 pt-1">
-            {tagChips.map((chip) => (
-              <Badge key={chip} variant="default" size="sm">
-                {chip}
-              </Badge>
-            ))}
-          </div>
+          <p
+            className="text-xs font-medium pt-2 border-t border-base-content/10 break-keep"
+            style={{ color: "var(--label-secondary)" }}
+          >
+            <strong className="font-semibold text-base-content">연관 공정 · 파트너</strong>{" "}
+            {tagChips.join(" · ")}
+          </p>
         </section>
 
         {/* Quarterly Trajectory Table (Fabs & Customers) */}
@@ -476,12 +479,12 @@ async function StandaloneEntityContent({
                 </thead>
                 <tbody>
                   {entity.links.map((link) => {
-                    const gapVariant =
+                    const gapToneClass =
                       link.gapPct <= -18
-                        ? "error"
+                        ? "text-status-error"
                         : link.gapPct <= -10
-                        ? "warning"
-                        : "success";
+                        ? "text-status-warning"
+                        : "text-status-success";
                     return (
                       <tr key={link.id} className="hover:bg-base-200/40">
                         <td className="font-semibold break-keep">
@@ -501,9 +504,9 @@ async function StandaloneEntityContent({
                           {link.monthlyActualShippedUnits.toLocaleString("ko-KR")} {link.unitLabel}
                         </td>
                         <td className="text-right tabular-nums">
-                          <Badge variant={gapVariant} size="xs">
+                          <span className={`font-bold ${gapToneClass}`}>
                             {formatSignedPercent(link.gapPct)}
-                          </Badge>
+                          </span>
                         </td>
                       </tr>
                     );

@@ -2,15 +2,27 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
+    id: "/",
+    scope: "/",
     name: "fabnow — 반도체 출하 지표 · AI 수요 인텔리전스",
     short_name: "fabnow",
     description:
       "파운드리·HBM 반도체 공급 출하 지표와 프론티어 AI 랩·네오클라우드 컴퓨트 수요 병목을 추적하는 Cloudflare Workers Edge SSR 인텔리전스 대시보드",
+    lang: "ko",
+    dir: "ltr",
     start_url: "/",
     display: "standalone",
+    orientation: "any",
+    categories: ["business", "finance", "productivity"],
     background_color: "#09070e",
     theme_color: "#db528d",
     icons: [
+      {
+        src: "/icon.svg",
+        sizes: "any",
+        type: "image/svg+xml",
+        purpose: "any",
+      },
       {
         src: "/favicon.ico",
         sizes: "any",
@@ -20,13 +32,65 @@ export default function manifest(): MetadataRoute.Manifest {
         src: "/icon-192.png",
         sizes: "192x192",
         type: "image/png",
-        purpose: "maskable",
+        purpose: "any",
+      },
+      {
+        src: "/icon-512.png",
+        sizes: "512x512",
+        type: "image/png",
+        purpose: "any",
       },
       {
         src: "/icon-512.png",
         sizes: "512x512",
         type: "image/png",
         purpose: "maskable",
+      },
+    ],
+    shortcuts: [
+      {
+        name: "통합 수급 현황",
+        short_name: "현황",
+        description: "실시간 글로벌 반도체 출하·AI 수요 밸런스",
+        url: "/?section=overview",
+        icons: [{ src: "/icon-192.png", sizes: "192x192", type: "image/png" }],
+      },
+      {
+        name: "파운드리·메모리 출하",
+        short_name: "출하",
+        description: "TSMC·SK하이닉스·삼성전자 라인별 출하 추적",
+        url: "/?section=fabs",
+        icons: [{ src: "/icon-192.png", sizes: "192x192", type: "image/png" }],
+      },
+      {
+        name: "프론티어 AI 랩 수요",
+        short_name: "랩 수요",
+        description: "OpenAI·Anthropic·Google·xAI·Meta 클러스터 수요",
+        url: "/?section=labs",
+        icons: [{ src: "/icon-192.png", sizes: "192x192", type: "image/png" }],
+      },
+      {
+        name: "병목·리드타임 경보",
+        short_name: "병목",
+        description: "CoWoS-L 및 HBM4 공급 병목·리드타임 경보",
+        url: "/?section=bottlenecks",
+        icons: [{ src: "/icon-192.png", sizes: "192x192", type: "image/png" }],
+      },
+    ],
+    screenshots: [
+      {
+        src: "/screenshot_desktop.png",
+        sizes: "1280x900",
+        type: "image/png",
+        form_factor: "wide",
+        label: "fabnow 데스크톱 통합 수급 현황 및 할당 매트릭스",
+      },
+      {
+        src: "/screenshot_mobile.png",
+        sizes: "390x844",
+        type: "image/png",
+        form_factor: "narrow",
+        label: "fabnow 모바일 실시간 KPI 및 Liquid Glass 내비게이션",
       },
     ],
   };

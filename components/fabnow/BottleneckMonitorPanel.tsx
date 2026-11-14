@@ -3,15 +3,12 @@
 import React, { useMemo, useState } from "react";
 import {
   Alert,
-  Badge,
   Button,
   Card,
   EmptyState,
-  IconPulse,
   Progress,
   RadialProgress,
   Tabs,
-  type SearchToken,
 } from "@/components/ui";
 import {
   BOTTLENECK_STAGES,
@@ -35,39 +32,16 @@ const DOMAIN_LABELS: Record<"all" | BottleneckDomain, string> = {
   substrate: "기판",
 };
 
-export function BottleneckMonitorPanel({
-  searchQuery = "",
-  searchTokens = [],
-  onResetSearch,
-}: {
-  searchQuery?: string;
-  searchTokens?: SearchToken[];
-  onResetSearch?: () => void;
-}) {
+export function BottleneckMonitorPanel() {
   const { openModal, closeModal } = useModal();
   const [domainFilter, setDomainFilter] = useState<"all" | BottleneckDomain>("all");
 
   const filteredStages = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase();
-    const tokenValues = searchTokens.map((t) => t.value.toLowerCase());
-
     return BOTTLENECK_STAGES.filter((bn) => {
       if (domainFilter !== "all" && bn.domain !== domainFilter) return false;
-      const haystack = [
-        bn.stageName,
-        bn.stageNameKo,
-        bn.domain,
-        bn.mitigationKo,
-        ...bn.primarySuppliers,
-        ...bn.primaryDrivers,
-      ]
-        .join(" ")
-        .toLowerCase();
-      if (q && !haystack.includes(q)) return false;
-      if (tokenValues.some((tv) => !haystack.includes(tv))) return false;
       return true;
     }).sort((a, b) => b.saturationPct - a.saturationPct);
-  }, [domainFilter, searchQuery, searchTokens]);
+  }, [domainFilter]);
 
   const peakStage = useMemo(
     () => [...BOTTLENECK_STAGES].sort((a, b) => b.saturationPct - a.saturationPct)[0],
@@ -101,19 +75,17 @@ export function BottleneckMonitorPanel({
         style={{ borderColor: "var(--separator)" }}
       >
         <div className="space-y-1 min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="p-2 rounded-2xl bg-error/14 text-status-error shrink-0">
-              <IconPulse className="w-5 h-5" />
-            </span>
+          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
             <h2
               id="bottleneck-monitor-heading"
               className="text-lg sm:text-xl font-extrabold tracking-tight text-base-content"
             >
-              공정 병목 포화도 & 리드타임 경보 모니터
+              공정 병목 포화도 · 리드타임 모니터
             </h2>
-            <Badge variant="error" size="sm">
+            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-status-error tabular-nums">
+              <span className="w-1.5 h-1.5 rounded-full bg-error shrink-0" aria-hidden="true" />
               긴급 병목 {BOTTLENECK_STAGES.filter((b) => b.riskLevel === "tight").length}건
-            </Badge>
+            </span>
           </div>
           <p
             className="text-xs sm:text-sm font-medium"
@@ -160,14 +132,13 @@ export function BottleneckMonitorPanel({
         <EmptyState
           size="md"
           title="조건에 일치하는 병목 공정이 없습니다"
-          description="공정 도메인 탭이나 검색어를 초기화하여 전체 6대 병목 구간을 확인하세요."
+          description="공정 도메인 탭을 초기화하여 전체 6대 병목 구간을 확인하세요."
           action={
             <Button
               size="sm"
               variant="primary"
               onClick={() => {
                 setDomainFilter("all");
-                onResetSearch?.();
               }}
             >
               병목 필터 초기화
@@ -189,8 +160,7 @@ export function BottleneckMonitorPanel({
                 key={bn.id}
                 materialWeight="regular"
                 title={bn.stageName}
-                subtitle={bn.stageNameKo}
-                badge={bn.domain.toUpperCase()}
+                subtitle={`${DOMAIN_LABELS[bn.domain]} · ${bn.stageNameKo}`}
                 actions={
                   <div className="w-full flex items-center justify-between gap-2">
                     <RiskBadge risk={bn.riskLevel} size="xs" />
@@ -241,24 +211,28 @@ export function BottleneckMonitorPanel({
                     color={colorVariant}
                   />
 
-                  <div className="space-y-2">
+                  <div className="space-y-2.5">
                     <p className="text-xs leading-relaxed text-base-content">
                       {bn.mitigationKo}
                     </p>
-                    <div className="flex flex-wrap gap-1">
-                      {bn.primarySuppliers.map((sup) => (
-                        <Badge key={sup} variant="outline" size="xs">
-                          {sup}
-                        </Badge>
-                      ))}
-                    </div>
-                    <div className="flex flex-wrap gap-1">
-                      {bn.primaryDrivers.map((drv) => (
-                        <Badge key={drv} variant="secondary" size="xs">
-                          {drv}
-                        </Badge>
-                      ))}
-                    </div>
+                    <dl className="pt-2 border-t border-base-content/10 space-y-1 text-[11px]">
+                      <div className="flex items-baseline justify-between gap-2">
+                        <dt className="font-semibold shrink-0" style={{ color: "var(--label-secondary)" }}>
+                          핵심 공급
+                        </dt>
+                        <dd className="font-semibold text-base-content text-end truncate">
+                          {bn.primarySuppliers.join(" · ")}
+                        </dd>
+                      </div>
+                      <div className="flex items-baseline justify-between gap-2">
+                        <dt className="font-semibold shrink-0" style={{ color: "var(--label-secondary)" }}>
+                          수요 동인
+                        </dt>
+                        <dd className="font-medium text-end truncate" style={{ color: "var(--label-secondary)" }}>
+                          {bn.primaryDrivers.join(" · ")}
+                        </dd>
+                      </div>
+                    </dl>
                   </div>
                 </div>
               </Card>

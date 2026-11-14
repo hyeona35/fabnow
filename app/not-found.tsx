@@ -10,9 +10,12 @@ export default function NotFound() {
         </div>
 
         <div className="space-y-2">
-          <span className="badge badge-sm badge-neutral font-semibold">
+          <p
+            className="text-xs font-bold tracking-wide"
+            style={{ color: "var(--label-secondary)" }}
+          >
             404 Not Found
-          </span>
+          </p>
           <h1 className="text-2xl font-bold tracking-tight text-base-content">
             지표 또는 페이지를 찾을 수 없습니다
           </h1>

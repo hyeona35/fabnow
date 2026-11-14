@@ -1314,3 +1314,57 @@ export function IconFilter({
   );
 }
 
+/**
+ * Bespoke fabnow silicon die & lithography channel emblem (Pure RSC).
+ */
+export function FabnowBrandMark({
+  className = "w-6 h-6",
+  ...props
+}: IconProps) {
+  const uid = React.useId();
+  const traceGradId = `fabnow-trace-${uid}`;
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 32 32"
+      fill="none"
+      aria-hidden="true"
+      {...props}
+    >
+      <defs>
+        <linearGradient id={traceGradId} x1="6" y1="6" x2="26" y2="26" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#db528d" />
+          <stop offset="100%" stopColor="#9055cf" />
+        </linearGradient>
+      </defs>
+      {/* Chamfered silicon die substrate */}
+      <rect
+        x="2"
+        y="2"
+        width="28"
+        height="28"
+        rx="8"
+        fill="#13101d"
+        stroke="rgba(255,255,255,0.16)"
+        strokeWidth="1.2"
+      />
+      {/* Top-left foundry reticle quadrant */}
+      <rect x="7" y="7" width="8" height="8" rx="2" fill="#f8fafc" fillOpacity="0.92" />
+      {/* Stacked HBM die strata */}
+      <rect x="17.5" y="7" width="7.5" height="2.1" rx="0.8" fill="#cbd5e1" fillOpacity="0.85" />
+      <rect x="17.5" y="10.2" width="7.5" height="2.1" rx="0.8" fill="#cbd5e1" fillOpacity="0.65" />
+      <rect x="17.5" y="13.4" width="7.5" height="2.1" rx="0.8" fill="#cbd5e1" fillOpacity="0.45" />
+      {/* Interconnect bus path linking fab output to compute array */}
+      <path
+        d="M11 17.5V22.5H17.5"
+        stroke={`url(#${traceGradId})`}
+        strokeWidth="2.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      {/* Compute focal core */}
+      <rect x="18" y="18" width="7" height="7" rx="2.2" fill={`url(#${traceGradId})`} />
+    </svg>
+  );
+}
+

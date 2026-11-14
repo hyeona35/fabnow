@@ -6,12 +6,12 @@
   "author": "fabnow & pstui Contributors",
   "repository": {
     "type": "git",
-    "url": "https://github.com/pstui/pstui.git"
+    "url": "https://github.com/hyeona35/fabnow.git"
   },
   "bugs": {
-    "url": "https://github.com/pstui/pstui/issues"
+    "url": "https://github.com/hyeona35/fabnow/issues"
   },
-  "homepage": "https://github.com/pstui/pstui#readme",
+  "homepage": "https://github.com/hyeona35/fabnow#readme",
   "keywords": [
     "fabnow",
     "semiconductor",

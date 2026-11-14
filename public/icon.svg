@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <radialGradient id="waferGlow" cx="68%" cy="28%" r="72%">
+      <stop offset="0%" stop-color="#2c1936" />
+      <stop offset="52%" stop-color="#13101d" />
+      <stop offset="100%" stop-color="#09070e" />
+    </radialGradient>
+    <linearGradient id="dieRim" x1="88" y1="88" x2="424" y2="424" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#f472b6" stop-opacity="0.55" />
+      <stop offset="50%" stop-color="#c084fc" stop-opacity="0.32" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.14" />
+    </linearGradient>
+    <linearGradient id="hbmCore" x1="150" y1="168" x2="362" y2="358" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#f472b6" />
+      <stop offset="55%" stop-color="#db528d" />
+      <stop offset="100%" stop-color="#9055cf" />
+    </linearGradient>
+    <linearGradient id="hbmTop" x1="162" y1="142" x2="350" y2="210" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#fbcfe8" />
+      <stop offset="100%" stop-color="#f472b6" />
+    </linearGradient>
+  </defs>
+
+  <!-- Squircle Silicon Substrate -->
+  <rect x="24" y="24" width="464" height="464" rx="112" fill="url(#waferGlow)" stroke="rgba(240,235,255,0.16)" stroke-width="6" />
+
+  <!-- Subtle Foundry Alignment Reticle Hairlines -->
+  <g stroke="rgba(240,235,255,0.10)" stroke-width="3">
+    <line x1="256" y1="48" x2="256" y2="92" />
+    <line x1="256" y1="420" x2="256" y2="464" />
+    <line x1="48" y1="256" x2="92" y2="256" />
+    <line x1="420" y1="256" x2="464" y2="256" />
+    <circle cx="256" cy="256" r="196" stroke-dasharray="6 14" stroke-opacity="0.35" />
+  </g>
+
+  <!-- Chamfered Logic Interposer Die -->
+  <path
+    d="M142 104H370L408 142V370L370 408H142L104 370V142L142 104Z"
+    fill="#141021"
+    stroke="url(#dieRim)"
+    stroke-width="6"
+  />
+
+  <!-- HBM Stacked Silicon Strata & Foundry Core -->
+  <rect x="164" y="328" width="184" height="32" rx="10" fill="#f0ebff" fill-opacity="0.18" />
+  <rect x="150" y="274" width="212" height="34" rx="10" fill="#f0ebff" fill-opacity="0.34" />
+  <rect x="136" y="216" width="240" height="38" rx="12" fill="url(#hbmCore)" />
+  <rect x="158" y="158" width="196" height="36" rx="11" fill="url(#hbmTop)" />
+
+  <!-- Vertical Through-Silicon Via (TSV) Bus & Top Precision Node -->
+  <path d="M256 176V344" stroke="#ffffff" stroke-opacity="0.9" stroke-width="10" stroke-linecap="round" />
+  <circle cx="256" cy="176" r="14" fill="#ffffff" />
+  <rect x="236" y="228" width="40" height="14" rx="7" fill="#ffffff" fill-opacity="0.92" />
+</svg>

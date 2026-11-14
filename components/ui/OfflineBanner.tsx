@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { offlineQueue, type QueuedAction } from "@/lib/offlineQueue";
-import { IconExclamationTriangle, IconArrowPath, IconCheckCircle } from "./icons";
+import { IconArrowPath, IconCheckCircle } from "./icons";
 import { triggerHaptic } from "@/lib/haptics";
 
 export function OfflineBanner() {
@@ -44,10 +44,11 @@ export function OfflineBanner() {
     >
       {!isOnline ? (
         <div className="liquid-glass-elevated rounded-2xl p-3 border border-warning/30 shadow-lg flex items-center justify-between gap-3 text-xs bg-warning/10 text-neutral-900 dark:text-neutral-100">
-          <div className="flex items-center gap-2 min-w-0">
-            <span className="p-1 rounded-lg bg-warning/20 text-warning shrink-0">
-              <IconExclamationTriangle className="w-4 h-4" />
-            </span>
+          <div className="flex items-center gap-2.5 min-w-0">
+            <span
+              className="w-2.5 h-2.5 rounded-full bg-warning shrink-0"
+              aria-hidden="true"
+            />
             <div className="min-w-0">
               <p className="font-bold truncate">오프라인 모드 작동 중</p>
               <p className="text-[11px] opacity-80 truncate">
@@ -57,7 +58,7 @@ export function OfflineBanner() {
               </p>
             </div>
           </div>
-          <span className="badge badge-xs badge-warning font-bold shrink-0">
+          <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-status-warning shrink-0">
             오프라인
           </span>
         </div>

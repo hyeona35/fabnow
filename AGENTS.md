@@ -6,7 +6,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 # pstui 에이전트 작업 지침 및 인계 문서 (Agent Guidelines & Handoff Specification)
 
-본 문서는 **pstui** (인간 중심 인터랙션 원칙 + Liquid Glass + DaisyUI 5 + Tailwind CSS v4 + Next.js 16 App Router) 프레임워크를 개발, 확장, 유지보수하는 모든 AI 에이전트를 위한 단일 행동 지침 및 인계 문서입니다. 후속 에이전트는 본 문서와 [DESIGN.md](file:///c:/Users/xjdiu/OneDrive/Desktop/pstui/DESIGN.md)의 규격을 엄격히 준수해야 합니다.
+본 문서는 **pstui** (인간 중심 인터랙션 원칙 + Liquid Glass + DaisyUI 5 + Tailwind CSS v4 + Next.js 16 App Router) 프레임워크를 개발, 확장, 유지보수하는 모든 AI 에이전트를 위한 단일 행동 지침 및 인계 문서입니다. 후속 에이전트는 본 문서와 [DESIGN.md](DESIGN.md)의 규격을 엄격히 준수해야 합니다.
 
 ---
 
@@ -34,18 +34,18 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 4. **간결하고 직관적인 컴포넌트 아키텍처 (`components/ui/`)**:
    - 복잡했던 이전 파일명을 간결하고 직관적인 단일 단어 / 표준 파스칼 케이스 파일로 리팩터링 완료:
-     - [`Button.tsx`](file:///c:/Users/xjdiu/OneDrive/Desktop/pstui/components/ui/Button.tsx): `Button`, `ToggleButton` (Client)
-     - [`Input.tsx`](file:///c:/Users/xjdiu/OneDrive/Desktop/pstui/components/ui/Input.tsx): `TextField`, `SearchField`, `OtpInput` (alias `OTP`) (Client)
-     - [`Selection.tsx`](file:///c:/Users/xjdiu/OneDrive/Desktop/pstui/components/ui/Selection.tsx): `Checkbox`, `Radio`, `Switch`, `Slider` (Client)
-     - [`Select.tsx`](file:///c:/Users/xjdiu/OneDrive/Desktop/pstui/components/ui/Select.tsx): `Select`, `FieldSet` (alias `Fieldset`), `FileUpload`, `Filter`, `Rating`, `Swap` (Client)
-     - [`Card.tsx`](file:///c:/Users/xjdiu/OneDrive/Desktop/pstui/components/ui/Card.tsx): `Card` (Pure RSC), `Accordion`, `Collapse`, `Carousel`, `Dropdown` (alias `PullDownMenu`) (Client)
-     - [`Navigation.tsx`](file:///c:/Users/xjdiu/OneDrive/Desktop/pstui/components/ui/Navigation.tsx): `Divider`, `Breadcrumbs`, `Steps` (Pure RSC), `TabBar` (alias `BottomBar`), `Sidebar`, `Tabs`, `MegaMenu` (alias `Megamenu`), `Stack` (Client)
-     - [`Display.tsx`](file:///c:/Users/xjdiu/OneDrive/Desktop/pstui/components/ui/Display.tsx): `Badge`, `Kbd` (alias `KBD`), `Mask`, `Diff`, `List`, `ChatBubble`, `Link` (Pure RSC), `Calendar`, `Countdown` (Client)
-     - [`Feedback.tsx`](file:///c:/Users/xjdiu/OneDrive/Desktop/pstui/components/ui/Feedback.tsx): `Indicator`, `RadialProgress`, `Tooltip` (Pure RSC), `Alert`, `Progress`, `ErrorBoundary`, `EmptyState` (Client/Server)
-     - [`ErrorBoundary.tsx`](file:///c:/Users/xjdiu/OneDrive/Desktop/pstui/components/ui/ErrorBoundary.tsx): `ErrorBoundary` (Client)
-     - [`EmptyState.tsx`](file:///c:/Users/xjdiu/OneDrive/Desktop/pstui/components/ui/EmptyState.tsx): `EmptyState` (Pure RSC)
-     - [`icons.tsx`](file:///c:/Users/xjdiu/OneDrive/Desktop/pstui/components/ui/icons.tsx): 37+ 벡터 아이콘 시스템 (Pure React Server Component, `"use client"` 미사용으로 번들 최적화)
-     - [`index.ts`](file:///c:/Users/xjdiu/OneDrive/Desktop/pstui/components/ui/index.ts): 모든 UI 컴포넌트 통합 Re-export
+     - [`Button.tsx`](components/ui/Button.tsx): `Button`, `ToggleButton` (Client)
+     - [`Input.tsx`](components/ui/Input.tsx): `TextField`, `SearchField`, `OtpInput` (alias `OTP`) (Client)
+     - [`Selection.tsx`](components/ui/Selection.tsx): `Checkbox`, `Radio`, `Switch`, `Slider` (Client)
+     - [`Select.tsx`](components/ui/Select.tsx): `Select`, `FieldSet` (alias `Fieldset`), `FileUpload`, `Filter`, `Rating`, `Swap` (Client)
+     - [`Card.tsx`](components/ui/Card.tsx): `Card` (Pure RSC), `Accordion`, `Collapse`, `Carousel`, `Dropdown` (alias `PullDownMenu`) (Client)
+     - [`Navigation.tsx`](components/ui/Navigation.tsx): `Divider`, `Breadcrumbs`, `Steps` (Pure RSC), `TabBar` (alias `BottomBar`), `Sidebar`, `Tabs`, `MegaMenu` (alias `Megamenu`), `Stack` (Client)
+     - [`Display.tsx`](components/ui/Display.tsx): `Badge`, `Kbd` (alias `KBD`), `Mask`, `Diff`, `List`, `ChatBubble`, `Link` (Pure RSC), `Calendar`, `Countdown` (Client)
+     - [`Feedback.tsx`](components/ui/Feedback.tsx): `Indicator`, `RadialProgress`, `Tooltip` (Pure RSC), `Alert`, `Progress`, `ErrorBoundary`, `EmptyState` (Client/Server)
+     - [`ErrorBoundary.tsx`](components/ui/ErrorBoundary.tsx): `ErrorBoundary` (Client)
+     - [`EmptyState.tsx`](components/ui/EmptyState.tsx): `EmptyState` (Pure RSC)
+     - [`icons.tsx`](components/ui/icons.tsx): 37+ 벡터 아이콘 시스템 (Pure React Server Component, `"use client"` 미사용으로 번들 최적화)
+     - [`index.ts`](components/ui/index.ts): 모든 UI 컴포넌트 통합 Re-export
    - **RSC & 클라이언트 경계 원칙**: 상태나 이벤트가 없는 정적 컴포넌트는 `"use client"` 지시문 없이 서버 컴포넌트로 동작하며, 인터랙티브 컴포넌트는 내부 클라이언트 경계 모듈(`*Client.tsx`)을 통해 상위 모듈로 투명하게 Re-export 됩니다.
    - 이전 하위 호환성 포워더 파일명(`layoutNavigation.tsx`, `formDataInput.tsx`, `containmentDisclosure.tsx`, `dataDisplay.tsx`, `feedbackStatus.tsx`)은 코드베이스 최적화를 위해 완전히 제거되었습니다. 모든 컴포넌트는 `@/components/ui` 또는 concise 모듈 파일을 직접 임포트합니다.
 
@@ -187,7 +187,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 에이전트는 어떠한 경우에도 다음 패턴을 코드에 생성해서는 안 됩니다.
 
-1. **네이티브 전용 코드 혼입 금지**: Swift, SwiftUI, Objective-C API(`UIVibrancyEffectStyle`, `NSVisualEffectView` 등)를 웹 코드에 직접 작성하지 마십시오. 반드시 [DESIGN.md](file:///c:/Users/xjdiu/OneDrive/Desktop/pstui/DESIGN.md)에 정의된 웹 표준 CSS/HTML/JS 규격으로 구현하십시오.
+1. **네이티브 전용 코드 혼입 금지**: Swift, SwiftUI, Objective-C API(`UIVibrancyEffectStyle`, `NSVisualEffectView` 등)를 웹 코드에 직접 작성하지 마십시오. 반드시 [DESIGN.md](DESIGN.md)에 정의된 웹 표준 CSS/HTML/JS 규격으로 구현하십시오.
 2. **데스크톱의 모바일 컨테이너 감금 금지**: 데스크톱 화면(`>= 768px`)에서 화면 중앙에 `max-width: 430px` 같은 스마트폰 프레임 박스를 만들어 놓고 좌우 여백을 버리는 레이아웃을 절대 작성하지 마십시오.
 3. **하드코딩 색상 및 가는 폰트 금지**: `#ffffff`, `#000000`, `rgb(...)` 등의 하드코딩 색상과 `font-weight: 100 | 200 | 300` 사용을 금지합니다. 모든 색상은 `var(--...)` 시맨틱 토큰을 사용하십시오.
 4. **초기 진입 경고 및 권한 요청 금지**: `useEffect` 마운트 시점에 위치/카메라/알림 권한을 즉시 요청하거나 네트워크 오류 경고창(Alert)을 띄우지 마십시오. 권한은 사용자의 명시적 클릭 이벤트 핸들러 내부에서만 요청하십시오.
@@ -200,7 +200,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 작업을 완료하고 사용자에게 코드를 제시하기 직전에 다음 항목을 점검하십시오.
 
-- [ ] [DESIGN.md](file:///c:/Users/xjdiu/OneDrive/Desktop/pstui/DESIGN.md)의 CSS 변수(`--color-primary`, `--color-secondary`, `--liquid-glass-*`, `--material-*`)가 루트에 정상 선언되고 모든 스타일에 적용되었는가?
+- [ ] [DESIGN.md](DESIGN.md)의 CSS 변수(`--color-primary`, `--color-secondary`, `--liquid-glass-*`, `--material-*`)가 루트에 정상 선언되고 모든 스타일에 적용되었는가?
 - [ ] `< 768px`에서는 하단 플로팅 Liquid Glass 탭 막대가, `>= 768px`에서는 좌측 플로팅 Liquid Glass 사이드바가 자연스럽게 전환되며 콘텐츠가 그 뒤로 확장(Background Extension)되는가?
 - [ ] 라이트 모드, 다크 모드(`prefers-color-scheme: dark`), 대비 증가(`prefers-contrast: more`), 동작 줄이기(`prefers-reduced-motion: reduce`) 미디어 쿼리가 모두 반영되었는가?
 - [ ] 모든 버튼과 입력 요소의 최소 히트 영역이 44x44px 이상이며, 색상 외에 아이콘·텍스트·모양 등 비색상 단서가 함께 제공되는가?
@@ -213,7 +213,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - **컴포넌트 및 파일 명명**: 컴포넌트 파일은 반드시 간결한 단일 단어 또는 명확한 복합어 **PascalCase**로 작성합니다 (예: `Button.tsx`, `Card.tsx`, `Navigation.tsx`).
 - **함수 및 변수**: camelCase를 사용합니다.
 - **인터페이스 및 타입**: PascalCase를 사용합니다.
-- **모듈 익스포트**: [`components/ui/index.ts`](file:///c:/Users/xjdiu/OneDrive/Desktop/pstui/components/ui/index.ts)를 통해 모든 UI 컴포넌트를 단일 진입점으로 제공해야 합니다.
+- **모듈 익스포트**: [`components/ui/index.ts`](components/ui/index.ts)를 통해 모든 UI 컴포넌트를 단일 진입점으로 제공해야 합니다.
 
 ---
 

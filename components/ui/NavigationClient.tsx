@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { triggerHaptic } from "@/lib/haptics";
 import {
+  FabnowBrandMark,
   IconChevronDown,
 } from "./icons";
 
@@ -231,20 +232,16 @@ export function Sidebar({
             aria-label="fabnow 통합 수급 현황으로 이동"
             className="flex items-center gap-2.5 min-w-0 ps-1 cursor-pointer pst-press rounded-xl hover:opacity-85 transition-opacity focus-visible:outline-2 focus-visible:outline-primary text-start"
           >
-            <span
-              className="h-3.5 w-3.5 rounded-full shrink-0 shadow-xs"
-              style={{ background: "var(--gradient-brand)" }}
-              aria-hidden="true"
-            />
+            <FabnowBrandMark className="w-7 h-7 shrink-0" />
             <span className="flex flex-col min-w-0 leading-tight">
               <span className="text-sm font-extrabold tracking-tight text-base-content truncate">
                 fabnow
               </span>
               <span
-                className="text-[10px] font-semibold tracking-wide truncate"
+                className="text-[11px] font-medium tracking-tight truncate"
                 style={{ color: "var(--label-secondary)" }}
               >
-                반도체·AI 수급 인텔리전스
+                반도체·AI 수급 지표
               </span>
             </span>
           </button>
@@ -263,11 +260,7 @@ export function Sidebar({
             aria-label="fabnow 통합 수급 현황으로 이동"
             className="w-9 h-9 rounded-2xl flex items-center justify-center pst-press hover:bg-base-content/10 transition-colors focus-visible:outline-2 focus-visible:outline-primary mx-auto"
           >
-            <span
-              className="h-3.5 w-3.5 rounded-full shrink-0 shadow-xs"
-              style={{ background: "var(--gradient-brand)" }}
-              aria-hidden="true"
-            />
+            <FabnowBrandMark className="w-6 h-6 shrink-0" />
           </button>
         )}
       </div>

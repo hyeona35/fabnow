@@ -2,13 +2,10 @@
 
 import React, { useMemo, useState } from "react";
 import {
-  Badge,
   Button,
   EmptyState,
-  IconChip,
   IconDownload,
   Tabs,
-  type SearchToken,
 } from "@/components/ui";
 import {
   DATA_SYNC_LABEL,
@@ -78,15 +75,7 @@ function triggerFileDownload(filename: string, content: string, mimeType: string
   URL.revokeObjectURL(url);
 }
 
-export function FabShipmentsPanel({
-  searchQuery = "",
-  searchTokens = [],
-  onResetSearch,
-}: {
-  searchQuery?: string;
-  searchTokens?: SearchToken[];
-  onResetSearch?: () => void;
-}) {
+export function FabShipmentsPanel() {
   const { openModal, closeModal } = useModal();
   const { showToast } = useToast();
   const { getQuoteForEntity, lastSyncedAt } = useFabnowLive();
@@ -119,9 +108,6 @@ export function FabShipmentsPanel({
   };
 
   const filteredAndSorted = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase();
-    const tokenValues = searchTokens.map((t) => t.value.toLowerCase());
-
     const filtered = FAB_SHIPMENTS.filter((row) => {
       if (selectedCategory !== "all" && row.category !== selectedCategory) {
         return false;
@@ -129,20 +115,6 @@ export function FabShipmentsPanel({
       if (selectedCompany !== "all" && row.company !== selectedCompany) {
         return false;
       }
-      const haystack = [
-        row.company,
-        row.companyKo,
-        row.lineName,
-        row.nodeOrProduct,
-        row.primarySites,
-        row.bottleneckStage,
-        ...row.keyCustomers,
-      ]
-        .join(" ")
-        .toLowerCase();
-
-      if (q && !haystack.includes(q)) return false;
-      if (tokenValues.some((tv) => !haystack.includes(tv))) return false;
       return true;
     });
 
@@ -157,14 +129,7 @@ export function FabShipmentsPanel({
     });
 
     return sorted;
-  }, [
-    selectedCategory,
-    selectedCompany,
-    searchQuery,
-    searchTokens,
-    sortKey,
-    sortDirection,
-  ]);
+  }, [selectedCategory, selectedCompany, sortKey, sortDirection]);
 
   const handleDownloadCsv = () => {
     triggerHaptic("medium");
@@ -227,19 +192,19 @@ export function FabShipmentsPanel({
       {/* Header + Export Actions */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b" style={{ borderColor: "var(--separator)" }}>
         <div className="space-y-1 min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="p-2 rounded-2xl bg-primary/14 text-accent-primary shrink-0">
-              <IconChip className="w-5 h-5" />
-            </span>
+          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
             <h2
               id="fab-shipments-heading"
               className="text-lg sm:text-xl font-extrabold tracking-tight text-base-content"
             >
               파운드리 · HBM 메모리 · 어드밴스드 패키징 출하 지표
             </h2>
-            <Badge variant="primary" size="sm">
-              {filteredAndSorted.length} / {FAB_SHIPMENTS.length} 라인
-            </Badge>
+            <span
+              className="text-xs font-semibold tabular-nums"
+              style={{ color: "var(--label-secondary)" }}
+            >
+              {filteredAndSorted.length}/{FAB_SHIPMENTS.length}개 라인
+            </span>
           </div>
           <p className="text-xs sm:text-sm font-medium" style={{ color: "var(--label-secondary)" }}>
             글로벌 5대 제조사의 AI 핵심 라인별 월간 출하 규모, MoM/QoQ 증감, 팹 가동률, 양산 수율 및 납기(Lead Time)를 비교합니다.
@@ -326,7 +291,7 @@ export function FabShipmentsPanel({
         <EmptyState
           size="md"
           title="조건에 일치하는 팹 출하 라인이 없습니다"
-          description="공급사·공정 필터 또는 검색어를 초기화하여 전체 10개 핵심 라인을 확인해 보세요."
+          description="공급사·공정 필터를 초기화하여 전체 10개 핵심 라인을 확인해 보세요."
           action={
             <Button
               size="sm"
@@ -334,7 +299,6 @@ export function FabShipmentsPanel({
               onClick={() => {
                 setSelectedCategory("all");
                 setSelectedCompany("all");
-                onResetSearch?.();
               }}
             >
               필터 초기화
@@ -446,10 +410,10 @@ export function FabShipmentsPanel({
                           </span>
                           {quote && quote.status === "live" && quote.dayChangePct !== null && (
                             <span
-                              className={`text-[10px] font-bold px-1.5 py-0.5 rounded-lg tabular-nums ${
+                              className={`text-[11px] font-semibold tabular-nums ${
                                 quote.dayChangePct >= 0
-                                  ? "bg-success/12 text-status-success"
-                                  : "bg-error/12 text-status-error"
+                                  ? "text-status-success"
+                                  : "text-status-error"
                               }`}
                               title={`${quote.symbol} 실시간 시세 변동`}
                             >

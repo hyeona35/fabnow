@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { Badge, Button, IconArrowUpRight, IconSort } from "@/components/ui";
+import { Button, IconArrowUpRight, IconSort } from "@/components/ui";
 import { triggerHaptic } from "@/lib/haptics";
 
 export type RiskLevelType = "tight" | "constrained" | "balanced";
@@ -14,24 +14,35 @@ export function RiskBadge({
   risk: RiskLevelType;
   size?: "xs" | "sm" | "md";
 }) {
+  const textSize = size === "md" ? "text-xs" : "text-[11px]";
+
   if (risk === "tight") {
     return (
-      <Badge variant="error" size={size}>
-        공급 부족
-      </Badge>
+      <span
+        className={`inline-flex items-center gap-1.5 font-bold whitespace-nowrap text-status-error ${textSize}`}
+      >
+        <span className="w-1.5 h-1.5 rounded-full bg-error shrink-0" aria-hidden="true" />
+        <span>공급 부족</span>
+      </span>
     );
   }
   if (risk === "constrained") {
     return (
-      <Badge variant="warning" size={size}>
-        제한적
-      </Badge>
+      <span
+        className={`inline-flex items-center gap-1.5 font-bold whitespace-nowrap text-status-warning ${textSize}`}
+      >
+        <span className="w-1.5 h-1.5 rounded-full bg-warning shrink-0" aria-hidden="true" />
+        <span>제한적</span>
+      </span>
     );
   }
   return (
-    <Badge variant="success" size={size}>
-      균형
-    </Badge>
+    <span
+      className={`inline-flex items-center gap-1.5 font-bold whitespace-nowrap text-status-success ${textSize}`}
+    >
+      <span className="w-1.5 h-1.5 rounded-full bg-success shrink-0" aria-hidden="true" />
+      <span>균형</span>
+    </span>
   );
 }
 

@@ -1,6 +1,5 @@
 import React, { Suspense } from "react";
 import Link from "next/link";
-import { Badge } from "@/components/ui/Display";
 import {
   IconXMark,
   IconLayers,
@@ -24,25 +23,29 @@ export function generateStaticParams() {
   return getAllEntitySlugs().map((id) => ({ id }));
 }
 
-function getRiskBadgeMeta(risk: RiskLevel): {
+function getRiskStatusMeta(risk: RiskLevel): {
   label: string;
-  variant: "error" | "warning" | "success";
+  dotClass: string;
+  textClass: string;
 } {
   if (risk === "tight") {
     return {
       label: "고압 · 긴장 (Tight)",
-      variant: "error",
+      dotClass: "bg-error",
+      textClass: "text-status-error",
     };
   }
   if (risk === "constrained") {
     return {
       label: "수급 제약 (Constrained)",
-      variant: "warning",
+      dotClass: "bg-warning",
+      textClass: "text-status-warning",
     };
   }
   return {
     label: "안정 · 균형 (Balanced)",
-    variant: "success",
+    dotClass: "bg-success",
+    textClass: "text-status-success",
   };
 }
 
@@ -193,7 +196,7 @@ async function ModalEntityContent({
     );
   }
 
-  const riskMeta = getRiskBadgeMeta(entity.riskLevel);
+  const riskMeta = getRiskStatusMeta(entity.riskLevel);
   const { sectionId, sectionLabel } = resolveSectionInfo(entity);
   const metrics = buildModalMetrics(entity);
   const summaryText =
@@ -216,19 +219,18 @@ async function ModalEntityContent({
         style={{ borderColor: "var(--separator)" }}
       >
         <div className="min-w-0 space-y-1.5">
-          <div className="flex flex-wrap items-center gap-1.5">
-            <Badge variant={riskMeta.variant} size="xs">
+          <div
+            className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs font-medium"
+            style={{ color: "var(--label-secondary)" }}
+          >
+            <span className={`inline-flex items-center gap-1.5 font-semibold ${riskMeta.textClass}`}>
+              <span className={`w-1.5 h-1.5 rounded-full ${riskMeta.dotClass}`} aria-hidden="true" />
               {riskMeta.label}
-            </Badge>
-            <Badge variant="outline" size="xs">
-              {sectionLabel}
-            </Badge>
-            <span
-              className="text-[11px] font-medium tabular-nums"
-              style={{ color: "var(--label-secondary)" }}
-            >
-              {DATA_SYNC_LABEL}
             </span>
+            <span aria-hidden="true">·</span>
+            <span>{sectionLabel}</span>
+            <span aria-hidden="true">·</span>
+            <span className="tabular-nums">{DATA_SYNC_LABEL}</span>
           </div>
           <h2
             id="modal-preview-title"
@@ -338,18 +340,17 @@ async function ModalEntityContent({
                 <span className="tabular-nums font-semibold">
                   {link.monthlyActualShippedUnits}/{link.monthlyCommittedUnits}{" "}
                   {link.unitLabel}{" "}
-                  <Badge
-                    variant={
+                  <span
+                    className={`font-bold ${
                       link.gapPct <= -18
-                        ? "error"
+                        ? "text-status-error"
                         : link.gapPct <= -10
-                        ? "warning"
-                        : "success"
-                    }
-                    size="xs"
+                        ? "text-status-warning"
+                        : "text-status-success"
+                    }`}
                   >
                     {formatSignedPercent(link.gapPct)}
-                  </Badge>
+                  </span>
                 </span>
               </li>
             ))}

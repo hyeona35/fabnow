@@ -2,12 +2,10 @@
 
 import React, { useMemo, useState } from "react";
 import {
-  Badge,
   Button,
   EmptyState,
   IconArrowPath,
   IconExternalLink,
-  IconPulse,
   IconTrendDown,
   IconTrendUp,
 } from "@/components/ui";
@@ -89,28 +87,31 @@ export function LiveTelemetryPanel() {
     return items.filter((item) => item.kind === feedFilter).slice(0, 6);
   }, [liveData?.headlines, feedFilter]);
 
-  const statusBadge = useMemo(() => {
+  const statusSummary = useMemo(() => {
     if (isRefreshing && !liveData) {
-      return { variant: "info" as const, label: "실시간 피드 연결 중…" };
+      return { dotClass: "bg-info", textClass: "text-status-info", label: "피드 연결 중" };
     }
     if (!liveData) {
-      return { variant: "warning" as const, label: "피드 초기화 대기" };
+      return { dotClass: "bg-warning", textClass: "text-status-warning", label: "초기화 대기" };
     }
     if (liveData.quotesStatus === "live" && liveData.newsStatus === "live") {
       return {
-        variant: "success" as const,
-        label: `LIVE · 시세 ${liveData.liveStats.liveQuotesCount}/${liveData.liveStats.totalQuotesCount} · 피드 ${liveData.liveStats.liveHeadlinesCount}건`,
+        dotClass: "bg-success",
+        textClass: "text-status-success",
+        label: `LIVE · 시세 ${liveData.liveStats.liveQuotesCount}/${liveData.liveStats.totalQuotesCount} · 뉴스·공시 ${liveData.liveStats.liveHeadlinesCount}건`,
       };
     }
     if (liveData.quotesStatus === "partial" || liveData.liveStats.liveQuotesCount > 0 || liveData.newsStatus === "live") {
       return {
-        variant: "info" as const,
+        dotClass: "bg-info",
+        textClass: "text-status-info",
         label: `부분 동기화 · 시세 ${liveData.liveStats.liveQuotesCount}/${liveData.liveStats.totalQuotesCount} · 피드 ${liveData.liveStats.liveHeadlinesCount}건`,
       };
     }
     return {
-      variant: "warning" as const,
-      label: "기준 지표 폴백 (오프라인/제한 네트워크)",
+      dotClass: "bg-warning",
+      textClass: "text-status-warning",
+      label: "기준 지표 폴백 (제한 네트워크)",
     };
   }, [isRefreshing, liveData]);
 
@@ -124,28 +125,28 @@ export function LiveTelemetryPanel() {
         className="flex flex-col xl:flex-row xl:items-center justify-between gap-3 pb-3.5 border-b"
         style={{ borderColor: "var(--separator)" }}
       >
-        <div className="space-y-1.5 min-w-0">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="p-2 rounded-2xl bg-primary/14 text-accent-primary shrink-0">
-              <IconPulse className="w-4 h-4" />
-            </span>
+        <div className="space-y-1 min-w-0">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
             <h2 className="text-sm sm:text-base font-extrabold tracking-tight text-base-content">
-              실시간 시장 지표 · 공시·뉴스 자동 동기화
+              시장 시세 · 공시·뉴스 자동 동기화
             </h2>
-            <Badge variant={statusBadge.variant} size="xs">
-              {statusBadge.label}
-            </Badge>
+            <span
+              className={`inline-flex items-center gap-1.5 text-xs font-bold tabular-nums ${statusSummary.textClass}`}
+            >
+              <span className={`w-1.5 h-1.5 rounded-full ${statusSummary.dotClass}`} aria-hidden="true" />
+              <span>{statusSummary.label}</span>
+            </span>
           </div>
 
           <div
-            className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-medium tabular-nums"
+            className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs font-medium tabular-nums"
             style={{ color: "var(--label-secondary)" }}
           >
-            <span>마지막 동기화: {formatLocalTime(lastSyncedAt)}</span>
+            <span>마지막 동기화 {formatLocalTime(lastSyncedAt)}</span>
             <span aria-hidden="true">·</span>
             <span>
               {intervalSec > 0
-                ? `다음 자동 갱신: ${formatCountdown(nextRefreshInSec)} (${intervalSec / 60}분 주기 · 탭 전환 시 절전)`
+                ? `다음 자동 갱신 ${formatCountdown(nextRefreshInSec)} (${intervalSec / 60}분 주기 · 백그라운드 절전)`
                 : "자동 갱신 일시정지됨"}
             </span>
           </div>
@@ -218,36 +219,34 @@ export function LiveTelemetryPanel() {
         </div>
 
         {visibleQuotes.length === 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 rounded-2xl overflow-hidden border border-base-content/10 divide-x divide-y divide-base-content/8 bg-base-100">
             {Array.from({ length: 6 }).map((_, idx) => (
-              <div
-                key={idx}
-                className="rounded-2xl p-3 bg-base-200/50 border border-base-content/8 h-20 animate-pulse"
-              />
+              <div key={idx} className="p-3.5 h-20 animate-pulse" />
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 rounded-2xl overflow-hidden border border-base-content/12 divide-x divide-y divide-base-content/10 bg-base-100">
             {visibleQuotes.map((q) => {
               const dayUp = typeof q.dayChangePct === "number" && q.dayChangePct >= 0;
               const monthUp = typeof q.monthChangePct === "number" && q.monthChangePct >= 0;
               return (
                 <div
                   key={q.symbol}
-                  className="bg-base-100 rounded-2xl p-3 border border-base-content/12 flex flex-col justify-between gap-1.5"
+                  className="p-3 flex flex-col justify-between gap-1.5 transition-colors hover:bg-base-content/[0.025]"
                 >
-                  <div className="flex items-center justify-between gap-1 min-w-0">
+                  <div className="flex items-baseline justify-between gap-1.5 min-w-0">
                     <span className="text-xs font-extrabold text-base-content truncate">
                       {q.displayNameKo}
                     </span>
                     <span
-                      className="text-[10px] font-bold px-1.5 py-0.5 rounded-lg bg-base-200 text-base-content/75 shrink-0 tabular-nums"
+                      className="text-[11px] font-semibold shrink-0 tabular-nums"
+                      style={{ color: "var(--label-secondary)" }}
                     >
                       {q.symbol}
                     </span>
                   </div>
 
-                  <div className="text-sm font-extrabold text-base-content tabular-nums">
+                  <div className="text-[15px] font-extrabold text-base-content tabular-nums leading-snug">
                     {formatQuotePrice(q)}
                   </div>
 
@@ -332,41 +331,46 @@ export function LiveTelemetryPanel() {
             description="오프라인 상태이거나 외부 RSS 응답이 지연된 경우에도 기준 수급 데이터는 계속 유지됩니다."
           />
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 rounded-2xl overflow-hidden border border-base-content/12 divide-y md:divide-x divide-base-content/10 bg-base-100">
             {filteredHeadlines.map((item) => (
               <a
                 key={item.id}
                 href={item.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-base-100 rounded-2xl p-3 border border-base-content/10 hover:border-primary/45 transition-all flex items-start justify-between gap-2.5 group"
+                className="px-4 py-3 hover:bg-base-content/[0.03] transition-colors flex items-start justify-between gap-3 group"
               >
                 <div className="min-w-0 space-y-1">
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    <Badge
-                      variant={item.kind === "filing" ? "secondary" : "outline"}
-                      size="xs"
-                    >
-                      {item.source}
-                    </Badge>
-                    {item.matchedTags.slice(0, 2).map((tag) => (
-                      <Badge key={tag} variant="primary" size="xs">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                  <p className="text-xs font-bold text-base-content group-hover:text-primary transition-colors line-clamp-2 break-keep">
-                    {item.title}
-                  </p>
-                  <p
-                    className="text-[11px] font-medium tabular-nums"
+                  <div
+                    className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-[11px] font-semibold tabular-nums"
                     style={{ color: "var(--label-secondary)" }}
                   >
-                    {formatPublishedLabel(item.publishedAtIso)}
+                    <span
+                      className={
+                        item.kind === "filing"
+                          ? "text-accent-secondary font-bold"
+                          : "font-bold text-base-content/75"
+                      }
+                    >
+                      {item.source}
+                    </span>
+                    <span aria-hidden="true">·</span>
+                    <span>{formatPublishedLabel(item.publishedAtIso)}</span>
+                    {item.matchedTags.length > 0 && (
+                      <>
+                        <span aria-hidden="true">·</span>
+                        <span className="truncate">
+                          {item.matchedTags.slice(0, 2).join(" / ")}
+                        </span>
+                      </>
+                    )}
+                  </div>
+                  <p className="text-xs sm:text-[13px] font-bold text-base-content group-hover:text-primary transition-colors line-clamp-2 break-keep leading-snug">
+                    {item.title}
                   </p>
                 </div>
                 <IconExternalLink
-                  className="w-3.5 h-3.5 shrink-0 mt-1 opacity-60 group-hover:opacity-100 text-primary"
+                  className="w-3.5 h-3.5 shrink-0 mt-1 opacity-45 group-hover:opacity-100 text-primary transition-opacity"
                   aria-hidden="true"
                 />
               </a>

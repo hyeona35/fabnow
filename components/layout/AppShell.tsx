@@ -8,26 +8,23 @@ import {
   type BottomBarItem,
   type SidebarNavItem,
   ToggleButton,
-  Badge,
-  KBD,
 } from "@/components/ui";
 import {
+  FabnowBrandMark,
   IconBellShield,
   IconChart,
   IconCompass,
+  IconDownload,
   IconGrid,
   IconLayers,
   IconMoon,
   IconSidebarLeft,
   IconSun,
 } from "@/components/ui/icons";
+import { usePwaInstall } from "@/components/providers/ClientRuntimeProvider";
 import { useToast } from "@/context/OverlayContext";
 import { triggerHaptic } from "@/lib/haptics";
 
-const CommandMenu = dynamic(
-  () => import("@/components/ui/CommandMenu").then((mod) => mod.CommandMenu),
-  { ssr: false }
-);
 const OfflineBanner = dynamic(
   () => import("@/components/ui/OfflineBanner").then((mod) => mod.OfflineBanner),
   { ssr: false }
@@ -76,35 +73,30 @@ const SIDEBAR_ITEMS: SidebarNavItem[] = [
   {
     id: "overview",
     label: "통합 수급 현황",
-    badge: "LIVE",
     icon: <IconGrid className="w-5 h-5" />,
     activeIcon: <IconGrid className="w-5 h-5" filled />,
   },
   {
     id: "fabs",
     label: "파운드리·메모리 출하",
-    badge: "10",
     icon: <IconLayers className="w-5 h-5" />,
     activeIcon: <IconLayers className="w-5 h-5" filled />,
   },
   {
     id: "labs",
     label: "프론티어 랩 수요",
-    badge: "5",
     icon: <IconCompass className="w-5 h-5" />,
     activeIcon: <IconCompass className="w-5 h-5" filled />,
   },
   {
     id: "neoclouds",
     label: "네오클라우드 수요",
-    badge: "5",
     icon: <IconChart className="w-5 h-5" />,
     activeIcon: <IconChart className="w-5 h-5" filled />,
   },
   {
     id: "bottlenecks",
     label: "병목·리드타임",
-    badge: "6",
     icon: <IconBellShield className="w-5 h-5" />,
     activeIcon: <IconBellShield className="w-5 h-5" filled />,
   },
@@ -138,7 +130,6 @@ const MOBILE_BOTTOM_ITEMS: BottomBarItem[] = [
   {
     id: "bottlenecks",
     label: "병목",
-    badge: 6,
     icon: <IconBellShield className="w-5 h-5" />,
     activeIcon: <IconBellShield className="w-5 h-5" filled />,
   },
@@ -192,7 +183,6 @@ export function AppShell({
   const onSelectSection = controlledOnSelectSection ?? setInternalActiveSection;
 
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
-  const [isCommandMenuOpen, setIsCommandMenuOpen] = useState<boolean>(false);
   const osColorScheme = useSyncExternalStore(
     subscribeColorScheme,
     getColorSchemeSnapshot,
@@ -204,6 +194,7 @@ export function AppShell({
   const theme = userThemeOverride ?? osColorScheme;
 
   const { showToast } = useToast();
+  const { canInstall, isInstalling, promptInstall } = usePwaInstall();
 
   const currentSection = sectionTitles[activeSection] ??
     DEFAULT_SECTION_TITLES[activeSection] ?? {
@@ -221,18 +212,6 @@ export function AppShell({
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
   }, [theme]);
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
-        e.preventDefault();
-        setIsCommandMenuOpen((prev) => !prev);
-        triggerHaptic("selection");
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
 
   const toggleTheme = (nextDark: boolean) => {
     const nextTheme = nextDark ? "dark" : "light";
@@ -312,23 +291,14 @@ export function AppShell({
               title={`${currentSection.title} - fabnow 통합 수급 현황으로 이동`}
               aria-label={`${currentSection.title} - fabnow 통합 수급 현황으로 이동 및 맨 위로 스크롤`}
             >
-              <div className="flex items-center gap-2 min-w-0">
-                <span
-                  className="h-2.5 w-2.5 rounded-full shrink-0 group-hover:scale-125 transition-transform"
-                  style={{ background: "var(--gradient-brand)" }}
-                  aria-hidden="true"
-                />
-                <h1 className="text-sm sm:text-base font-bold tracking-tight text-base-content group-hover:text-primary transition-colors truncate">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <FabnowBrandMark className="w-5 h-5 shrink-0 md:hidden" />
+                <h1 className="text-sm sm:text-base font-extrabold tracking-tight text-base-content group-hover:text-primary transition-colors truncate">
                   {currentSection.title}
                 </h1>
-                <span className="hidden sm:inline-flex shrink-0">
-                  <Badge variant="primary" size="xs">
-                    {currentSection.badge}
-                  </Badge>
-                </span>
               </div>
               <p
-                className="hidden md:block text-xs font-medium truncate ps-4.5"
+                className="hidden md:block text-xs font-medium truncate"
                 style={{ color: "var(--label-secondary)" }}
               >
                 {currentSection.description ?? subtitle}
@@ -337,22 +307,22 @@ export function AppShell({
           </div>
 
           <div className="flex items-center gap-1.5 md:gap-2.5 shrink-0">
-            <button
-              type="button"
-              onClick={() => {
-                triggerHaptic("selection");
-                setIsCommandMenuOpen(true);
-              }}
-              className="pst-press cursor-pointer inline-flex items-center justify-center rounded-2xl px-1.5 sm:px-2 py-1 hover:bg-base-content/6 transition-colors"
-              aria-label="빠른 이동 커맨드 메뉴 (⌘K)"
-            >
-              <span className="hidden sm:inline-flex">
-                <KBD keys={["⌘", "K"]} size="xs" label="빠른 이동" />
-              </span>
-              <span className="sm:hidden inline-flex">
-                <KBD keys={["⌘K"]} size="xs" />
-              </span>
-            </button>
+            {canInstall && (
+              <button
+                type="button"
+                aria-disabled={isInstalling}
+                onClick={() => {
+                  if (isInstalling) return;
+                  triggerHaptic("selection");
+                  void promptInstall();
+                }}
+                aria-label="fabnow 앱 설치"
+                className="btn btn-sm btn-ghost rounded-2xl pst-press border border-base-content/20 text-base-content font-semibold gap-1.5"
+              >
+                <IconDownload className="w-4 h-4 shrink-0" aria-hidden="true" />
+                <span className="hidden sm:inline">앱 설치</span>
+              </button>
+            )}
 
             <button
               type="button"
@@ -401,18 +371,7 @@ export function AppShell({
         onSelect={onSelectSection}
       />
 
-      {/* 4. Power-User Command Menu Dialog (⌘K) */}
-      {isCommandMenuOpen && (
-        <CommandMenu
-          isOpen={isCommandMenuOpen}
-          onClose={() => setIsCommandMenuOpen(false)}
-          onSelectSection={onSelectSection}
-          theme={theme}
-          onToggleTheme={toggleTheme}
-        />
-      )}
-
-      {/* 5. Real-Time Offline Detection & Background Queueing Banner */}
+      {/* 4. Real-Time Offline Detection & Background Queueing Banner */}
       <OfflineBanner />
     </div>
   );

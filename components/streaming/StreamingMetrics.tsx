@@ -2,66 +2,57 @@ import React from "react";
 import { fetchServerTelemetry } from "@/lib/server/metrics";
 import { DATA_SYNC_LABEL } from "@/lib/data/fabnow";
 import {
-  IconSparkles,
   IconCheckCircle,
   IconExclamationTriangle,
   IconInfoCircle,
 } from "@/components/ui/icons";
-import { Badge } from "@/components/ui/Display";
 
 export async function StreamingMetrics() {
   const metrics = await fetchServerTelemetry();
 
   return (
     <section
-      aria-label="글로벌 반도체·AI 수급 텔레메트리"
-      className="material-regular p-5 rounded-3xl shadow-xs space-y-4"
+      aria-label="글로벌 반도체·AI 수급 핵심 지표"
+      className="material-regular rounded-3xl shadow-xs overflow-hidden"
     >
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-2.5 min-w-0">
-          <span
-            className="p-2 rounded-2xl bg-primary/14 text-accent-primary shrink-0"
-            aria-hidden="true"
-          >
-            <IconSparkles className="w-5 h-5" />
-          </span>
-          <div className="min-w-0">
-            <h2 className="text-sm font-bold tracking-tight text-base-content truncate">
-              글로벌 반도체·AI 엣지 수급 텔레메트리 (RSC 스트리밍)
-            </h2>
-            <p
-              className="text-xs font-medium truncate"
-              style={{ color: "var(--label-secondary)" }}
-            >
-              파운드리 가동률 · HBM/CoWoS 초과 수요 갭 · 프론티어/네오클라우드 잔고 실시간 집계
-            </p>
-          </div>
+      <div
+        className="flex flex-wrap items-center justify-between gap-2 px-5 py-3.5 border-b"
+        style={{ borderColor: "var(--separator)" }}
+      >
+        <div className="min-w-0">
+          <h2 className="text-sm font-extrabold tracking-tight text-base-content">
+            글로벌 반도체·AI 수급 밸런스
+          </h2>
         </div>
-        <Badge variant="primary" size="sm">
-          {DATA_SYNC_LABEL}
-        </Badge>
+        <div
+          className="inline-flex items-center gap-2 text-xs font-semibold shrink-0"
+          style={{ color: "var(--label-secondary)" }}
+        >
+          <span className="w-1.5 h-1.5 rounded-full bg-success" aria-hidden="true" />
+          <span>{DATA_SYNC_LABEL}</span>
+        </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
+      <div className="grid grid-cols-2 lg:grid-cols-4 divide-y lg:divide-y-0 lg:divide-x divide-base-content/10 bg-base-100/55">
         {metrics.map((metric) => {
           const isOptimal = metric.status === "optimal";
           const isHealthy = metric.status === "healthy";
           return (
             <div
               key={metric.id}
-              className="p-3.5 rounded-2xl bg-base-200/60 border border-base-content/10 space-y-1 transition-all hover:bg-base-200/90"
+              className="px-5 py-4 space-y-1.5 transition-colors hover:bg-base-content/[0.02]"
             >
               <p
-                className="text-[11px] font-semibold truncate"
+                className="text-xs font-semibold truncate"
                 style={{ color: "var(--label-secondary)" }}
               >
                 {metric.name}
               </p>
-              <p className="text-lg sm:text-xl font-extrabold tracking-tight text-base-content tabular-nums">
+              <p className="text-2xl sm:text-[26px] font-extrabold tracking-tight text-base-content tabular-nums leading-tight">
                 {metric.value}
               </p>
               <p
-                className={`text-[11px] font-semibold flex items-center gap-1 tabular-nums ${
+                className={`text-xs font-semibold flex items-center gap-1.5 tabular-nums ${
                   isOptimal
                     ? "text-accent-primary"
                     : isHealthy

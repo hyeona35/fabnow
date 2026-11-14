@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>오프라인 — fabnow</title>
+  <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #fbf9fc;
+      --surface: #ffffff;
+      --border: rgba(24, 16, 36, 0.12);
+      --text: #181024;
+      --muted: #5a5068;
+      --accent: #db528d;
+      --accent-text: #ffffff;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #09070e;
+        --surface: #14111d;
+        --border: rgba(240, 235, 255, 0.16);
+        --text: #f5f2ff;
+        --muted: #a69bb8;
+        --accent: #f472b6;
+        --accent-text: #09070e;
+      }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100dvh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'NanumSquareNeo', 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif;
+      word-break: keep-all;
+      line-height: 1.55;
+    }
+    main {
+      width: 100%;
+      max-width: 440px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 32px 28px;
+      text-align: center;
+    }
+    .mark {
+      width: 52px;
+      height: 52px;
+      margin: 0 auto 18px;
+      display: block;
+    }
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #f59e0b;
+    }
+    h1 {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      margin-bottom: 10px;
+    }
+    p {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+    button, a {
+      min-height: 44px;
+      min-width: 44px;
+      padding: 0 18px;
+      border-radius: 14px;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    button {
+      border: none;
+      background: var(--accent);
+      color: var(--accent-text);
+    }
+    a {
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <img class="mark" src="/icon.svg" alt="fabnow" />
+    <div class="status"><span class="dot" aria-hidden="true"></span>네트워크 연결 끊김</div>
+    <h1>현재 오프라인 상태입니다</h1>
+    <p>
+      인터넷 연결이 복구되면 파운드리 출하·AI 수요 실시간 시세와 공시 피드가 자동으로 재동기화됩니다.
+    </p>
+    <div class="actions">
+      <button type="button" onclick="window.location.reload()">다시 연결 시도</button>
+      <a href="/">대시보드로 이동</a>
+    </div>
+  </main>
+</body>
+</html>
