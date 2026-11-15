@@ -44,3 +44,21 @@ yarn-error.log*
 next-env.d.ts
 .vinext/
 .cloudflare/
+
+# IDE & OS
+.vscode/
+Thumbs.db
+Desktop.ini
+
+# cloudflare local secrets & wrangler state
+.dev.vars*
+.wrangler/
+
+# reports, logs & pstui sync backups
+public/lighthouse-*.json
+*.log
+*.bak.*
+.pstui-latest
+
+# site-specific ads verification (excluded from public repo)
+public/ads.txt

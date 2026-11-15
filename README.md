@@ -16,7 +16,7 @@
 - **pstui Liquid Glass & WCAG AA/AAA Tokens**: Floating translucent chrome (`AppShell`, `Sidebar`, `TabBar`), solid content surfaces (`Card`, tables, forms), soft pastel high-contrast accents, `NanumSquareNeo` webfont, and `prefers-reduced-motion` support (`styles/pstui-tokens.css`, `DESIGN.md`).
 - **SEO, Feeds & Open Graph**:
   - Dynamic routes: `/robots.txt` (`app/robots.ts`), `/sitemap.xml` (`app/sitemap.ts`), `/feed.xml` (`app/feed.xml/route.ts`), `/rss.xml` (`app/rss.xml/route.ts`), `/manifest.webmanifest` (`app/manifest.ts`)
-  - Static assets under `public/`: `robots.txt`, `sitemap.xml`, `manifest.json`, `offline.html`, `sw.js`, `icon.svg`, `icon-192.png`, `icon-512.png`, `apple-touch-icon.png`, `favicon.ico`, `og-image.png`, `llms.txt`, `llms-full.txt`, `humans.txt`, `ads.txt`
+  - Static assets under `public/`: `robots.txt`, `sitemap.xml`, `manifest.json`, `offline.html`, `sw.js`, `icon.svg`, `icon-192.png`, `icon-512.png`, `apple-touch-icon.png`, `favicon.ico`, `og-image.png`, `llms.txt`, `llms-full.txt`, `humans.txt` (`public/ads.txt` is gitignored for owner-specific publisher deployment)
 
 ---
 
@@ -34,7 +34,7 @@
 ## Getting Started
 
 ### Prerequisites
-- Node.js `>= 20.0.0` (verified on Node `v26.5.0`)
+- Node.js `>= 20.0.0` (CI verified on Node `22`)
 - npm
 
 ### Install Dependencies
@@ -76,17 +76,19 @@ npm run start:vinext
 npm run check
 npm run check:vinext
 
-# Project asset & token integrity check (27 items)
+# Project asset & token integrity check (26 items)
 npm run setup -- --check
 ```
 
 ### Environment Variables (Optional)
 
-`fabnow` works out of the box with zero required secrets. For optional Firebase Auth or canonical site origin overrides, copy [`.env.example`](.env.example) to `.env.local`:
+`fabnow` runs zero-login by default with zero required secrets. To override canonical `NEXT_PUBLIC_SITE_URL` origins (defaults to `https://fabnow.workers.dev`) or enable optional Firebase Auth templates in `context/AuthContext.tsx`, copy [`.env.example`](.env.example) to `.env.local`:
 
 ```bash
 cp .env.example .env.local
 ```
+
+> **Fork Note**: If you deploy a fork under your own analytics or AdSense account, update the Google Tag ID in `app/layout.tsx` and create your own gitignored `public/ads.txt` locally before building.
 
 ---
 
@@ -171,7 +173,7 @@ fabnow/
 
 `setup.mjs` also manages manifest hashes and downstream component exports for the underlying `pstui` design system:
 
-- `npm run setup -- --check` — Verify dependencies, design tokens, Cloudflare configs, and 27 production SEO/PWA assets.
+- `npm run setup -- --check` — Verify dependencies, design tokens, Cloudflare configs, and 26 production SEO/PWA assets.
 - `npm run manifest` — Recompute SHA-256 hashes in `pstui.manifest.json`.
 - `npm run export` / `npm run sync` / `npm run update` — Export or non-destructively synchronize `pstui` components into another Next.js project.
 

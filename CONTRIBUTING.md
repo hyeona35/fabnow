@@ -12,10 +12,10 @@ npm run dev
 Or run the Cloudflare Workers Vite dev server (`vinext`):
 
 ```bash
-npx vinext dev
+npm run dev:vinext
 ```
 
-Copy [`.env.example`](.env.example) to `.env.local` if you want to configure custom Firebase Authentication or canonical `NEXT_PUBLIC_SITE_URL` origins. Without environment variables, `fabnow` runs cleanly with built-in mock auth and public market/supply telemetry feeds.
+Copy [`.env.example`](.env.example) to `.env.local` if you want to override canonical `NEXT_PUBLIC_SITE_URL` origins (default: `https://fabnow.workers.dev`) or opt into the optional Firebase Authentication context in `context/AuthContext.tsx`. Without environment variables, `fabnow` runs zero-login with public market and supply telemetry feeds.
 
 ## Quality & Verification Checklist
 

@@ -9,6 +9,7 @@ import { ClientRuntimeProvider } from "@/components/providers/ClientRuntimeProvi
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://fabnow.workers.dev";
+const GTM_ID = (process.env.NEXT_PUBLIC_GTM_ID ?? "GTM-MWZK4QQK").trim();
 const SITE_TITLE = "fabnow — 반도체 출하 지표 · AI 수요 인텔리전스";
 const SITE_DESCRIPTION =
   "TSMC·SK hynix·삼성전자·Micron의 파운드리·HBM 출하량과 OpenAI·Anthropic·Google DeepMind·CoreWeave·Nebius의 AI 연산 수요 및 CoWoS·EUV 병목 공정을 추적하는 실시간 반도체 수급 인텔리전스 대시보드.";
@@ -177,19 +178,23 @@ export default function RootLayout({
             </NuqsAdapter>
           </Suspense>
         </ClientRuntimeProvider>
-        <Script id="gtm-gtag-init" strategy="afterInteractive">
-          {`window.dataLayer = window.dataLayer || [];
+        {GTM_ID ? (
+          <>
+            <Script id="gtm-gtag-init" strategy="afterInteractive">
+              {`window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 window.gtag = gtag;
 gtag('js', new Date());`}
-        </Script>
-        <Script
-          id="gtm-script"
-          src="https://www.googletagmanager.com/gtm.js?id=GTM-MWZK4QQK"
-          strategy="afterInteractive"
-          async
-          fetchPriority="low"
-        />
+            </Script>
+            <Script
+              id="gtm-script"
+              src={`https://www.googletagmanager.com/gtm.js?id=${encodeURIComponent(GTM_ID)}`}
+              strategy="afterInteractive"
+              async
+              fetchPriority="low"
+            />
+          </>
+        ) : null}
       </body>
     </html>
   );

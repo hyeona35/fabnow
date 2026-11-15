@@ -290,7 +290,6 @@ async function verifyPwaAndSeo() {
     "public/offline.html",
     "public/screenshot_desktop.png",
     "public/screenshot_mobile.png",
-    "public/ads.txt",
     "public/humans.txt",
     "public/llms.txt",
     "public/llms-full.txt",
@@ -323,6 +322,13 @@ async function verifyPwaAndSeo() {
     success(`총 ${passed}/${assets.length}개 프로덕션 자산 검증 100% 통과!`);
   } else {
     warn(`일부 자산 누락: ${passed}/${assets.length} 통과`);
+  }
+
+  const adsPath = path.join(ROOT_DIR, "public/ads.txt");
+  if (fs.existsSync(adsPath)) {
+    info("선택 파일 확인: public/ads.txt (.gitignore 제외 대상, 로컬 배포 시 포함)");
+  } else {
+    info("선택 파일 미존재: public/ads.txt (.gitignore 제외 대상 — 필요 시 로컬에서 생성)");
   }
 }
 
