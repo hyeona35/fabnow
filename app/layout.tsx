@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
+import Script from "next/script";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import "./globals.css";
 import { OverlayProvider } from "@/context/OverlayContext";
@@ -140,6 +141,7 @@ export default function RootLayout({
       data-theme="light"
     >
       <head>
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         {/* Preload core NanumSquare Neo self-hosted weights for instant FOUT-free rendering */}
         <link
           rel="preload"
@@ -175,6 +177,19 @@ export default function RootLayout({
             </NuqsAdapter>
           </Suspense>
         </ClientRuntimeProvider>
+        <Script id="gtm-gtag-init" strategy="afterInteractive">
+          {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+window.gtag = gtag;
+gtag('js', new Date());`}
+        </Script>
+        <Script
+          id="gtm-script"
+          src="https://www.googletagmanager.com/gtm.js?id=GTM-MWZK4QQK"
+          strategy="afterInteractive"
+          async
+          fetchPriority="low"
+        />
       </body>
     </html>
   );
