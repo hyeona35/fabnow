@@ -3,20 +3,20 @@ import { IconCompass } from "@/components/ui/icons";
 
 export default function NotFound() {
   return (
-    <div className="min-h-dvh flex items-center justify-center p-6 bg-base-200">
-      <div className="liquid-glass max-w-md w-full rounded-3xl p-8 text-center space-y-6 shadow-xl">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/14 text-accent-primary border border-primary/25">
+    <main className="min-h-dvh flex items-center justify-center p-6 bg-base-200">
+      <section className="material-regular max-w-md w-full rounded-[28px] p-7 sm:p-9 text-center space-y-6 shadow-lg">
+        <div
+          aria-hidden="true"
+          className="mx-auto flex h-16 w-16 items-center justify-center rounded-[20px] surface-pastel-blush text-accent-primary"
+        >
           <IconCompass className="w-8 h-8" />
         </div>
 
-        <div className="space-y-2">
-          <p
-            className="text-xs font-bold tracking-wide"
-            style={{ color: "var(--label-secondary)" }}
-          >
+        <div className="space-y-2.5">
+          <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-bold tracking-wide surface-pastel-lilac text-accent-secondary">
             404 Not Found
-          </p>
-          <h1 className="text-2xl font-bold tracking-tight text-base-content">
+          </span>
+          <h1 className="text-2xl font-extrabold tracking-tight text-base-content">
             지표 또는 페이지를 찾을 수 없습니다
           </h1>
           <p
@@ -28,15 +28,15 @@ export default function NotFound() {
           </p>
         </div>
 
-        <div className="pt-2">
+        <div className="pt-1">
           <Link
             href="/"
-            className="btn btn-primary w-full rounded-2xl pst-press font-bold shadow-md"
+            className="btn btn-primary w-full rounded-[18px] pst-press font-bold shadow-sm"
           >
             fabnow 통합 수급 현황으로 돌아가기
           </Link>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }

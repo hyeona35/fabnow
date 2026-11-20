@@ -39,17 +39,20 @@ export default function ErrorBoundary({
   }, [isChunkError]);
 
   return (
-    <div className="min-h-dvh flex items-center justify-center p-6 bg-base-200">
-      <div className="liquid-glass max-w-md w-full rounded-3xl p-8 text-center space-y-6 shadow-xl">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-error/14 text-status-error border border-error/25">
+    <main className="min-h-dvh flex items-center justify-center p-6 bg-base-200">
+      <section className="material-regular max-w-md w-full rounded-[28px] p-7 sm:p-9 text-center space-y-6 shadow-lg">
+        <div
+          aria-hidden="true"
+          className="mx-auto flex h-16 w-16 items-center justify-center rounded-[20px] surface-pastel-blush text-status-error border border-error/25"
+        >
           <IconErrorCircle className="w-8 h-8" />
         </div>
 
-        <div className="space-y-2">
-          <p className="text-xs font-bold tracking-wide text-status-error">
+        <div className="space-y-2.5">
+          <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-bold tracking-wide surface-pastel-blush text-status-error">
             {isChunkError ? "버전 업데이트 감지" : "오류 발생"}
-          </p>
-          <h1 className="text-2xl font-bold tracking-tight text-base-content">
+          </span>
+          <h1 className="text-2xl font-extrabold tracking-tight text-base-content">
             {isChunkError
               ? "새 데이터 버전이 배포되었습니다"
               : "일시적인 오류가 발생했습니다"}
@@ -62,9 +65,17 @@ export default function ErrorBoundary({
               ? "fabnow의 최신 엣지 빌드가 반영되었습니다. 페이지를 새로고침하면 최신 지표를 확인할 수 있습니다."
               : error.message || "수급 데이터를 불러오는 도중 예상치 못한 오류가 발생했습니다."}
           </p>
+          {error.digest && (
+            <p
+              className="text-xs font-mono tabular-nums"
+              style={{ color: "var(--label-tertiary)" }}
+            >
+              오류 코드: {error.digest}
+            </p>
+          )}
         </div>
 
-        <div className="space-y-2 pt-2">
+        <div className="space-y-2.5 pt-1">
           {isChunkError ? (
             <button
               type="button"
@@ -76,7 +87,7 @@ export default function ErrorBoundary({
                 }
                 window.location.reload();
               }}
-              className="btn btn-primary w-full rounded-2xl pst-press font-bold shadow-md inline-flex items-center justify-center gap-2"
+              className="btn btn-primary w-full rounded-[18px] pst-press font-bold shadow-sm inline-flex items-center justify-center gap-2"
             >
               <IconArrowPath className="w-4 h-4" />
               <span>최신 버전으로 새로고침</span>
@@ -85,7 +96,7 @@ export default function ErrorBoundary({
             <button
               type="button"
               onClick={() => reset()}
-              className="btn btn-primary w-full rounded-2xl pst-press font-bold shadow-md inline-flex items-center justify-center gap-2"
+              className="btn btn-primary w-full rounded-[18px] pst-press font-bold shadow-sm inline-flex items-center justify-center gap-2"
             >
               <IconArrowPath className="w-4 h-4" />
               <span>다시 시도</span>
@@ -98,13 +109,12 @@ export default function ErrorBoundary({
               reset();
               router.push("/");
             }}
-            className="btn btn-ghost btn-sm w-full rounded-xl pst-press text-xs font-semibold"
-            style={{ color: "var(--label-secondary)" }}
+            className="btn btn-ghost w-full rounded-[18px] border control-border pst-press text-sm font-semibold text-base-content"
           >
             fabnow 통합 수급 현황으로 이동
           </button>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }

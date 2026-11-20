@@ -95,8 +95,8 @@ export const viewport: Viewport = {
   maximumScale: 5,
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fbf9fc" },
-    { media: "(prefers-color-scheme: dark)", color: "#09070e" },
+    { media: "(prefers-color-scheme: light)", color: "#f8f5f0" },
+    { media: "(prefers-color-scheme: dark)", color: "#14111d" },
   ],
 };
 
@@ -142,6 +142,7 @@ export default function RootLayout({
       data-theme="light"
     >
       <head>
+        <meta name="color-scheme" content="light dark" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         {/* Preload core NanumSquare Neo self-hosted weights for instant FOUT-free rendering */}
         <link
@@ -165,7 +166,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className="min-h-dvh flex flex-col font-sans selection:bg-primary/20 selection:text-primary">
+      <body className="min-h-dvh flex flex-col font-sans selection:bg-primary/20 selection:text-[var(--accent-primary-text)]">
         <ClientRuntimeProvider>
           <Suspense fallback={<div className="min-h-dvh w-full" />}>
             <NuqsAdapter>
