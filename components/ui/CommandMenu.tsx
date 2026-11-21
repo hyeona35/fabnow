@@ -386,7 +386,7 @@ export function CommandMenu({
       <div
         ref={dialogRef}
         onKeyDown={handleKeyDown}
-        className={`relative z-10 w-full max-w-xl max-h-[90dvh] sm:max-h-[80dvh] liquid-glass-elevated rounded-[28px] shadow-2xl border border-[var(--border-control)] overflow-hidden flex flex-col transition-[transform,opacity] duration-[200ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-opacity motion-reduce:transform-none ${
+        className={`relative z-10 w-full max-w-xl max-h-[90dvh] sm:max-h-[80dvh] liquid-glass-elevated rounded-[28px] shadow-2xl border border-[var(--border-control)] overflow-hidden flex flex-col transition-[transform,translate,scale,opacity] duration-[200ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-opacity motion-reduce:transform-none motion-reduce:translate-y-0 motion-reduce:scale-100 ${
           isOpenVisual
             ? "opacity-100 translate-y-0 scale-100"
             : "opacity-0 -translate-y-2 scale-[0.97]"

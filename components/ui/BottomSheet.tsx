@@ -460,12 +460,12 @@ export function BottomSheet({
               : undefined,
           transition: isDragging
             ? "none"
-            : "transform 240ms cubic-bezier(0.22, 1, 0.36, 1), opacity 220ms ease-out",
+            : "transform 240ms cubic-bezier(0.22, 1, 0.36, 1), translate 240ms cubic-bezier(0.22, 1, 0.36, 1), scale 240ms cubic-bezier(0.22, 1, 0.36, 1), opacity 220ms ease-out",
         }}
-        className={`relative z-10 w-full sm:max-w-lg max-h-[93dvh] sm:max-h-[86dvh] liquid-glass-elevated rounded-t-[28px] sm:rounded-[28px] shadow-2xl border border-[var(--border-control)] flex flex-col overflow-hidden pb-[env(safe-area-inset-bottom,0px)] focus:outline-none motion-reduce:transition-opacity motion-reduce:transform-none ${
+        className={`relative z-10 w-full sm:max-w-lg max-h-[93dvh] sm:max-h-[86dvh] liquid-glass-elevated rounded-t-[28px] max-sm:rounded-b-none max-sm:border-b-0 sm:rounded-[28px] shadow-2xl border border-[var(--border-control)] flex flex-col overflow-hidden pb-[env(safe-area-inset-bottom,0px)] focus:outline-none motion-reduce:transition-opacity motion-reduce:transform-none motion-reduce:translate-y-0 motion-reduce:scale-100 ${
           isOpenVisual
-            ? "opacity-100 translate-y-0 sm:scale-100"
-            : "opacity-0 translate-y-full sm:translate-y-4 sm:scale-[0.96]"
+            ? "opacity-100 translate-y-0 scale-100"
+            : "opacity-0 translate-y-full scale-100 sm:translate-y-4 sm:scale-[0.96]"
         } ${className}`}
       >
         {/* Pill Drag Handle with Pointer Capture for Mobile Intuitive Affordance */}

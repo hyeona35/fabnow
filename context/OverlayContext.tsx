@@ -966,7 +966,7 @@ export function OverlayProvider({ children }: { children: React.ReactNode }) {
                   : undefined,
               transition: isDraggingModal
                 ? "none"
-                : "transform 240ms cubic-bezier(0.22, 1, 0.36, 1), opacity 220ms ease-out",
+                : "transform 240ms cubic-bezier(0.22, 1, 0.36, 1), translate 240ms cubic-bezier(0.22, 1, 0.36, 1), scale 240ms cubic-bezier(0.22, 1, 0.36, 1), opacity 220ms ease-out",
             }}
             className={`modal-box relative z-10 w-full! max-sm:max-w-none! ${
               activeModal.size === "sm"
@@ -974,10 +974,10 @@ export function OverlayProvider({ children }: { children: React.ReactNode }) {
                 : activeModal.size === "lg"
                 ? "sm:max-w-2xl!"
                 : "sm:max-w-lg!"
-            } max-h-[93dvh]! sm:max-h-[86dvh]! p-0! m-0! pb-[env(safe-area-inset-bottom,0px)]! liquid-glass-elevated rounded-t-[28px]! sm:rounded-[28px]! shadow-2xl border border-[var(--border-control)] flex flex-col overflow-hidden! focus:outline-none motion-reduce:transition-opacity motion-reduce:transform-none! ${
+            } max-h-[93dvh]! sm:max-h-[86dvh]! p-0! m-0! pb-[env(safe-area-inset-bottom,0px)]! liquid-glass-elevated rounded-t-[28px]! max-sm:rounded-b-none! max-sm:border-b-0! sm:rounded-[28px]! shadow-2xl border border-[var(--border-control)] flex flex-col overflow-hidden! focus:outline-none motion-reduce:transition-opacity motion-reduce:transform-none! motion-reduce:translate-y-0! motion-reduce:scale-100! ${
               isModalOpenVisual
-                ? "opacity-100 translate-y-0 sm:scale-100"
-                : "opacity-0 translate-y-full sm:translate-y-4 sm:scale-[0.96]"
+                ? "opacity-100 translate-y-0 scale-100!"
+                : "opacity-0 translate-y-full scale-100! sm:translate-y-4 sm:scale-[0.96]!"
             }`}
           >
             {/* Mobile Drag Handle Bar (< 640px) */}
@@ -1072,7 +1072,7 @@ export function OverlayProvider({ children }: { children: React.ReactNode }) {
                 }`}
               >
                 <div
-                  className={`liquid-glass-elevated rounded-[24px] border border-[var(--border-control)] p-4 sm:p-5 space-y-3 shadow-2xl transition-[transform,opacity] duration-[240ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-opacity motion-reduce:transform-none ${
+                  className={`liquid-glass-elevated rounded-[24px] border border-[var(--border-control)] p-4 sm:p-5 space-y-3 shadow-2xl transition-[transform,translate,scale,opacity] duration-[240ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-opacity motion-reduce:transform-none motion-reduce:translate-y-0 motion-reduce:scale-100 ${
                     isDirtyOpenVisual
                       ? "opacity-100 translate-y-0 scale-100"
                       : "opacity-0 translate-y-6 scale-[0.98]"
@@ -1156,10 +1156,10 @@ export function OverlayProvider({ children }: { children: React.ReactNode }) {
           <div
             ref={urgentAlertRef}
             tabIndex={-1}
-            className={`modal-box relative z-10 w-full! max-w-sm! m-0! p-6! liquid-glass-elevated rounded-[28px]! shadow-2xl border border-[var(--border-control)] text-center focus:outline-none transition-[transform,opacity] duration-[240ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-opacity motion-reduce:transform-none! ${
+            className={`modal-box relative z-10 w-full! max-w-sm! m-0! p-6! liquid-glass-elevated rounded-[28px]! shadow-2xl border border-[var(--border-control)] text-center focus:outline-none transition-[transform,translate,scale,opacity] duration-[240ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-opacity motion-reduce:transform-none! motion-reduce:translate-y-0! motion-reduce:scale-100! ${
               isAlertOpenVisual
-                ? "opacity-100 translate-y-0 scale-100"
-                : "opacity-0 translate-y-3 scale-[0.96]"
+                ? "opacity-100 translate-y-0 scale-100!"
+                : "opacity-0 translate-y-3 scale-[0.96]!"
             }`}
           >
             <div
@@ -1262,10 +1262,10 @@ export function OverlayProvider({ children }: { children: React.ReactNode }) {
           <div
             ref={prePermissionRef}
             tabIndex={-1}
-            className={`modal-box relative z-10 w-full! max-w-md! m-0! p-6! liquid-glass-elevated rounded-[28px]! shadow-2xl border border-[var(--border-control)] text-center focus:outline-none transition-[transform,opacity] duration-[240ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-opacity motion-reduce:transform-none! ${
+            className={`modal-box relative z-10 w-full! max-w-md! m-0! p-6! liquid-glass-elevated rounded-[28px]! shadow-2xl border border-[var(--border-control)] text-center focus:outline-none transition-[transform,translate,scale,opacity] duration-[240ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-opacity motion-reduce:transform-none! motion-reduce:translate-y-0! motion-reduce:scale-100! ${
               isPrePermOpenVisual
-                ? "opacity-100 translate-y-0 scale-100"
-                : "opacity-0 translate-y-3 scale-[0.96]"
+                ? "opacity-100 translate-y-0 scale-100!"
+                : "opacity-0 translate-y-3 scale-[0.96]!"
             }`}
           >
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/14 text-accent-primary border border-primary/35">
