@@ -46,6 +46,8 @@ export interface CommandMenuProps {
   onToggleTheme: (isDark: boolean) => void;
 }
 
+type MenuPhase = "closed" | "entering" | "open" | "closing";
+
 const CLOSE_DURATION_MS = 200;
 
 export function CommandMenu({
@@ -56,127 +58,102 @@ export function CommandMenu({
   onToggleTheme,
 }: CommandMenuProps) {
   const router = useRouter();
-  const [shouldRender, setShouldRender] = useState<boolean>(isOpen);
-  const [isEntered, setIsEntered] = useState<boolean>(false);
-  const [isClosing, setIsClosing] = useState<boolean>(false);
+  const [phase, setPhase] = useState<MenuPhase>(isOpen ? "entering" : "closed");
+  const [restoreFocusOnClose, setRestoreFocusOnClose] = useState<boolean>(true);
+  const [shouldNotifyClose, setShouldNotifyClose] = useState<boolean>(false);
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const dialogRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const shouldRenderRef = useRef<boolean>(isOpen);
-  const isClosingRef = useRef<boolean>(false);
-  const closeTimerRef = useRef<number | null>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
+  const onCloseRef = useRef(onClose);
 
   useEffect(() => {
-    shouldRenderRef.current = shouldRender;
-  }, [shouldRender]);
+    onCloseRef.current = onClose;
+  }, [onClose]);
 
-  useEffect(() => {
-    isClosingRef.current = isClosing;
-  }, [isClosing]);
-
-  useEffect(() => {
-    return () => {
-      if (closeTimerRef.current !== null) {
-        window.clearTimeout(closeTimerRef.current);
-      }
-    };
+  const closeMenu = useCallback((restoreFocus = true) => {
+    setRestoreFocusOnClose(restoreFocus);
+    setShouldNotifyClose(true);
+    setPhase((prev) => (prev === "closed" || prev === "closing" ? prev : "closing"));
   }, []);
 
-  const finishClose = useCallback(
-    (notifyParent: boolean, restoreFocus = true) => {
-      closeTimerRef.current = null;
-      isClosingRef.current = false;
-      shouldRenderRef.current = false;
-      setShouldRender(false);
-      setIsClosing(false);
-      setIsEntered(false);
-      setQuery("");
-      setSelectedIndex(0);
-
-      const prevEl = previousFocusRef.current;
-      previousFocusRef.current = null;
-      if (restoreFocus && prevEl && prevEl.isConnected) {
-        prevEl.focus();
-      }
-      if (notifyParent) {
-        onClose();
-      }
-    },
-    [onClose]
-  );
-
-  const requestClose = useCallback(
-    (restoreFocus = true) => {
-      if (isClosingRef.current) return;
-      isClosingRef.current = true;
-      setIsClosing(true);
-
-      if (closeTimerRef.current !== null) {
-        window.clearTimeout(closeTimerRef.current);
-      }
-      closeTimerRef.current = window.setTimeout(() => {
-        finishClose(true, restoreFocus);
-      }, CLOSE_DURATION_MS);
-    },
-    [finishClose]
-  );
-
-  // Synchronize isOpen prop with smooth GPU enter & exit transitions
+  // Synchronize external isOpen prop with menu phase transitions
   useEffect(() => {
-    let nestedRaf = 0;
     const raf = window.requestAnimationFrame(() => {
       if (isOpen) {
-        if (closeTimerRef.current !== null) {
-          window.clearTimeout(closeTimerRef.current);
-          closeTimerRef.current = null;
-        }
-        if (!previousFocusRef.current && document.activeElement instanceof HTMLElement) {
+        if (
+          !previousFocusRef.current &&
+          document.activeElement instanceof HTMLElement
+        ) {
           previousFocusRef.current = document.activeElement;
         }
-        isClosingRef.current = false;
-        shouldRenderRef.current = true;
-        setShouldRender(true);
-        setIsClosing(false);
-
-        nestedRaf = window.requestAnimationFrame(() => {
-          setIsEntered(true);
-          inputRef.current?.focus();
-        });
-      } else if (shouldRenderRef.current && !isClosingRef.current) {
-        isClosingRef.current = true;
-        setIsClosing(true);
-        if (closeTimerRef.current !== null) {
-          window.clearTimeout(closeTimerRef.current);
-        }
-        closeTimerRef.current = window.setTimeout(() => {
-          finishClose(false, true);
-        }, CLOSE_DURATION_MS);
+        setShouldNotifyClose(false);
+        setRestoreFocusOnClose(true);
+        setPhase((prev) => (prev === "open" ? "open" : "entering"));
+      } else {
+        setPhase((prev) =>
+          prev === "entering" || prev === "open" ? "closing" : prev
+        );
       }
     });
+    return () => window.cancelAnimationFrame(raf);
+  }, [isOpen]);
 
-    return () => {
-      window.cancelAnimationFrame(raf);
-      if (nestedRaf) {
-        window.cancelAnimationFrame(nestedRaf);
+  // Drive entering -> open and closing -> closed lifecycle inside effects
+  useEffect(() => {
+    if (phase === "entering") {
+      if (
+        !previousFocusRef.current &&
+        document.activeElement instanceof HTMLElement &&
+        document.activeElement !== inputRef.current
+      ) {
+        previousFocusRef.current = document.activeElement;
       }
-    };
-  }, [isOpen, finishClose]);
+      inputRef.current?.focus();
+      let nestedRaf = 0;
+      const raf = window.requestAnimationFrame(() => {
+        nestedRaf = window.requestAnimationFrame(() => {
+          setPhase("open");
+          inputRef.current?.focus();
+        });
+      });
+      return () => {
+        window.cancelAnimationFrame(raf);
+        if (nestedRaf) {
+          window.cancelAnimationFrame(nestedRaf);
+        }
+      };
+    }
+
+    if (phase === "closing") {
+      const timer = window.setTimeout(() => {
+        setPhase("closed");
+        setQuery("");
+        setSelectedIndex(0);
+        const prevEl = previousFocusRef.current;
+        previousFocusRef.current = null;
+        if (restoreFocusOnClose && prevEl && prevEl.isConnected) {
+          prevEl.focus();
+        }
+        if (shouldNotifyClose) {
+          setShouldNotifyClose(false);
+          onCloseRef.current();
+        }
+      }, CLOSE_DURATION_MS);
+      return () => window.clearTimeout(timer);
+    }
+  }, [phase, restoreFocusOnClose, shouldNotifyClose]);
 
   // Global ESC & Tab focus trap while CommandMenu is mounted
   useEffect(() => {
-    if (!shouldRender) return;
-
-    const focusTimer = window.setTimeout(() => {
-      inputRef.current?.focus();
-    }, 16);
+    if (phase === "closed") return;
 
     const handleGlobalKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         e.preventDefault();
-        requestClose(true);
+        closeMenu(true);
         return;
       }
 
@@ -212,12 +189,11 @@ export function CommandMenu({
 
     window.addEventListener("keydown", handleGlobalKeyDown);
     return () => {
-      window.clearTimeout(focusTimer);
       window.removeEventListener("keydown", handleGlobalKeyDown);
     };
-  }, [shouldRender, requestClose]);
+  }, [phase, closeMenu]);
 
-  if (!shouldRender) return null;
+  if (phase === "closed") return null;
 
   const handleQueryChange = (val: string) => {
     setQuery(val);
@@ -367,12 +343,6 @@ export function CommandMenu({
     );
   });
 
-  const handleSelectItem = (item: CommandMenuItem) => {
-    triggerHaptic("selection");
-    item.onSelect();
-    requestClose(!item.isEntityRoute);
-  };
-
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowDown") {
       e.preventDefault();
@@ -386,12 +356,14 @@ export function CommandMenu({
       e.preventDefault();
       const current = filtered[selectedIndex];
       if (current) {
-        handleSelectItem(current);
+        triggerHaptic("selection");
+        current.onSelect();
+        closeMenu(!current.isEntityRoute);
       }
     }
   };
 
-  const isOpenVisual = isEntered && !isClosing;
+  const isOpenVisual = phase === "open";
 
   return (
     <div
@@ -407,7 +379,7 @@ export function CommandMenu({
             : "opacity-0 backdrop-blur-none"
         }`}
         style={{ backgroundColor: "var(--liquid-glass-dimming)" }}
-        onClick={() => requestClose(true)}
+        onClick={() => closeMenu(true)}
         aria-hidden="true"
       />
 
@@ -443,7 +415,7 @@ export function CommandMenu({
           />
           <button
             type="button"
-            onClick={() => requestClose(true)}
+            onClick={() => closeMenu(true)}
             aria-label="커맨드 메뉴 닫기"
             className="btn btn-ghost btn-circle btn-xs rounded-2xl pst-press text-base-content shrink-0"
           >
@@ -467,7 +439,11 @@ export function CommandMenu({
                 <button
                   key={item.id}
                   type="button"
-                  onClick={() => handleSelectItem(item)}
+                  onClick={() => {
+                    triggerHaptic("selection");
+                    item.onSelect();
+                    closeMenu(!item.isEntityRoute);
+                  }}
                   onMouseEnter={() => setSelectedIndex(idx)}
                   className={`w-full pst-press flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-2xl text-start transition-all duration-150 ${
                     isSelected
