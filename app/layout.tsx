@@ -159,6 +159,13 @@ export default function RootLayout({
           type="font/woff2"
           crossOrigin="anonymous"
         />
+        <link
+          rel="preload"
+          href="/fonts/NanumSquareNeoTTF-dEb.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
 
         {/* Structured Data (JSON-LD) for Rich Search Results */}
         <script

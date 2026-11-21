@@ -58,8 +58,31 @@
   src: url("/fonts/NanumSquareNeoTTF-eHv.woff2") format("woff2");
 }
 
+/* Zero-CLS metric-adjusted system fallback matched to NanumSquare Neo (85% ascent / 25.5% descent / 0% line-gap) */
+@font-face {
+  font-family: "NanumSquareNeo Fallback";
+  font-weight: 300 600;
+  font-style: normal;
+  src: local("Apple SD Gothic Neo"), local("Malgun Gothic"), local("Segoe UI"), local("Arial");
+  size-adjust: 96%;
+  ascent-override: 88.54%;
+  descent-override: 26.56%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "NanumSquareNeo Fallback";
+  font-weight: 700 900;
+  font-style: normal;
+  src: local("Apple SD Gothic Neo Bold"), local("Malgun Gothic Bold"), local("Malgun Gothic"), local("Segoe UI Bold"), local("Arial Bold");
+  size-adjust: 95%;
+  ascent-override: 89.47%;
+  descent-override: 26.84%;
+  line-gap-override: 0%;
+}
+
 @theme {
-  --font-sans: "NanumSquareNeo", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --font-sans: "NanumSquareNeo", "NanumSquareNeo Fallback", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
 }
 
 @layer base {

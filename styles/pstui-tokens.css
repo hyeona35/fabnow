@@ -186,7 +186,7 @@ html {
   --material-thick: #ffffff;
 
   /* 6. Metrics & Concentric Soft Curvature */
-  --font-sans: "NanumSquareNeo", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --font-sans: "NanumSquareNeo", "NanumSquareNeo Fallback", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
   --hit-target-min: 44px;
   --sidebar-width: 260px;
   --sidebar-collapsed-width: 76px;
