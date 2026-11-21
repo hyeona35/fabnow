@@ -331,6 +331,9 @@ export function EntityActionLinks({
   onOpenModal: () => void;
   compact?: boolean;
 }) {
+  const modalActionLabel = compact ? "요약" : "상세";
+  const previewLinkLabel = compact ? "페이지" : "프리뷰";
+
   return (
     <div className="inline-flex items-center gap-2 shrink-0">
       <Button
@@ -338,18 +341,18 @@ export function EntityActionLinks({
         variant="soft"
         opensModal
         onClick={onOpenModal}
-        aria-label={`${entityLabel} 상세 모달 열기`}
+        aria-label={`${entityLabel} ${modalActionLabel} 모달 열기`}
         className="rounded-full px-3"
       >
-        {compact ? "요약" : "상세"}
+        {modalActionLabel}
       </Button>
       <Link
         href={`/preview/${slug}`}
         onClick={() => triggerHaptic("selection")}
-        aria-label={`${entityLabel} 전용 라우트 미리보기 열기`}
+        aria-label={`${entityLabel} 전용 ${previewLinkLabel} 열기`}
         className="btn btn-xs btn-ghost rounded-full border border-[var(--border-control,var(--separator))] control-border pst-press font-semibold inline-flex items-center gap-1 px-3 text-base-content hover:border-primary hover:text-accent-primary"
       >
-        <span>{compact ? "페이지" : "프리뷰"}</span>
+        <span>{previewLinkLabel}</span>
         <IconArrowUpRight className="w-3.5 h-3.5 shrink-0" />
       </Link>
     </div>

@@ -169,15 +169,17 @@ export function FabnowWorkspace({
                   >
                     파운드리 웨이퍼
                   </dt>
-                  <dd className="text-lg sm:text-xl font-extrabold tabular-nums text-base-content">
-                    {summary.totalMonthlyWaferKpm}
+                  <dd className="space-y-0.5">
+                    <span className="text-lg sm:text-xl font-extrabold tabular-nums text-base-content block">
+                      {summary.totalMonthlyWaferKpm}
+                    </span>
+                    <span
+                      className="text-xs font-medium block"
+                      style={{ color: "var(--label-tertiary)" }}
+                    >
+                      kWPM / 월
+                    </span>
                   </dd>
-                  <span
-                    className="text-xs font-medium block"
-                    style={{ color: "var(--label-tertiary)" }}
-                  >
-                    kWPM / 월
-                  </span>
                 </div>
                 <div className="rounded-[18px] p-3.5 bg-base-100 border border-[var(--separator)] space-y-1 min-w-0">
                   <dt
@@ -186,15 +188,17 @@ export function FabnowWorkspace({
                   >
                     HBM3E·HBM4
                   </dt>
-                  <dd className="text-lg sm:text-xl font-extrabold tabular-nums text-base-content">
-                    {summary.totalMonthlyHbmKStacks}k
+                  <dd className="space-y-0.5">
+                    <span className="text-lg sm:text-xl font-extrabold tabular-nums text-base-content block">
+                      {summary.totalMonthlyHbmKStacks}k
+                    </span>
+                    <span
+                      className="text-xs font-medium block"
+                      style={{ color: "var(--label-tertiary)" }}
+                    >
+                      Stacks / 월
+                    </span>
                   </dd>
-                  <span
-                    className="text-xs font-medium block"
-                    style={{ color: "var(--label-tertiary)" }}
-                  >
-                    Stacks / 월
-                  </span>
                 </div>
                 <div className="rounded-[18px] p-3.5 bg-base-100 border border-[var(--separator)] space-y-1 min-w-0">
                   <dt
@@ -203,15 +207,17 @@ export function FabnowWorkspace({
                   >
                     2.5D/3D 패키징
                   </dt>
-                  <dd className="text-lg sm:text-xl font-extrabold tabular-nums text-base-content">
-                    {summary.totalMonthlyPackagingK}k
+                  <dd className="space-y-0.5">
+                    <span className="text-lg sm:text-xl font-extrabold tabular-nums text-base-content block">
+                      {summary.totalMonthlyPackagingK}k
+                    </span>
+                    <span
+                      className="text-xs font-medium block"
+                      style={{ color: "var(--label-tertiary)" }}
+                    >
+                      Interposers / 월
+                    </span>
                   </dd>
-                  <span
-                    className="text-xs font-medium block"
-                    style={{ color: "var(--label-tertiary)" }}
-                  >
-                    Interposers / 월
-                  </span>
                 </div>
               </dl>
 
@@ -274,16 +280,18 @@ export function FabnowWorkspace({
                     >
                       총 GPU 환산 수요
                     </dt>
-                    <dd className="text-lg sm:text-xl font-extrabold tabular-nums text-base-content">
-                      {summary.totalMonthlyGpuEquivalentK.toLocaleString("en-US")}k
-                      <span className="text-xs font-semibold ms-1">/ 월</span>
+                    <dd className="space-y-0.5">
+                      <span className="text-lg sm:text-xl font-extrabold tabular-nums text-base-content block">
+                        {summary.totalMonthlyGpuEquivalentK.toLocaleString("en-US")}k
+                        <span className="text-xs font-semibold ms-1">/ 월</span>
+                      </span>
+                      <span
+                        className="text-xs font-medium tabular-nums block"
+                        style={{ color: "var(--label-tertiary)" }}
+                      >
+                        HBM {(summary.totalMonthlyHbmDemandTB / 1000).toFixed(1)} PB/월
+                      </span>
                     </dd>
-                    <span
-                      className="text-xs font-medium tabular-nums block"
-                      style={{ color: "var(--label-tertiary)" }}
-                    >
-                      HBM {(summary.totalMonthlyHbmDemandTB / 1000).toFixed(1)} PB/월
-                    </span>
                   </div>
                   <div className="rounded-[18px] p-4 bg-base-100 border border-[var(--separator)] space-y-1 min-w-0">
                     <dt
@@ -292,15 +300,17 @@ export function FabnowWorkspace({
                     >
                       데이터센터 전력 · 잔고
                     </dt>
-                    <dd className="text-lg sm:text-xl font-extrabold tabular-nums text-base-content">
-                      {(summary.totalCommittedPowerMW / 1000).toFixed(2)} GW
+                    <dd className="space-y-0.5">
+                      <span className="text-lg sm:text-xl font-extrabold tabular-nums text-base-content block">
+                        {(summary.totalCommittedPowerMW / 1000).toFixed(2)} GW
+                      </span>
+                      <span
+                        className="text-xs font-medium tabular-nums block"
+                        style={{ color: "var(--label-tertiary)" }}
+                      >
+                        Lab {summary.frontierLabAvgBacklogMonths}m · Cloud {summary.neocloudAvgBacklogMonths}m
+                      </span>
                     </dd>
-                    <span
-                      className="text-xs font-medium tabular-nums block"
-                      style={{ color: "var(--label-tertiary)" }}
-                    >
-                      Lab {summary.frontierLabAvgBacklogMonths}m · Cloud {summary.neocloudAvgBacklogMonths}m
-                    </span>
                   </div>
                 </dl>
               </div>
@@ -430,7 +440,6 @@ export function FabnowWorkspace({
                           fab.lineName
                         )
                       }
-                      aria-label={`${fab.company} ${fab.nodeOrProduct} 상세 분석 모달 열기`}
                       className="surface-pastel-sage rounded-[22px] p-4 sm:p-5 border border-[var(--border-control,var(--separator))] control-border hover:border-primary shadow-2xs text-start flex flex-col justify-between gap-4 transition-all pst-press group min-w-0 cursor-pointer"
                     >
                       <div className="flex items-center justify-between gap-2 min-w-0">
@@ -533,7 +542,6 @@ export function FabnowWorkspace({
                             cust.focusCompute
                           )
                         }
-                        aria-label={`${cust.name} 수요 상세 분석 모달 열기`}
                         className="surface-pastel-blush rounded-[22px] p-4 sm:p-5 border border-[var(--border-control,var(--separator))] control-border hover:border-primary shadow-2xs text-start flex flex-col justify-between gap-4 transition-all pst-press group min-w-0 cursor-pointer"
                       >
                         <div className="flex items-center justify-between gap-2 min-w-0">

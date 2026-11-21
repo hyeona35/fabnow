@@ -405,10 +405,6 @@ export function SupplyDemandMatrix({
             const isConnected =
               connectedSupplierCompanies.has(sup.company) ||
               (!selectedSupplier && !selectedCustomerId && !hoveredLinkId);
-            const dimmed =
-              Boolean(selectedCustomerId || hoveredLinkId || selectedSupplier) &&
-              !isSelected &&
-              !connectedSupplierCompanies.has(sup.company);
 
             return (
               <button
@@ -427,9 +423,9 @@ export function SupplyDemandMatrix({
                   isSelected
                     ? "surface-pastel-blush border-primary shadow-sm ring-2 ring-primary/25"
                     : isConnected
-                    ? "bg-base-100 border-[var(--border-control,var(--separator))] control-border hover:border-primary"
-                    : "bg-base-100 border-[var(--separator)]"
-                } ${dimmed ? "opacity-50" : "opacity-100"}`}
+                    ? "bg-base-100 border-[var(--border-control,var(--separator))] control-border shadow-2xs hover:border-primary"
+                    : "bg-base-200 border-[var(--border-control,var(--separator))] control-border hover:border-primary"
+                }`}
               >
                 <div className="flex items-start justify-between gap-2.5 min-w-0">
                   <div className="flex items-center gap-2.5 min-w-0">
@@ -622,10 +618,6 @@ export function SupplyDemandMatrix({
             const isConnected =
               connectedCustomerIds.has(cust.id) ||
               (!selectedSupplier && !selectedCustomerId && !hoveredLinkId);
-            const dimmed =
-              Boolean(selectedCustomerId || hoveredLinkId || selectedSupplier) &&
-              !isSelected &&
-              !connectedCustomerIds.has(cust.id);
             const isCompactList = visibleCustomers.length > 5;
             const rowHeightClass = isCompactList ? "h-[52px]" : "h-[108px]";
 
@@ -648,9 +640,9 @@ export function SupplyDemandMatrix({
                   isSelected
                     ? "surface-pastel-lilac border-secondary shadow-sm ring-2 ring-secondary/25"
                     : isConnected
-                    ? "bg-base-100 border-[var(--border-control,var(--separator))] control-border hover:border-secondary"
-                    : "bg-base-100 border-[var(--separator)]"
-                } ${dimmed ? "opacity-50" : "opacity-100"}`}
+                    ? "bg-base-100 border-[var(--border-control,var(--separator))] control-border shadow-2xs hover:border-secondary"
+                    : "bg-base-200 border-[var(--border-control,var(--separator))] control-border hover:border-secondary"
+                }`}
               >
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 min-w-0">

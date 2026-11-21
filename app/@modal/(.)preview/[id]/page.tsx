@@ -225,9 +225,9 @@ async function ModalEntityContent({
 
   return (
     <div className="space-y-5">
-      {/* Sticky-Friendly Sheet Header */}
+      {/* Sticky Sheet Header (stays pinned while scrolling inside PreviewModalShell) */}
       <div
-        className="flex items-start justify-between gap-3 pb-4 border-b"
+        className="sticky top-0 z-10 -mx-5 -mt-1 px-5 pt-2 pb-4 sm:-mx-6 sm:-mt-6 sm:px-6 sm:pt-6 flex items-start justify-between gap-3 border-b bg-base-100/95 backdrop-blur-md"
         style={{ borderColor: "var(--separator)" }}
       >
         <div className="min-w-0 space-y-2 flex-1">
