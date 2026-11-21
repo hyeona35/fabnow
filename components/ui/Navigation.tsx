@@ -30,6 +30,16 @@ export {
   type MegamenuLink,
   Stack,
   type StackProps,
+  FloatingNavbar,
+  type FloatingNavbarProps,
+  type FloatingNavbarItem,
+  RevealMenu,
+  type RevealMenuProps,
+  type RevealMenuItem,
+  PreviewModalShell,
+  type PreviewModalShellProps,
+  PreviewModalCloseButton,
+  type PreviewModalCloseButtonProps,
 } from "./NavigationClient";
 
 export interface BreadcrumbItem {
@@ -85,7 +95,7 @@ export function Breadcrumbs({ items, className = "" }: BreadcrumbsProps) {
                   type="button"
                   onClick={item.onClick}
                   style={{ color: "var(--label-secondary)" }}
-                  className="pst-press inline-flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 font-medium hover:text-base-content hover:bg-base-content/8 transition-all duration-300 ease-out"
+                  className="pst-press min-h-[44px] min-w-[44px] inline-flex items-center gap-1.5 rounded-2xl px-2.5 py-1.5 font-medium hover:text-base-content hover:bg-base-content/8 transition-all duration-300 ease-out"
                 >
                   {item.icon}
                   <span>{item.label}</span>
@@ -158,7 +168,7 @@ export function Steps({
               }
             }}
             className={`step ${colorClass} ${
-              onStepClick ? "cursor-pointer" : ""
+              onStepClick ? "cursor-pointer min-h-[44px]" : ""
             }`}
           >
             <span className="step-icon font-bold text-xs">

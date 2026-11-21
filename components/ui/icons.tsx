@@ -3,7 +3,14 @@ import React from "react";
 export interface IconProps extends React.SVGProps<SVGSVGElement> {
   size?: number;
   filled?: boolean;
+  animated?: boolean;
 }
+
+const NAV_ICON_MICRO_CLASS =
+  "nav-icon-micro transition-transform duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none motion-reduce:transform-none";
+
+const MICRO_PATH_CLASS =
+  "transition-transform duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none motion-reduce:transform-none";
 
 /**
  * Human-centric vector icon system.
@@ -65,27 +72,62 @@ export function IconSplitView({
 export function IconGrid({
   className = "w-5 h-5",
   filled = false,
+  animated = true,
   ...props
 }: IconProps) {
+  const { size: _size, ...svgProps } = props;
+  void _size;
+  const svgClass = animated
+    ? `${className} ${NAV_ICON_MICRO_CLASS} group-hover:scale-[1.05]`
+    : className;
+
   if (filled) {
     return (
       <svg
-        className={className}
+        className={svgClass}
         viewBox="0 0 24 24"
         fill="currentColor"
         aria-hidden="true"
-        {...props}
+        {...svgProps}
       >
-        <rect x="3.5" y="3.5" width="7.5" height="7.5" rx="2.25" />
-        <rect x="13" y="3.5" width="7.5" height="7.5" rx="2.25" />
-        <rect x="3.5" y="13" width="7.5" height="7.5" rx="2.25" />
-        <rect x="13" y="13" width="7.5" height="7.5" rx="2.25" />
+        <rect
+          x="3.5"
+          y="3.5"
+          width="7.5"
+          height="7.5"
+          rx="2.25"
+          className={animated ? `${MICRO_PATH_CLASS} group-hover:-translate-x-[0.35px] group-hover:-translate-y-[0.35px]` : undefined}
+        />
+        <rect
+          x="13"
+          y="3.5"
+          width="7.5"
+          height="7.5"
+          rx="2.25"
+          className={animated ? `${MICRO_PATH_CLASS} group-hover:translate-x-[0.35px] group-hover:-translate-y-[0.35px]` : undefined}
+        />
+        <rect
+          x="3.5"
+          y="13"
+          width="7.5"
+          height="7.5"
+          rx="2.25"
+          className={animated ? `${MICRO_PATH_CLASS} group-hover:-translate-x-[0.35px] group-hover:translate-y-[0.35px]` : undefined}
+        />
+        <rect
+          x="13"
+          y="13"
+          width="7.5"
+          height="7.5"
+          rx="2.25"
+          className={animated ? `${MICRO_PATH_CLASS} group-hover:translate-x-[0.35px] group-hover:translate-y-[0.35px]` : undefined}
+        />
       </svg>
     );
   }
   return (
     <svg
-      className={className}
+      className={svgClass}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -93,12 +135,40 @@ export function IconGrid({
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
-      {...props}
+      {...svgProps}
     >
-      <rect x="3.75" y="3.75" width="7" height="7" rx="2" />
-      <rect x="13.25" y="3.75" width="7" height="7" rx="2" />
-      <rect x="3.75" y="13.25" width="7" height="7" rx="2" />
-      <rect x="13.25" y="13.25" width="7" height="7" rx="2" />
+      <rect
+        x="3.75"
+        y="3.75"
+        width="7"
+        height="7"
+        rx="2"
+        className={animated ? `${MICRO_PATH_CLASS} group-hover:-translate-x-[0.35px] group-hover:-translate-y-[0.35px]` : undefined}
+      />
+      <rect
+        x="13.25"
+        y="3.75"
+        width="7"
+        height="7"
+        rx="2"
+        className={animated ? `${MICRO_PATH_CLASS} group-hover:translate-x-[0.35px] group-hover:-translate-y-[0.35px]` : undefined}
+      />
+      <rect
+        x="3.75"
+        y="13.25"
+        width="7"
+        height="7"
+        rx="2"
+        className={animated ? `${MICRO_PATH_CLASS} group-hover:-translate-x-[0.35px] group-hover:translate-y-[0.35px]` : undefined}
+      />
+      <rect
+        x="13.25"
+        y="13.25"
+        width="7"
+        height="7"
+        rx="2"
+        className={animated ? `${MICRO_PATH_CLASS} group-hover:translate-x-[0.35px] group-hover:translate-y-[0.35px]` : undefined}
+      />
     </svg>
   );
 }
@@ -106,16 +176,21 @@ export function IconGrid({
 export function IconCompass({
   className = "w-5 h-5",
   filled = false,
+  animated = true,
   ...props
 }: IconProps) {
+  const { size: _size, ...svgProps } = props;
+  void _size;
+  const svgClass = animated ? `${className} ${NAV_ICON_MICRO_CLASS}` : className;
+
   if (filled) {
     return (
       <svg
-        className={className}
+        className={animated ? `${svgClass} group-hover:rotate-12` : svgClass}
         viewBox="0 0 24 24"
         fill="currentColor"
         aria-hidden="true"
-        {...props}
+        {...svgProps}
       >
         <path d="M12 2a10 10 0 100 20 10 10 0 000-20zm3.89 6.11l-2.12 5.66a1.5 1.5 0 01-.88.88l-5.66 2.12a.5.5 0 01-.65-.65l2.12-5.66a1.5 1.5 0 01.88-.88l5.66-2.12a.5.5 0 01.65.65z" />
       </svg>
@@ -123,7 +198,7 @@ export function IconCompass({
   }
   return (
     <svg
-      className={className}
+      className={svgClass}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -131,10 +206,14 @@ export function IconCompass({
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
-      {...props}
+      {...svgProps}
     >
       <circle cx="12" cy="12" r="9" />
-      <polygon points="15.5 8.5 13.5 13.5 8.5 15.5 10.5 10.5 15.5 8.5" />
+      <polygon
+        points="15.5 8.5 13.5 13.5 8.5 15.5 10.5 10.5 15.5 8.5"
+        style={animated ? { transformBox: "view-box", transformOrigin: "12px 12px" } : undefined}
+        className={animated ? `${MICRO_PATH_CLASS} group-hover:rotate-12` : undefined}
+      />
     </svg>
   );
 }
@@ -187,26 +266,37 @@ export function IconSliders({
 export function IconLayers({
   className = "w-5 h-5",
   filled = false,
+  animated = true,
   ...props
 }: IconProps) {
+  const { size: _size, ...svgProps } = props;
+  void _size;
+  const svgClass = animated ? `${className} ${NAV_ICON_MICRO_CLASS}` : className;
+
   if (filled) {
     return (
       <svg
-        className={className}
+        className={svgClass}
         viewBox="0 0 24 24"
         fill="currentColor"
         aria-hidden="true"
-        {...props}
+        {...svgProps}
       >
-        <path d="M11.24 2.38a1.75 1.75 0 011.52 0l8.25 4a1 1 0 010 1.8l-8.25 4a1.75 1.75 0 01-1.52 0l-8.25-4a1 1 0 010-1.8l8.25-4z" />
+        <path
+          d="M11.24 2.38a1.75 1.75 0 011.52 0l8.25 4a1 1 0 010 1.8l-8.25 4a1.75 1.75 0 01-1.52 0l-8.25-4a1 1 0 010-1.8l8.25-4z"
+          className={animated ? `${MICRO_PATH_CLASS} group-hover:-translate-y-[1px]` : undefined}
+        />
         <path d="M3.44 12.1a.75.75 0 011.01-.34L12 15.42l7.55-3.66a.75.75 0 11.65 1.35l-7.88 3.82a.75.75 0 01-.64 0l-7.88-3.82a.75.75 0 01-.36-1.01z" />
-        <path d="M3.44 16.35a.75.75 0 011.01-.34L12 19.67l7.55-3.66a.75.75 0 11.65 1.35l-7.88 3.82a.75.75 0 01-.64 0l-7.88-3.82a.75.75 0 01-.36-1.01z" />
+        <path
+          d="M3.44 16.35a.75.75 0 011.01-.34L12 19.67l7.55-3.66a.75.75 0 11.65 1.35l-7.88 3.82a.75.75 0 01-.64 0l-7.88-3.82a.75.75 0 01-.36-1.01z"
+          className={animated ? `${MICRO_PATH_CLASS} group-hover:translate-y-[0.75px]` : undefined}
+        />
       </svg>
     );
   }
   return (
     <svg
-      className={className}
+      className={svgClass}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -214,11 +304,17 @@ export function IconLayers({
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
-      {...props}
+      {...svgProps}
     >
-      <polygon points="12 3 21 7.5 12 12 3 7.5 12 3" />
+      <polygon
+        points="12 3 21 7.5 12 12 3 7.5 12 3"
+        className={animated ? `${MICRO_PATH_CLASS} group-hover:-translate-y-[1px]` : undefined}
+      />
       <polyline points="3 12.5 12 17 21 12.5" />
-      <polyline points="3 17 12 21.5 21 17" />
+      <polyline
+        points="3 17 12 21.5 21 17"
+        className={animated ? `${MICRO_PATH_CLASS} group-hover:translate-y-[0.75px]` : undefined}
+      />
     </svg>
   );
 }
@@ -226,16 +322,23 @@ export function IconLayers({
 export function IconBellShield({
   className = "w-5 h-5",
   filled = false,
+  animated = true,
   ...props
 }: IconProps) {
+  const { size: _size, ...svgProps } = props;
+  void _size;
+  const svgClass = animated
+    ? `${className} ${NAV_ICON_MICRO_CLASS} group-hover:scale-[1.06]`
+    : className;
+
   if (filled) {
     return (
       <svg
-        className={className}
+        className={svgClass}
         viewBox="0 0 24 24"
         fill="currentColor"
         aria-hidden="true"
-        {...props}
+        {...svgProps}
       >
         <path d="M12 2.25c-2.43 0-4.9.95-6.77 2.48A1.75 1.75 0 004.5 6.1v5.15c0 5.25 3.46 9.26 7.12 10.42a1.25 1.25 0 00.76 0c3.66-1.16 7.12-5.17 7.12-10.42V6.1c0-.53-.24-1.04-.73-1.37A11.33 11.33 0 0012 2.25zm3.53 7.22l-4.25 4.25a.75.75 0 01-1.06 0l-2-2a.75.75 0 111.06-1.06l1.47 1.47 3.72-3.72a.75.75 0 111.06 1.06z" />
       </svg>
@@ -243,7 +346,7 @@ export function IconBellShield({
   }
   return (
     <svg
-      className={className}
+      className={svgClass}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -251,10 +354,14 @@ export function IconBellShield({
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
-      {...props}
+      {...svgProps}
     >
       <path d="M12 3c-2.35 0-4.7.9-6.5 2.35A1.5 1.5 0 005 6.5v4.75c0 4.95 3.25 8.75 7 9.95 3.75-1.2 7-5 7-9.95V6.5a1.5 1.5 0 00-.5-1.15C16.7 3.9 14.35 3 12 3z" />
-      <polyline points="9 12 11 14 15 10" />
+      <polyline
+        points="9 12 11 14 15 10"
+        style={animated ? { transformBox: "fill-box", transformOrigin: "center" } : undefined}
+        className={animated ? `${MICRO_PATH_CLASS} group-hover:scale-110` : undefined}
+      />
     </svg>
   );
 }
@@ -371,26 +478,47 @@ export function IconUser({
 export function IconChart({
   className = "w-5 h-5",
   filled = false,
+  animated = true,
   ...props
 }: IconProps) {
+  const { size: _size, ...svgProps } = props;
+  void _size;
+  const svgClass = animated ? `${className} ${NAV_ICON_MICRO_CLASS}` : className;
+
   if (filled) {
     return (
       <svg
-        className={className}
+        className={svgClass}
         viewBox="0 0 24 24"
         fill="currentColor"
         aria-hidden="true"
-        {...props}
+        {...svgProps}
       >
         <rect x="3.5" y="12.5" width="4.25" height="8" rx="1.25" />
-        <rect x="9.875" y="8.5" width="4.25" height="12" rx="1.25" />
-        <rect x="16.25" y="3.5" width="4.25" height="17" rx="1.25" />
+        <rect
+          x="9.875"
+          y="8.5"
+          width="4.25"
+          height="12"
+          rx="1.25"
+          style={animated ? { transformBox: "fill-box", transformOrigin: "50% 100%" } : undefined}
+          className={animated ? `${MICRO_PATH_CLASS} group-hover:scale-y-[1.12]` : undefined}
+        />
+        <rect
+          x="16.25"
+          y="3.5"
+          width="4.25"
+          height="17"
+          rx="1.25"
+          style={animated ? { transformBox: "fill-box", transformOrigin: "50% 100%" } : undefined}
+          className={animated ? `${MICRO_PATH_CLASS} group-hover:scale-y-[1.06]` : undefined}
+        />
       </svg>
     );
   }
   return (
     <svg
-      className={className}
+      className={svgClass}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -398,26 +526,50 @@ export function IconChart({
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
-      {...props}
+      {...svgProps}
     >
       <rect x="4" y="13" width="3.5" height="7" rx="1" />
-      <rect x="10.25" y="9" width="3.5" height="11" rx="1" />
-      <rect x="16.5" y="4" width="3.5" height="16" rx="1" />
+      <rect
+        x="10.25"
+        y="9"
+        width="3.5"
+        height="11"
+        rx="1"
+        style={animated ? { transformBox: "fill-box", transformOrigin: "50% 100%" } : undefined}
+        className={animated ? `${MICRO_PATH_CLASS} group-hover:scale-y-[1.12]` : undefined}
+      />
+      <rect
+        x="16.5"
+        y="4"
+        width="3.5"
+        height="16"
+        rx="1"
+        style={animated ? { transformBox: "fill-box", transformOrigin: "50% 100%" } : undefined}
+        className={animated ? `${MICRO_PATH_CLASS} group-hover:scale-y-[1.06]` : undefined}
+      />
     </svg>
   );
 }
 
 export function IconMoon({
   className = "w-4 h-4",
+  animated = true,
   ...props
 }: IconProps) {
+  const { filled: _filled, size: _size, ...svgProps } = props;
+  void _filled;
+  void _size;
   return (
     <svg
-      className={className}
+      className={
+        animated
+          ? `${className} ${NAV_ICON_MICRO_CLASS} group-hover:-rotate-12`
+          : className
+      }
       viewBox="0 0 24 24"
       fill="currentColor"
       aria-hidden="true"
-      {...props}
+      {...svgProps}
     >
       <path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
     </svg>
@@ -426,11 +578,15 @@ export function IconMoon({
 
 export function IconSun({
   className = "w-4 h-4",
+  animated = true,
   ...props
 }: IconProps) {
+  const { filled: _filled, size: _size, ...svgProps } = props;
+  void _filled;
+  void _size;
   return (
     <svg
-      className={className}
+      className={animated ? `${className} ${NAV_ICON_MICRO_CLASS}` : className}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -438,17 +594,33 @@ export function IconSun({
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
-      {...props}
+      {...svgProps}
     >
-      <circle cx="12" cy="12" r="4" fill="currentColor" />
-      <line x1="12" y1="2.5" x2="12" y2="4.5" />
-      <line x1="12" y1="19.5" x2="12" y2="21.5" />
-      <line x1="4.93" y1="4.93" x2="6.34" y2="6.34" />
-      <line x1="17.66" y1="17.66" x2="19.07" y2="19.07" />
-      <line x1="2.5" y1="12" x2="4.5" y2="12" />
-      <line x1="19.5" y1="12" x2="21.5" y2="12" />
-      <line x1="4.93" y1="19.07" x2="6.34" y2="17.66" />
-      <line x1="17.66" y1="6.34" x2="19.07" y2="4.93" />
+      <circle
+        cx="12"
+        cy="12"
+        r="4"
+        fill="currentColor"
+        style={animated ? { transformBox: "fill-box", transformOrigin: "center" } : undefined}
+        className={animated ? `${MICRO_PATH_CLASS} group-hover:scale-95` : undefined}
+      />
+      <g
+        style={animated ? { transformBox: "view-box", transformOrigin: "12px 12px" } : undefined}
+        className={
+          animated
+            ? "transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:rotate-45 motion-reduce:transition-none motion-reduce:transform-none"
+            : undefined
+        }
+      >
+        <line x1="12" y1="2.5" x2="12" y2="4.5" />
+        <line x1="12" y1="19.5" x2="12" y2="21.5" />
+        <line x1="4.93" y1="4.93" x2="6.34" y2="6.34" />
+        <line x1="17.66" y1="17.66" x2="19.07" y2="19.07" />
+        <line x1="2.5" y1="12" x2="4.5" y2="12" />
+        <line x1="19.5" y1="12" x2="21.5" y2="12" />
+        <line x1="4.93" y1="19.07" x2="6.34" y2="17.66" />
+        <line x1="17.66" y1="6.34" x2="19.07" y2="4.93" />
+      </g>
     </svg>
   );
 }
@@ -916,11 +1088,15 @@ export function IconCopy({
 
 export function IconDownload({
   className = "w-4 h-4",
+  animated = true,
   ...props
 }: IconProps) {
+  const { filled: _filled, size: _size, ...svgProps } = props;
+  void _filled;
+  void _size;
   return (
     <svg
-      className={className}
+      className={animated ? `${className} ${NAV_ICON_MICRO_CLASS}` : className}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -928,11 +1104,19 @@ export function IconDownload({
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
-      {...props}
+      {...svgProps}
     >
       <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
-      <polyline points="7 10 12 15 17 10" />
-      <line x1="12" y1="15" x2="12" y2="3" />
+      <g
+        className={
+          animated
+            ? `${MICRO_PATH_CLASS} group-hover:translate-y-[1.5px]`
+            : undefined
+        }
+      >
+        <polyline points="7 10 12 15 17 10" />
+        <line x1="12" y1="15" x2="12" y2="3" />
+      </g>
     </svg>
   );
 }
@@ -1364,6 +1548,96 @@ export function FabnowBrandMark({
       />
       {/* Compute focal core */}
       <rect x="18" y="18" width="7" height="7" rx="2.2" fill={`url(#${traceGradId})`} />
+    </svg>
+  );
+}
+
+export interface IconMenuMorphProps extends IconProps {
+  /** Whether the menu is currently open (morphs 3 horizontal bars into an X). */
+  isOpen?: boolean;
+}
+
+/**
+ * Bespoke GPU-accelerated morphing menu icon (Pure RSC).
+ * Smoothly transforms 3 horizontal bars into an X via transform + opacity
+ * using Apple-style cubic-bezier(0.22, 1, 0.36, 1) without bounce.
+ */
+export function IconMenuMorph({
+  isOpen = false,
+  className = "w-5 h-5",
+  ...props
+}: IconMenuMorphProps) {
+  const { filled: _filled, size: _size, animated: _animated, ...svgProps } = props;
+  void _filled;
+  void _size;
+  void _animated;
+
+  return (
+    <svg
+      className={`${className} nav-icon-micro`}
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+      {...svgProps}
+    >
+      <rect
+        x="4.25"
+        y="11.05"
+        width="15.5"
+        height="1.9"
+        rx="0.95"
+        fill="currentColor"
+        className="motion-reduce:transition-none"
+        style={{
+          transformBox: "fill-box",
+          transformOrigin: "center",
+          transform: isOpen
+            ? "translate3d(0, 0, 0) rotate(45deg)"
+            : "translate3d(0, -5px, 0) rotate(0deg)",
+          transitionProperty: "transform",
+          transitionDuration: "240ms",
+          transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
+        }}
+      />
+      <rect
+        x="4.25"
+        y="11.05"
+        width="15.5"
+        height="1.9"
+        rx="0.95"
+        fill="currentColor"
+        className="motion-reduce:transition-none"
+        style={{
+          transformBox: "fill-box",
+          transformOrigin: "center",
+          transform: isOpen
+            ? "translate3d(0, 0, 0) scaleX(0.2)"
+            : "translate3d(0, 0, 0) scaleX(1)",
+          opacity: isOpen ? 0 : 1,
+          transitionProperty: "transform, opacity",
+          transitionDuration: "200ms",
+          transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
+        }}
+      />
+      <rect
+        x="4.25"
+        y="11.05"
+        width="15.5"
+        height="1.9"
+        rx="0.95"
+        fill="currentColor"
+        className="motion-reduce:transition-none"
+        style={{
+          transformBox: "fill-box",
+          transformOrigin: "center",
+          transform: isOpen
+            ? "translate3d(0, 0, 0) rotate(-45deg)"
+            : "translate3d(0, 5px, 0) rotate(0deg)",
+          transitionProperty: "transform",
+          transitionDuration: "240ms",
+          transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
+        }}
+      />
     </svg>
   );
 }
