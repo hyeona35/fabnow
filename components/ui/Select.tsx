@@ -56,7 +56,7 @@ export function Select({
         id={selectId}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="select select-bordered w-full rounded-2xl bg-base-100 border-base-content/25 text-base-content text-sm font-semibold pst-press"
+        className="select select-bordered w-full rounded-[18px] bg-base-100 border border-[var(--border-control)] focus:border-primary text-base-content text-sm font-semibold pst-press"
       >
         {options.map((opt) => (
           <option key={opt.value} value={opt.value}>
@@ -96,7 +96,7 @@ export function FieldSet({
 }: FieldSetProps) {
   return (
     <fieldset
-      className={`fieldset material-regular rounded-2xl p-4 shadow-xs space-y-3.5 ${className}`}
+      className={`fieldset material-regular rounded-[28px] p-5 shadow-xs space-y-3.5 ${className}`}
     >
       <legend className="fieldset-legend text-sm font-bold text-base-content px-2">
         {legend}
@@ -205,10 +205,10 @@ export function FileUpload({
           setIsDragging(false);
           appendFiles(e.dataTransfer.files);
         }}
-        className={`rounded-2xl border-2 border-dashed p-5 text-center transition-all duration-300 ease-out ${
+        className={`rounded-[20px] border-2 border-dashed p-5 text-center transition-all duration-300 ease-out ${
           isDragging
             ? "border-primary bg-primary/12"
-            : "border-base-content/25 material-regular"
+            : "border-[var(--border-control)] material-regular"
         }`}
       >
         <div className="mx-auto mb-2.5 flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/12 text-accent-primary">
@@ -221,7 +221,7 @@ export function FileUpload({
           accept={accept}
           multiple={multiple}
           onChange={(e) => appendFiles(e.target.files)}
-          className="file-input file-input-bordered file-input-sm pst-press w-full max-w-xs rounded-xl mb-3 border-base-content/25"
+          className="file-input file-input-bordered file-input-sm pst-press w-full max-w-xs rounded-2xl mb-3 border border-[var(--border-control)]"
         />
         <p className="text-xs font-semibold text-base-content flex flex-wrap items-center justify-center gap-1">
           <span>파일을 이곳으로 끌어다 놓거나</span>
@@ -312,7 +312,7 @@ export function Filter({
       className={`filter flex flex-wrap items-center gap-1.5 ${className}`}
     >
       <input
-        className="btn btn-sm filter-reset rounded-xl pst-press bg-base-100 text-base-content border border-base-content/25 font-bold"
+        className="btn btn-sm filter-reset rounded-2xl pst-press bg-base-100 text-base-content border border-[var(--border-control)] font-bold"
         type="radio"
         name={groupName}
         aria-label="×"
@@ -322,10 +322,10 @@ export function Filter({
       {options.map((opt) => (
         <input
           key={opt}
-          className={`btn btn-sm rounded-xl pst-press font-semibold border ${
+          className={`btn btn-sm rounded-2xl pst-press font-semibold border ${
             selected === opt
               ? "bg-primary text-primary-content border-primary shadow-xs"
-              : "bg-base-100 text-base-content border-base-content/25 hover:bg-base-200"
+              : "bg-base-100 text-base-content border-[var(--border-control)] hover:bg-base-200"
           }`}
           type="radio"
           name={groupName}
@@ -471,7 +471,7 @@ export function Swap({
       aria-label={ariaLabel}
       className={`swap ${effectClass} ${
         active ? "swap-active" : ""
-      } btn btn-ghost rounded-2xl border border-base-content/25 bg-base-100/80 pst-press px-3.5 ${className}`}
+      } btn btn-ghost rounded-2xl border border-[var(--border-control)] bg-base-100/80 pst-press px-3.5 ${className}`}
     >
       <input
         type="checkbox"

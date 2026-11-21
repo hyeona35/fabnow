@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   IconSearch,
@@ -46,20 +46,178 @@ export interface CommandMenuProps {
   onToggleTheme: (isDark: boolean) => void;
 }
 
-function CommandMenuDialog({
+const CLOSE_DURATION_MS = 200;
+
+export function CommandMenu({
+  isOpen,
   onClose,
   onSelectSection,
   theme,
   onToggleTheme,
 }: CommandMenuProps) {
   const router = useRouter();
+  const [shouldRender, setShouldRender] = useState<boolean>(isOpen);
+  const [isEntered, setIsEntered] = useState<boolean>(false);
+  const [isClosing, setIsClosing] = useState<boolean>(false);
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const dialogRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const shouldRenderRef = useRef<boolean>(isOpen);
+  const isClosingRef = useRef<boolean>(false);
+  const closeTimerRef = useRef<number | null>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    inputRef.current?.focus();
+    shouldRenderRef.current = shouldRender;
+  }, [shouldRender]);
+
+  useEffect(() => {
+    isClosingRef.current = isClosing;
+  }, [isClosing]);
+
+  useEffect(() => {
+    return () => {
+      if (closeTimerRef.current !== null) {
+        window.clearTimeout(closeTimerRef.current);
+      }
+    };
   }, []);
+
+  const finishClose = useCallback(
+    (notifyParent: boolean, restoreFocus = true) => {
+      closeTimerRef.current = null;
+      isClosingRef.current = false;
+      shouldRenderRef.current = false;
+      setShouldRender(false);
+      setIsClosing(false);
+      setIsEntered(false);
+      setQuery("");
+      setSelectedIndex(0);
+
+      const prevEl = previousFocusRef.current;
+      previousFocusRef.current = null;
+      if (restoreFocus && prevEl && prevEl.isConnected) {
+        prevEl.focus();
+      }
+      if (notifyParent) {
+        onClose();
+      }
+    },
+    [onClose]
+  );
+
+  const requestClose = useCallback(
+    (restoreFocus = true) => {
+      if (isClosingRef.current) return;
+      isClosingRef.current = true;
+      setIsClosing(true);
+
+      if (closeTimerRef.current !== null) {
+        window.clearTimeout(closeTimerRef.current);
+      }
+      closeTimerRef.current = window.setTimeout(() => {
+        finishClose(true, restoreFocus);
+      }, CLOSE_DURATION_MS);
+    },
+    [finishClose]
+  );
+
+  // Synchronize isOpen prop with smooth GPU enter & exit transitions
+  useEffect(() => {
+    let nestedRaf = 0;
+    const raf = window.requestAnimationFrame(() => {
+      if (isOpen) {
+        if (closeTimerRef.current !== null) {
+          window.clearTimeout(closeTimerRef.current);
+          closeTimerRef.current = null;
+        }
+        if (!previousFocusRef.current && document.activeElement instanceof HTMLElement) {
+          previousFocusRef.current = document.activeElement;
+        }
+        isClosingRef.current = false;
+        shouldRenderRef.current = true;
+        setShouldRender(true);
+        setIsClosing(false);
+
+        nestedRaf = window.requestAnimationFrame(() => {
+          setIsEntered(true);
+          inputRef.current?.focus();
+        });
+      } else if (shouldRenderRef.current && !isClosingRef.current) {
+        isClosingRef.current = true;
+        setIsClosing(true);
+        if (closeTimerRef.current !== null) {
+          window.clearTimeout(closeTimerRef.current);
+        }
+        closeTimerRef.current = window.setTimeout(() => {
+          finishClose(false, true);
+        }, CLOSE_DURATION_MS);
+      }
+    });
+
+    return () => {
+      window.cancelAnimationFrame(raf);
+      if (nestedRaf) {
+        window.cancelAnimationFrame(nestedRaf);
+      }
+    };
+  }, [isOpen, finishClose]);
+
+  // Global ESC & Tab focus trap while CommandMenu is mounted
+  useEffect(() => {
+    if (!shouldRender) return;
+
+    const focusTimer = window.setTimeout(() => {
+      inputRef.current?.focus();
+    }, 16);
+
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        requestClose(true);
+        return;
+      }
+
+      if (e.key === "Tab") {
+        const container = dialogRef.current;
+        if (!container) return;
+        const focusable = Array.from(
+          container.querySelectorAll<HTMLElement>(
+            'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+          )
+        );
+        if (focusable.length === 0) {
+          e.preventDefault();
+          return;
+        }
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        const active = document.activeElement as HTMLElement | null;
+        if (!active || !container.contains(active)) {
+          e.preventDefault();
+          (e.shiftKey ? last : first).focus();
+          return;
+        }
+        if (e.shiftKey && active === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && active === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleGlobalKeyDown);
+    return () => {
+      window.clearTimeout(focusTimer);
+      window.removeEventListener("keydown", handleGlobalKeyDown);
+    };
+  }, [shouldRender, requestClose]);
+
+  if (!shouldRender) return null;
 
   const handleQueryChange = (val: string) => {
     setQuery(val);
@@ -178,7 +336,7 @@ function CommandMenuDialog({
   const themeItem: CommandMenuItem = {
     id: "theme-toggle",
     title: theme === "dark" ? "라이트 모드로 전환" : "다크 모드로 전환",
-    subtitle: "Soft Pastel Surface / Elevated Pastel Depth 테마 변경",
+    subtitle: "Warm Ivory Silk / Deep Plum Indigo 테마 변경",
     category: "테마 및 설정",
     icon:
       theme === "dark" ? (
@@ -209,6 +367,12 @@ function CommandMenuDialog({
     );
   });
 
+  const handleSelectItem = (item: CommandMenuItem) => {
+    triggerHaptic("selection");
+    item.onSelect();
+    requestClose(!item.isEntityRoute);
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowDown") {
       e.preventDefault();
@@ -222,40 +386,52 @@ function CommandMenuDialog({
       e.preventDefault();
       const current = filtered[selectedIndex];
       if (current) {
-        triggerHaptic("selection");
-        current.onSelect();
-        onClose();
+        handleSelectItem(current);
       }
-    } else if (e.key === "Escape") {
-      e.preventDefault();
-      onClose();
     }
   };
+
+  const isOpenVisual = isEntered && !isClosing;
 
   return (
     <div
       role="dialog"
       aria-modal="true"
       aria-label="fabnow 빠른 이동 커맨드 메뉴"
-      className="fixed inset-0 z-50 flex items-start justify-center pt-[12vh] px-4 select-none"
+      className="fixed inset-0 z-50 flex items-start justify-center pt-4 sm:pt-[10vh] px-3 sm:px-4 pb-[env(safe-area-inset-bottom,0px)] select-none overscroll-contain"
     >
       <div
-        className="fixed inset-0 transition-opacity"
+        className={`fixed inset-0 overscroll-contain transition-[opacity,backdrop-filter] duration-[200ms] ease-out motion-reduce:transition-opacity ${
+          isOpenVisual
+            ? "opacity-100 backdrop-blur-[4px]"
+            : "opacity-0 backdrop-blur-none"
+        }`}
         style={{ backgroundColor: "var(--liquid-glass-dimming)" }}
-        onClick={onClose}
+        onClick={() => requestClose(true)}
         aria-hidden="true"
       />
 
       <div
+        ref={dialogRef}
         onKeyDown={handleKeyDown}
-        className="relative w-full max-w-xl liquid-glass-elevated rounded-3xl shadow-2xl border border-base-content/15 overflow-hidden flex flex-col z-10"
+        className={`relative z-10 w-full max-w-xl max-h-[90dvh] sm:max-h-[80dvh] liquid-glass-elevated rounded-[28px] shadow-2xl border border-[var(--border-control)] overflow-hidden flex flex-col transition-[transform,opacity] duration-[200ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-opacity motion-reduce:transform-none ${
+          isOpenVisual
+            ? "opacity-100 translate-y-0 scale-100"
+            : "opacity-0 -translate-y-2 scale-[0.97]"
+        }`}
       >
         {/* Search Input Bar */}
         <div
-          className="flex items-center gap-3 px-4 py-3 border-b"
+          className="shrink-0 flex items-center gap-3 px-4 sm:px-5 py-3.5 border-b"
           style={{ borderColor: "var(--separator)" }}
         >
-          <IconSearch className="w-5 h-5 text-base-content/60 shrink-0" />
+          <span
+            className="shrink-0 flex items-center justify-center"
+            style={{ color: "var(--label-secondary)" }}
+            aria-hidden="true"
+          >
+            <IconSearch className="w-5 h-5" />
+          </span>
           <input
             ref={inputRef}
             type="text"
@@ -263,22 +439,25 @@ function CommandMenuDialog({
             onChange={(e) => handleQueryChange(e.target.value)}
             placeholder="TSMC, SK hynix, OpenAI, CoreWeave, CoWoS-L, HBM4 검색… (ESC 닫기)"
             aria-label="fabnow 섹션 및 엔티티 빠른 검색"
-            className="w-full bg-transparent border-0 outline-none p-0 text-sm font-semibold text-base-content placeholder:text-base-content/45 focus:ring-0"
+            className="w-full bg-transparent border-0 outline-none p-0 text-sm font-semibold text-base-content placeholder:text-[var(--label-tertiary)] focus:ring-0"
           />
           <button
             type="button"
-            onClick={onClose}
+            onClick={() => requestClose(true)}
             aria-label="커맨드 메뉴 닫기"
-            className="btn btn-ghost btn-circle btn-xs rounded-xl pst-press text-base-content/70 hover:text-base-content"
+            className="btn btn-ghost btn-circle btn-xs rounded-2xl pst-press text-base-content shrink-0"
           >
             <IconXMark className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Command Menu Results List */}
-        <div className="max-h-96 overflow-y-auto p-2 space-y-1">
+        {/* Command Menu Results List with overscroll-contain */}
+        <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-2.5 space-y-1">
           {filtered.length === 0 ? (
-            <div className="py-10 text-center text-xs font-medium text-base-content/60">
+            <div
+              className="py-10 text-center text-xs font-medium"
+              style={{ color: "var(--label-secondary)" }}
+            >
               검색된 섹션 또는 반도체·AI 엔티티가 없습니다
             </div>
           ) : (
@@ -288,15 +467,11 @@ function CommandMenuDialog({
                 <button
                   key={item.id}
                   type="button"
-                  onClick={() => {
-                    triggerHaptic("selection");
-                    item.onSelect();
-                    onClose();
-                  }}
+                  onClick={() => handleSelectItem(item)}
                   onMouseEnter={() => setSelectedIndex(idx)}
-                  className={`w-full pst-press flex items-center justify-between gap-3 px-3 py-2.5 rounded-2xl text-start transition-all duration-150 ${
+                  className={`w-full pst-press flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-2xl text-start transition-all duration-150 ${
                     isSelected
-                      ? "bg-primary/14 text-accent-primary ring-1 ring-primary/30"
+                      ? "bg-primary/14 text-accent-primary ring-1 ring-primary/40"
                       : "text-base-content hover:bg-base-content/6"
                   }`}
                 >
@@ -316,7 +491,14 @@ function CommandMenuDialog({
                       )}
                     </span>
                   </span>
-                  <span className="inline-flex items-center gap-1.5 text-[11px] font-medium opacity-75 shrink-0 ps-2">
+                  <span
+                    className="inline-flex items-center gap-1.5 text-[11px] font-semibold shrink-0 ps-2"
+                    style={{
+                      color: isSelected
+                        ? "var(--accent-primary-text)"
+                        : "var(--label-secondary)",
+                    }}
+                  >
                     <span>{item.category}</span>
                     {item.isEntityRoute && (
                       <IconExternalLink className="w-3 h-3 shrink-0" />
@@ -329,7 +511,7 @@ function CommandMenuDialog({
         </div>
 
         <div
-          className="px-4 py-2 border-t flex items-center justify-between text-[11px] font-medium"
+          className="shrink-0 px-4 sm:px-5 py-2.5 border-t flex items-center justify-between text-[11px] font-medium"
           style={{
             borderColor: "var(--separator)",
             color: "var(--label-secondary)",
@@ -341,9 +523,4 @@ function CommandMenuDialog({
       </div>
     </div>
   );
-}
-
-export function CommandMenu(props: CommandMenuProps) {
-  if (!props.isOpen) return null;
-  return <CommandMenuDialog {...props} />;
 }

@@ -55,7 +55,7 @@ export function Accordion({
         return (
           <div
             key={item.id}
-            className={`collapse ${modifier} material-regular rounded-2xl shadow-xs transition-all duration-300 ease-out`}
+            className={`collapse ${modifier} material-regular rounded-[20px] shadow-xs transition-all duration-300 ease-out`}
           >
             <input
               type="radio"
@@ -121,7 +121,7 @@ export function Collapse({
 
   return (
     <div
-      className={`collapse ${modifier} material-regular rounded-2xl shadow-xs transition-all duration-300 ease-out ${className}`}
+      className={`collapse ${modifier} material-regular rounded-[20px] shadow-xs transition-all duration-300 ease-out ${className}`}
     >
       <input
         type="checkbox"
@@ -181,7 +181,7 @@ export function Carousel({ slides, className = "" }: CarouselProps) {
 
   if (slides.length === 0) {
     return (
-      <div className="material-regular rounded-2xl p-6 text-center text-sm">
+      <div className="material-regular rounded-[28px] p-6 text-center text-sm">
         <span style={{ color: "var(--label-secondary)" }}>
           표시할 슬라이드가 없습니다.
         </span>
@@ -221,7 +221,7 @@ export function Carousel({ slides, className = "" }: CarouselProps) {
           onScroll={handleContainerScroll}
           role="region"
           aria-label="콘텐츠 캐러셀"
-          className="carousel carousel-center w-full rounded-2xl shadow-xs overflow-x-auto scroll-smooth"
+          className="carousel carousel-center w-full rounded-[28px] shadow-xs overflow-x-auto scroll-smooth"
         >
           {slides.map((slide, idx) => (
             <div
@@ -270,7 +270,7 @@ export function Carousel({ slides, className = "" }: CarouselProps) {
                   className={`h-2 rounded-full transition-all duration-300 ease-out ${
                     idx === boundedActiveIndex
                       ? "w-6 bg-primary"
-                      : "w-2 bg-base-content/35 hover:bg-base-content/55"
+                      : "w-2 bg-[var(--border-control)] opacity-75 hover:opacity-100"
                   }`}
                 />
               </button>
@@ -282,7 +282,7 @@ export function Carousel({ slides, className = "" }: CarouselProps) {
               type="button"
               onClick={() => scrollToSlide(boundedActiveIndex - 1)}
               aria-label="이전 슬라이드"
-              className="btn btn-sm btn-circle btn-ghost border border-base-content/20 pst-press text-base-content"
+              className="btn btn-sm btn-circle btn-ghost border border-[var(--border-control)] pst-press text-base-content"
             >
               <IconChevronLeft className="w-4 h-4" />
             </button>
@@ -290,7 +290,7 @@ export function Carousel({ slides, className = "" }: CarouselProps) {
               type="button"
               onClick={() => scrollToSlide(boundedActiveIndex + 1)}
               aria-label="다음 슬라이드"
-              className="btn btn-sm btn-circle btn-ghost border border-base-content/20 pst-press text-base-content"
+              className="btn btn-sm btn-circle btn-ghost border border-[var(--border-control)] pst-press text-base-content"
             >
               <IconChevronRight className="w-4 h-4" />
             </button>
@@ -439,7 +439,7 @@ export function Dropdown({
         }}
         aria-haspopup="menu"
         aria-expanded={isOpen}
-        className="btn btn-sm rounded-xl pst-press border border-base-content/20 bg-base-100 text-base-content font-semibold flex items-center gap-2"
+        className="btn btn-sm rounded-[18px] pst-press border border-[var(--border-control)] bg-base-100 text-base-content font-semibold flex items-center gap-2"
       >
         <span>{triggerLabel}</span>
         <IconChevronDown
@@ -454,7 +454,7 @@ export function Dropdown({
           role="menu"
           className={`dropdown-content z-40 ${
             placement === "top" ? "mb-2" : "mt-2"
-          } w-64 liquid-glass-elevated rounded-2xl p-2 transition-all duration-300 ease-out ${
+          } w-64 liquid-glass-elevated rounded-[24px] border border-[var(--border-control)] p-2 transition-all duration-300 ease-out ${
             effectiveAlign === "end" ? "end-0 start-auto" : "start-0 end-auto"
           }`}
         >
@@ -466,7 +466,7 @@ export function Dropdown({
                     type="button"
                     role="menuitem"
                     onClick={() => handleItemClick(item)}
-                    className={`pst-press rounded-xl px-3 py-2.5 text-sm flex items-center justify-between ${
+                    className={`pst-press rounded-2xl px-3 py-2.5 text-sm flex items-center justify-between ${
                       item.isDestructive
                         ? "text-status-error hover:bg-error/12 font-semibold"
                         : "text-base-content font-medium hover:bg-base-content/8"
@@ -507,14 +507,14 @@ export function Dropdown({
                   <button
                     type="button"
                     onClick={() => setPendingDestructive(null)}
-                    className="btn btn-xs btn-ghost flex-1 rounded-xl pst-press font-semibold text-base-content"
+                    className="btn btn-xs btn-ghost flex-1 rounded-2xl border border-[var(--border-control)] pst-press font-semibold text-base-content"
                   >
                     취소
                   </button>
                   <button
                     type="button"
                     onClick={confirmDestructiveAction}
-                    className="btn btn-xs btn-error flex-1 rounded-xl pst-press font-semibold"
+                    className="btn btn-xs btn-error text-error-content flex-1 rounded-2xl pst-press font-semibold"
                   >
                     {pendingDestructive.confirmVerb ?? "삭제"}
                   </button>
@@ -526,13 +526,13 @@ export function Dropdown({
                 role="alertdialog"
                 aria-modal="true"
                 aria-label="삭제 확인 동작 시트"
-                className="md:hidden fixed inset-0 z-50 flex flex-col justify-end p-4"
+                className="md:hidden fixed inset-0 z-50 flex flex-col justify-end p-4 overscroll-contain"
                 style={{
                   backgroundColor: "var(--liquid-glass-dimming)",
                   paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 16px)",
                 }}
               >
-                <div className="liquid-glass-elevated rounded-2xl p-4 space-y-3 text-center">
+                <div className="liquid-glass-elevated rounded-[28px] border border-[var(--border-control)] p-4 space-y-3 text-center">
                   <div
                     className="space-y-1 pb-2 border-b"
                     style={{ borderColor: "var(--separator)" }}
@@ -552,14 +552,14 @@ export function Dropdown({
                     <button
                       type="button"
                       onClick={confirmDestructiveAction}
-                      className="btn btn-error w-full rounded-xl pst-press font-semibold"
+                      className="btn btn-error text-error-content w-full rounded-2xl pst-press font-semibold"
                     >
                       {pendingDestructive.confirmVerb ?? "삭제"}
                     </button>
                     <button
                       type="button"
                       onClick={() => setPendingDestructive(null)}
-                      className="btn btn-ghost w-full rounded-xl pst-press font-semibold text-base-content"
+                      className="btn btn-ghost w-full rounded-2xl border border-[var(--border-control)] pst-press font-semibold text-base-content"
                     >
                       취소
                     </button>

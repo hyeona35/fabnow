@@ -79,7 +79,7 @@ export function Alert({
   return (
     <div
       role="alert"
-      className={`alert ${colorClass} ${styleClass} sm:alert-horizontal rounded-2xl border border-base-content/15 shadow-xs p-4 ${className}`}
+      className={`alert ${colorClass} ${styleClass} sm:alert-horizontal rounded-[20px] border border-[var(--border-control)] shadow-xs p-4 ${className}`}
     >
       <span
         aria-hidden="true"
@@ -105,7 +105,7 @@ export function Alert({
             <button
               type="button"
               onClick={onCancel}
-              className="btn btn-xs btn-ghost rounded-xl border border-base-content/20 pst-press font-semibold text-base-content"
+              className="btn btn-xs btn-ghost rounded-2xl border border-[var(--border-control)] pst-press font-semibold text-base-content"
             >
               취소
             </button>
@@ -114,14 +114,14 @@ export function Alert({
             <button
               type="button"
               onClick={onAction}
-              className={`btn btn-xs rounded-xl pst-press font-semibold ${
+              className={`btn btn-xs rounded-2xl pst-press font-semibold ${
                 variant === "warning"
-                  ? "btn-warning text-neutral-900 font-bold"
+                  ? "btn-warning text-warning-content font-bold"
                   : variant === "success"
-                  ? "btn-success text-white"
+                  ? "btn-success text-success-content"
                   : variant === "error"
-                  ? "btn-error text-white"
-                  : "btn-info text-white"
+                  ? "btn-error text-error-content"
+                  : "btn-info text-info-content"
               }`}
             >
               {actionLabel}
@@ -178,7 +178,7 @@ export function Progress({
 
   return (
     <div
-      className={`material-regular rounded-2xl p-4 shadow-xs space-y-2.5 ${className}`}
+      className={`material-regular rounded-[20px] p-4 sm:p-5 shadow-xs space-y-2.5 ${className}`}
     >
       <div className="flex items-center justify-between gap-2">
         <div className="min-w-0">
@@ -212,7 +212,7 @@ export function Progress({
             <button
               type="button"
               onClick={onCancel}
-              className="btn btn-xs btn-ghost rounded-xl border border-base-content/20 pst-press font-semibold text-base-content inline-flex items-center gap-1"
+              className="btn btn-xs btn-ghost rounded-2xl border border-[var(--border-control)] pst-press font-semibold text-base-content inline-flex items-center gap-1"
             >
               <IconXMark className="w-3 h-3" />
               <span>취소</span>
@@ -222,7 +222,7 @@ export function Progress({
             <button
               type="button"
               onClick={onTogglePause}
-              className="btn btn-xs rounded-xl bg-primary/14 hover:bg-primary/22 text-accent-primary border border-primary/25 pst-press font-semibold inline-flex items-center gap-1"
+              className="btn btn-xs rounded-2xl bg-primary/14 hover:bg-primary/22 text-accent-primary border border-primary/35 pst-press font-semibold inline-flex items-center gap-1"
             >
               {isPaused ? (
                 <IconPlay className="w-3 h-3" />

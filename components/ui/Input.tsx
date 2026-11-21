@@ -88,8 +88,10 @@ export function TextField({
         {label}
       </label>
       <div
-        className={`input input-bordered w-full rounded-2xl flex items-center gap-2 bg-base-100 border-base-content/25 focus-within:border-primary ${
-          errorMessage ? "input-error border-error" : ""
+        className={`input input-bordered w-full rounded-[18px] flex items-center gap-2 bg-base-100 ${
+          errorMessage
+            ? "input-error border-error"
+            : "border border-[var(--border-control)] focus-within:border-primary"
         }`}
       >
         <input
@@ -224,7 +226,7 @@ export function SearchField({
           role="tablist"
           aria-label="검색 범위 막대 (Scope Bar)"
           style={{ backgroundColor: "var(--fill-tertiary)" }}
-          className="inline-flex items-center rounded-xl p-1 gap-1 border border-base-content/15 max-w-full overflow-x-auto shrink-0"
+          className="inline-flex items-center rounded-[18px] p-1 gap-1 border border-[var(--border-control)] max-w-full overflow-x-auto shrink-0"
         >
           {scopes.map((scope) => {
             const isActive = scope === activeScope;
@@ -236,9 +238,9 @@ export function SearchField({
                 aria-selected={isActive}
                 onClick={() => onScopeChange(scope)}
                 style={!isActive ? { color: "var(--label-secondary)" } : undefined}
-                className={`pst-press px-3 py-1.5 rounded-lg text-xs transition-all duration-200 flex items-center justify-center ${
+                className={`pst-press whitespace-nowrap shrink-0 px-3 py-1.5 rounded-[14px] text-xs transition-all duration-200 flex items-center justify-center ${
                   isActive
-                    ? "bg-base-100 text-base-content font-semibold shadow-sm border border-base-content/12"
+                    ? "bg-base-100 text-base-content font-semibold shadow-sm border border-[var(--border-control)]"
                     : "hover:text-base-content font-semibold"
                 }`}
               >
@@ -250,7 +252,7 @@ export function SearchField({
       </div>
 
       {/* Search Input with Search Tokens & Clear (X) Button - Perfectly in-line placeholder and icon */}
-      <div className="w-full rounded-2xl flex items-center gap-3 px-3.5 h-12 bg-base-100 border border-base-content/20 shadow-xs focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+      <div className="w-full rounded-[18px] flex items-center gap-3 px-3.5 h-12 bg-base-100 border border-[var(--border-control)] shadow-xs focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all">
         <span style={{ color: "var(--label-secondary)" }} className="shrink-0 flex items-center justify-center">
           <IconSearch className="w-4 h-4" />
         </span>
@@ -286,7 +288,7 @@ export function SearchField({
           value={query}
           onChange={(e) => onQueryChange(e.target.value)}
           placeholder={placeholder}
-          className="grow min-w-[120px] h-full py-0 bg-transparent border-0 outline-none text-sm font-medium text-base-content placeholder:text-base-content/40 leading-normal focus:outline-none focus:ring-0 [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden [&::-webkit-search-results-button]:hidden [&::-webkit-search-results-decoration]:hidden"
+          className="grow min-w-[120px] h-full py-0 bg-transparent border-0 outline-none text-sm font-medium text-base-content placeholder:text-[var(--label-tertiary)] leading-normal focus:outline-none focus:ring-0 [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden [&::-webkit-search-results-button]:hidden [&::-webkit-search-results-decoration]:hidden"
         />
 
         {(query.length > 0 || tokens.length > 0) && (
@@ -321,7 +323,7 @@ export function SearchField({
                 key={suggested.id}
                 type="button"
                 onClick={() => onAddSuggestedToken(suggested)}
-                className="btn btn-xs btn-outline rounded-full pst-press border-base-content/25 text-base-content hover:border-primary hover:text-accent-primary font-semibold px-2.5 inline-flex items-center gap-1"
+                className="btn btn-xs btn-outline rounded-full pst-press border-[var(--border-control)] text-base-content hover:border-primary hover:text-accent-primary font-semibold px-2.5 inline-flex items-center gap-1"
               >
                 <IconPlus className="w-3 h-3" />
                 <span>
@@ -345,7 +347,7 @@ export function SearchField({
                 key={`recent-${item}`}
                 type="button"
                 onClick={() => onQueryChange(item)}
-                className="btn btn-xs btn-ghost rounded-full pst-press border border-base-content/20 text-base-content font-semibold px-2.5 inline-flex items-center gap-1"
+                className="btn btn-xs btn-ghost rounded-full pst-press border border-[var(--border-control)] text-base-content font-semibold px-2.5 inline-flex items-center gap-1"
               >
                 <IconHistory className="w-3.5 h-3.5" />
                 <span>{item}</span>
@@ -356,7 +358,7 @@ export function SearchField({
                 key={`suggest-${item}`}
                 type="button"
                 onClick={() => onQueryChange(item)}
-                className="btn btn-xs rounded-full pst-press bg-primary/14 hover:bg-primary/22 text-accent-primary border border-primary/25 font-semibold px-2.5 inline-flex items-center gap-1"
+                className="btn btn-xs rounded-full pst-press bg-primary/14 hover:bg-primary/22 text-accent-primary border border-primary/35 font-semibold px-2.5 inline-flex items-center gap-1"
               >
                 <IconSearch className="w-3.5 h-3.5" />
                 <span>{item}</span>
@@ -438,7 +440,7 @@ export function OtpInput({
             <React.Fragment key={idx}>
               {idx === 3 && length === 6 && (
                 <span
-                  className="w-2 h-0.5 rounded-full bg-base-content/30 mx-0.5 shrink-0"
+                  className="w-2 h-0.5 rounded-full bg-[var(--border-control)] mx-0.5 shrink-0"
                   aria-hidden="true"
                 />
               )}
@@ -448,7 +450,7 @@ export function OtpInput({
                     ? "border-primary ring-4 ring-primary/20 bg-base-100 text-base-content scale-105"
                     : char
                     ? "border-primary/60 bg-primary/10 text-accent-primary"
-                    : "border-base-content/20 bg-base-100 text-base-content/40 hover:border-base-content/40"
+                    : "border-[var(--border-control)] bg-base-100 text-[var(--label-tertiary)] hover:border-primary/70"
                 }`}
               >
                 {char || "•"}

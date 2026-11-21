@@ -72,7 +72,7 @@ export function Card({
 
   return (
     <article
-      className={`card ${materialClass} rounded-3xl shadow-xs transition-all duration-300 ease-out overflow-visible relative ${
+      className={`card ${materialClass} rounded-[28px] shadow-xs transition-all duration-300 ease-out overflow-visible relative ${
         horizontalOnDesktop ? "sm:card-side" : ""
       } ${className}`}
     >
@@ -80,8 +80,8 @@ export function Card({
         <figure
           className={`relative overflow-hidden ${
             horizontalOnDesktop
-              ? "sm:w-48 min-h-[160px] shrink-0 rounded-t-3xl sm:rounded-t-none sm:rounded-s-3xl"
-              : "h-44 w-full rounded-t-3xl"
+              ? "sm:w-48 min-h-[160px] shrink-0 rounded-t-[28px] sm:rounded-t-none sm:rounded-s-[28px]"
+              : "h-44 w-full rounded-t-[28px]"
           }`}
         >
           <Image
@@ -96,12 +96,15 @@ export function Card({
           />
         </figure>
       )}
-      <div className="card-body p-5 gap-3.5 overflow-visible">
+      <div className="card-body p-5 sm:p-6 gap-3.5 overflow-visible">
         {(title || badge) && (
           <div className="flex items-start justify-between gap-2">
             <div>
               {title && (
-                <h3 className="card-title text-base font-bold tracking-tight text-base-content">
+                <h3
+                  className="card-title text-base font-bold tracking-tight text-base-content"
+                  style={{ color: "var(--label-primary)" }}
+                >
                   {title}
                 </h3>
               )}
@@ -121,13 +124,19 @@ export function Card({
             )}
           </div>
         )}
-        <div className="text-sm leading-relaxed text-base-content">
+        <div
+          className="text-sm leading-relaxed text-base-content"
+          style={{ color: "var(--label-primary)" }}
+        >
           {children}
         </div>
         {actions && (
           <div
-            className="card-actions justify-end pt-2.5 border-t overflow-visible"
-            style={{ borderColor: "var(--separator)" }}
+            className="card-actions justify-end pt-3 border-t overflow-visible"
+            style={{
+              borderColor: "var(--separator)",
+              color: "var(--label-primary)",
+            }}
           >
             {actions}
           </div>

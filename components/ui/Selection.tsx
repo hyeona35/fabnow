@@ -59,7 +59,9 @@ export function Checkbox({
           checked={checked}
           disabled={disabled}
           onChange={(e) => onChange(e.target.checked)}
-          className="checkbox checkbox-primary rounded-lg border-base-content/30"
+          className={`checkbox checkbox-primary rounded-[10px] ${
+            checked || indeterminate ? "border-primary" : "border-[var(--border-control)]"
+          }`}
         />
         {indeterminate && (
           <span
@@ -149,10 +151,10 @@ export function Radio({
             <label
               key={opt.value}
               htmlFor={optId}
-              className={`pst-press flex items-center justify-between gap-3 rounded-xl px-3.5 py-2.5 cursor-pointer border transition-all duration-300 ease-out ${
+              className={`pst-press flex items-center justify-between gap-3 rounded-[18px] px-3.5 py-2.5 cursor-pointer border transition-all duration-300 ease-out ${
                 isSelected
-                  ? "border-primary/50 bg-primary/12 shadow-2xs"
-                  : "border-base-content/20 bg-base-100/70 hover:bg-base-content/8"
+                  ? "border-primary bg-primary/12 shadow-2xs"
+                  : "border-[var(--border-control)] bg-base-100/80 hover:bg-base-content/8"
               }`}
             >
               <div className="flex items-center gap-3">
@@ -163,7 +165,9 @@ export function Radio({
                   value={opt.value}
                   checked={isSelected}
                   onChange={() => onChange(opt.value)}
-                  className="radio radio-primary radio-sm border-base-content/30"
+                  className={`radio radio-primary radio-sm ${
+                    isSelected ? "border-primary" : "border-[var(--border-control)]"
+                  }`}
                 />
                 <div>
                   <p className="text-sm font-semibold text-base-content">
@@ -230,7 +234,9 @@ export function Switch({
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
-        className="toggle toggle-primary"
+        className={`toggle toggle-primary ${
+          checked ? "border-primary" : "border-[var(--border-control)]"
+        }`}
       />
     </label>
   );
@@ -315,7 +321,7 @@ export function Slider({
               className="peer absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 pst-press"
             />
             <div
-              className="h-2.5 w-full rounded-full overflow-hidden bg-base-300 border border-base-content/15 pointer-events-none peer-focus-visible:ring-2 peer-focus-visible:ring-primary/50"
+              className="h-2.5 w-full rounded-full overflow-hidden bg-base-300 border border-[var(--border-control)] pointer-events-none peer-focus-visible:ring-2 peer-focus-visible:ring-primary/50"
               aria-hidden="true"
             >
               <div
@@ -342,7 +348,7 @@ export function Slider({
           >
             {ticks.map((t, i) => (
               <span key={`${t}-${i}`} className="flex flex-col items-center">
-                <span className="h-1.5 w-px bg-base-content/35 mb-0.5" />
+                <span className="h-1.5 w-px bg-[var(--border-control)] mb-0.5" />
                 <span>{t}</span>
               </span>
             ))}
@@ -355,7 +361,7 @@ export function Slider({
             type="button"
             onClick={() => onChange(clampValue(value - step))}
             aria-label={`${label} 감소`}
-            className="btn btn-xs btn-square rounded-xl border border-base-content/25 bg-base-100 text-base-content pst-press"
+            className="btn btn-xs btn-square rounded-2xl border border-[var(--border-control)] bg-base-100 text-base-content pst-press"
           >
             <IconMinus className="w-3.5 h-3.5" />
           </button>
@@ -373,13 +379,13 @@ export function Slider({
               const parsed = Number(e.target.value);
               onChange(Number.isNaN(parsed) ? min : clampValue(parsed));
             }}
-            className="input input-bordered input-xs w-16 rounded-xl text-center font-bold bg-base-100 border-base-content/25 text-base-content pst-press"
+            className="input input-bordered input-xs w-16 rounded-2xl text-center font-bold bg-base-100 border border-[var(--border-control)] focus:border-primary text-base-content pst-press"
           />
           <button
             type="button"
             onClick={() => onChange(clampValue(value + step))}
             aria-label={`${label} 증가`}
-            className="btn btn-xs btn-square rounded-xl border border-base-content/25 bg-base-100 text-base-content pst-press"
+            className="btn btn-xs btn-square rounded-2xl border border-[var(--border-control)] bg-base-100 text-base-content pst-press"
           >
             <IconPlus className="w-3.5 h-3.5" />
           </button>

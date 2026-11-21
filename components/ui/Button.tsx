@@ -95,14 +95,14 @@ export function Button({
       : variant === "secondary"
       ? "btn-secondary text-secondary-content shadow-xs"
       : variant === "soft"
-      ? "bg-primary/14 hover:bg-primary/22 text-accent-primary border border-primary/25"
+      ? "bg-primary/14 hover:bg-primary/22 text-accent-primary border border-primary/35"
       : variant === "ghost"
       ? "btn-ghost text-base-content hover:bg-base-content/10"
       : variant === "outline"
-      ? "btn-outline border-base-content/25 text-base-content hover:bg-base-content/8"
+      ? "btn-outline border-[var(--border-control)] text-base-content hover:bg-base-content/8 hover:border-[var(--label-primary)]"
       : isDestructive
       ? "btn-error text-error-content shadow-xs"
-      : "bg-base-100 border border-base-content/20 text-base-content hover:bg-base-200";
+      : "bg-base-100 border border-[var(--border-control)] text-base-content hover:bg-base-200";
 
   const sizeClass =
     size === "xs"
@@ -132,7 +132,7 @@ export function Button({
       disabled={disabled || effectiveLoading}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
-      className={`btn ${variantClass} ${sizeClass} rounded-2xl pst-press font-semibold inline-flex items-center justify-center gap-2 ${className}`}
+      className={`btn ${variantClass} ${sizeClass} rounded-[18px] pst-press font-semibold inline-flex items-center justify-center gap-2 ${className}`}
       {...rest}
     >
       {effectiveLoading ? (
@@ -202,10 +202,10 @@ export function ToggleButton({
       type="button"
       aria-pressed={active}
       onClick={() => onToggle(!active)}
-      className={`btn btn-sm rounded-2xl pst-press font-semibold flex items-center gap-1.5 transition-all duration-300 ease-out ${
+      className={`btn btn-sm rounded-[18px] pst-press font-semibold flex items-center gap-1.5 transition-all duration-300 ease-out ${
         active
           ? "bg-primary text-primary-content border-primary shadow-xs"
-          : "bg-base-100 text-base-content border-base-content/25 hover:bg-base-200"
+          : "bg-base-100 text-base-content border border-[var(--border-control)] hover:bg-base-200"
       }`}
     >
       {icon && <span className="shrink-0 inline-flex items-center">{icon}</span>}
