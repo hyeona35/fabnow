@@ -870,7 +870,6 @@ export function FloatingNavbar({
     };
 
     const rafId = window.requestAnimationFrame(measure);
-    const settleTimer = window.setTimeout(measure, 310);
 
     let observer: ResizeObserver | null = null;
     if (typeof ResizeObserver !== "undefined") {
@@ -882,10 +881,9 @@ export function FloatingNavbar({
 
     return () => {
       window.cancelAnimationFrame(rafId);
-      window.clearTimeout(settleTimer);
       observer?.disconnect();
     };
-  }, [activeId, effectiveCompact, visibleItems]);
+  }, [activeId, visibleItems]);
 
   const activeItem =
     visibleItems.find((item) => item.id === activeId) ?? visibleItems[0];
@@ -896,51 +894,97 @@ export function FloatingNavbar({
     >
       <nav
         aria-label="주요 탐색 캡슐 막대"
-        className={`pointer-events-auto h-14 p-1.5 rounded-full w-full flex items-center justify-between gap-1.5 sm:gap-2 transition-[max-width,box-shadow,background-color,border-color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${
-          effectiveCompact
-            ? "max-w-3xl liquid-glass-elevated shadow-lg"
-            : "max-w-5xl liquid-glass shadow-sm"
-        }`}
+        style={
+          {
+            "--nav-compact-inset":
+              "clamp(0px, calc((min(64rem, 100vw - 2rem) - 48rem) / 2), 8rem)",
+          } as React.CSSProperties
+        }
+        className="pointer-events-auto h-14 p-1.5 rounded-full w-full max-w-5xl relative grid grid-cols-[minmax(0,1fr)_minmax(0,auto)_minmax(0,1fr)] items-center gap-1.5 sm:gap-2"
       >
-        {/* 1. Brand Emblem & Title */}
-        <button
-          type="button"
-          onClick={() => {
-            triggerHaptic("selection");
-            if (onBrandClick) {
-              onBrandClick();
-            } else {
-              onSelect(visibleItems[0]?.id ?? "overview");
-              if (typeof window !== "undefined") {
-                window.scrollTo({ top: 0, behavior: "smooth" });
-              }
-            }
+        {/* GPU-composited Liquid Glass Capsule Shells (zero layout-shift on scroll compacting) */}
+        <span
+          aria-hidden="true"
+          className={`pointer-events-none absolute inset-0 rounded-full liquid-glass shadow-sm transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-opacity motion-reduce:transform-none ${
+            effectiveCompact ? "opacity-0 scale-x-95" : "opacity-100 scale-x-100"
+          }`}
+        />
+        <span
+          aria-hidden="true"
+          className={`pointer-events-none absolute inset-y-0 left-1/2 -translate-x-1/2 w-full max-w-3xl rounded-full liquid-glass-elevated shadow-lg transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-opacity motion-reduce:transform-none ${
+            effectiveCompact
+              ? "opacity-100 scale-x-100"
+              : "opacity-0 scale-x-105"
+          }`}
+        />
+
+        {/* 1. Brand Emblem & Title + Live Status Pill */}
+        <div
+          style={{
+            transform: effectiveCompact
+              ? "translate3d(var(--nav-compact-inset), 0, 0)"
+              : "translate3d(0, 0, 0)",
           }}
-          title={`${brandTitle} 홈으로 이동 및 맨 위로 스크롤`}
-          aria-label={`${brandTitle} 홈으로 이동 및 맨 위로 스크롤`}
-          className="group pst-press h-11 min-w-[44px] px-2.5 sm:px-3 rounded-full flex items-center gap-2 shrink-0 hover:bg-base-content/[0.06] transition-colors cursor-pointer"
+          className="relative z-10 justify-self-start flex items-center gap-2 min-w-0 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
         >
-          {brandMark ?? <FabnowBrandMark className="w-7 h-7 shrink-0" />}
-          <span className="text-sm font-extrabold tracking-tight text-base-content whitespace-nowrap">
-            {brandTitle}
-          </span>
-        </button>
+          <button
+            type="button"
+            onClick={() => {
+              triggerHaptic("selection");
+              if (onBrandClick) {
+                onBrandClick();
+              } else {
+                onSelect(visibleItems[0]?.id ?? "overview");
+                if (typeof window !== "undefined") {
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }
+              }
+            }}
+            title={`${brandTitle} 홈으로 이동 및 맨 위로 스크롤`}
+            aria-label={`${brandTitle} 홈으로 이동 및 맨 위로 스크롤`}
+            className="group pst-press h-11 min-w-[44px] px-2.5 sm:px-3 rounded-full flex items-center gap-2 shrink-0 hover:bg-base-content/[0.06] transition-colors cursor-pointer"
+          >
+            {brandMark ?? <FabnowBrandMark className="w-7 h-7 shrink-0" />}
+            <span className="text-sm font-extrabold tracking-tight text-base-content whitespace-nowrap">
+              {brandTitle}
+            </span>
+          </button>
+
+          {liveBadgeLabel && (
+            <span
+              aria-hidden={effectiveCompact ? true : undefined}
+              className={`hidden xl:inline-flex items-center gap-1.5 h-8 px-2.5 rounded-full bg-base-100/75 border control-border border-[var(--border-control,rgba(80,70,95,0.24))] text-[11px] font-bold text-base-content tracking-wide shrink-0 transition-[opacity,transform] duration-200 ease-out motion-reduce:transition-opacity motion-reduce:transform-none ${
+                effectiveCompact
+                  ? "opacity-0 scale-95 pointer-events-none"
+                  : "opacity-100 scale-100"
+              }`}
+              title="실시간 데이터 스트리밍 활성"
+            >
+              <span
+                className="w-2 h-2 rounded-full bg-success animate-pulse motion-reduce:animate-none"
+                aria-hidden="true"
+              />
+              <span>{liveBadgeLabel}</span>
+            </span>
+          )}
+        </div>
 
         {/* 2. Desktop Compact Inline Section Pills with Sliding Active Highlight */}
-        <div className="hidden lg:flex items-center justify-center flex-1 min-w-0">
+        <div className="relative z-10 justify-self-center hidden lg:flex items-center justify-center min-w-0">
           <div
             ref={navTrackRef}
             className="relative inline-flex items-center gap-1 min-w-0"
           >
-            <span
-              aria-hidden="true"
-              style={{
-                transform: `translate3d(${pillRect.left}px, 0, 0)`,
-                width: `${pillRect.width}px`,
-                opacity: pillRect.ready ? 1 : 0,
-              }}
-              className="pointer-events-none absolute top-0 bottom-0 start-0 rounded-full bg-primary/14 border border-primary/30 shadow-xs transition-[transform,width,opacity] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
-            />
+            {pillRect.ready && (
+              <span
+                aria-hidden="true"
+                style={{
+                  transform: `translate3d(${pillRect.left}px, 0, 0)`,
+                  width: `${pillRect.width}px`,
+                }}
+                className="pointer-events-none absolute top-0 bottom-0 start-0 rounded-full bg-primary/14 border border-primary/30 shadow-xs transition-[transform,width] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+              />
+            )}
             {visibleItems.map((item) => {
               const isActive = item.id === activeId;
               const pillLabel = item.shortLabel ?? item.label;
@@ -959,9 +1003,7 @@ export function FloatingNavbar({
                   style={
                     !isActive ? { color: "var(--label-secondary)" } : undefined
                   }
-                  className={`group relative z-10 pst-press h-11 min-w-[44px] rounded-full inline-flex items-center justify-center gap-1.5 whitespace-nowrap transition-[color,padding,background-color] duration-200 cursor-pointer ${
-                    effectiveCompact ? "px-2.5" : "px-3"
-                  } ${
+                  className={`group relative z-10 pst-press h-11 min-w-[44px] px-3 rounded-full inline-flex items-center justify-center gap-1.5 whitespace-nowrap transition-colors duration-200 cursor-pointer ${
                     isActive
                       ? `text-accent-primary font-bold ${
                           !pillRect.ready
@@ -986,8 +1028,8 @@ export function FloatingNavbar({
         </div>
 
         {/* 3. Smaller Widths (< lg): Active Section Indicator Pill */}
-        {activeItem && (
-          <div className="flex lg:hidden items-center justify-center flex-1 min-w-0">
+        {activeItem ? (
+          <div className="relative z-10 justify-self-center flex lg:hidden items-center justify-center min-w-0 max-w-full">
             <button
               type="button"
               onClick={() => {
@@ -1011,23 +1053,19 @@ export function FloatingNavbar({
               </span>
             </button>
           </div>
+        ) : (
+          <div className="lg:hidden" aria-hidden="true" />
         )}
 
-        {/* 4. Trailing Utilities (Live Dot, Install CTA, Theme Toggle, Menu Trigger) */}
-        <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
-          {liveBadgeLabel && !effectiveCompact && (
-            <span
-              className="hidden xl:inline-flex items-center gap-1.5 h-9 px-2.5 rounded-full bg-base-100/75 border control-border border-[var(--border-control,rgba(80,70,95,0.24))] text-[11px] font-bold text-base-content tracking-wide shrink-0"
-              title="실시간 데이터 스트리밍 활성"
-            >
-              <span
-                className="w-2 h-2 rounded-full bg-success animate-pulse motion-reduce:animate-none"
-                aria-hidden="true"
-              />
-              <span>{liveBadgeLabel}</span>
-            </span>
-          )}
-
+        {/* 4. Trailing Utilities (Install CTA anchored out-of-flow, Theme Toggle, Menu Trigger) */}
+        <div
+          style={{
+            transform: effectiveCompact
+              ? "translate3d(calc(var(--nav-compact-inset) * -1), 0, 0)"
+              : "translate3d(0, 0, 0)",
+          }}
+          className="relative z-10 justify-self-end flex items-center gap-1 sm:gap-1.5 shrink-0 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+        >
           {canInstall && onInstall && (
             <button
               type="button"
@@ -1037,19 +1075,11 @@ export function FloatingNavbar({
                 triggerHaptic("selection");
                 onInstall();
               }}
+              title="fabnow 앱 설치"
               aria-label="fabnow 앱 설치"
-              className="group pst-press h-11 min-w-[44px] px-2.5 sm:px-3 rounded-full border control-border border-[var(--border-control,rgba(80,70,95,0.35))] bg-base-100/80 hover:bg-base-100 text-base-content text-xs font-bold inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+              className="hidden sm:inline-flex group pst-press h-11 w-11 min-w-[44px] min-h-[44px] rounded-full border control-border border-[var(--border-control,rgba(80,70,95,0.35))] bg-base-100/80 hover:bg-base-100 text-base-content items-center justify-center transition-colors cursor-pointer absolute end-[calc(100%+6px)] top-0"
             >
               <IconDownload className="w-4 h-4 shrink-0" aria-hidden="true" />
-              <span
-                className={
-                  effectiveCompact
-                    ? "hidden"
-                    : "hidden sm:inline whitespace-nowrap"
-                }
-              >
-                앱 설치
-              </span>
             </button>
           )}
 
@@ -1081,20 +1111,13 @@ export function FloatingNavbar({
               triggerHaptic("light");
               onToggleMenu();
             }}
-            className={`group pst-press h-11 min-w-[44px] min-h-[44px] rounded-full inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer ${
-              effectiveCompact ? "w-11 px-0" : "px-2.5 xl:px-3.5"
-            } ${
+            className={`group pst-press h-11 w-11 min-w-[44px] min-h-[44px] rounded-full inline-flex items-center justify-center transition-colors cursor-pointer ${
               isMenuOpen
                 ? "bg-primary text-primary-content border border-primary shadow-xs"
                 : "bg-base-100/85 hover:bg-base-100 text-base-content border control-border border-[var(--border-control,rgba(80,70,95,0.35))]"
             }`}
           >
             <IconMenuMorph isOpen={isMenuOpen} className="w-5 h-5 shrink-0" />
-            {!effectiveCompact && (
-              <span className="hidden xl:inline text-xs font-bold whitespace-nowrap">
-                {isMenuOpen ? "닫기" : "메뉴"}
-              </span>
-            )}
           </button>
         </div>
       </nav>
