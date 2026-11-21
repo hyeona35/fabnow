@@ -7,6 +7,83 @@ import { triggerHaptic } from "@/lib/haptics";
 
 export type RiskLevelType = "tight" | "constrained" | "balanced";
 
+export type MonogramTone = "blush" | "lilac" | "sage";
+
+const ENTITY_MONOGRAM_MAP: Array<{
+  match: string;
+  code: string;
+  tone: MonogramTone;
+}> = [
+  { match: "tsmc", code: "TS", tone: "blush" },
+  { match: "sk hynix", code: "SK", tone: "lilac" },
+  { match: "samsung", code: "SE", tone: "sage" },
+  { match: "micron", code: "MU", tone: "sage" },
+  { match: "intel", code: "IF", tone: "lilac" },
+  { match: "openai", code: "OA", tone: "blush" },
+  { match: "anthropic", code: "AN", tone: "lilac" },
+  { match: "google", code: "GD", tone: "sage" },
+  { match: "deepmind", code: "GD", tone: "sage" },
+  { match: "xai", code: "xA", tone: "blush" },
+  { match: "meta", code: "MA", tone: "lilac" },
+  { match: "coreweave", code: "CW", tone: "blush" },
+  { match: "nebius", code: "NB", tone: "lilac" },
+  { match: "lambda", code: "LM", tone: "sage" },
+  { match: "crusoe", code: "CR", tone: "sage" },
+  { match: "tensorwave", code: "TW", tone: "lilac" },
+  { match: "cowos", code: "CW", tone: "blush" },
+  { match: "hbm", code: "HB", tone: "lilac" },
+  { match: "euv", code: "EU", tone: "blush" },
+  { match: "abf", code: "AB", tone: "sage" },
+];
+
+export function EntityMonogram({
+  name,
+  code,
+  tone,
+  size = "md",
+  className = "",
+}: {
+  name: string;
+  code?: string;
+  tone?: MonogramTone;
+  size?: "sm" | "md" | "lg";
+  className?: string;
+}) {
+  const lower = name.toLowerCase();
+  const matched = ENTITY_MONOGRAM_MAP.find((entry) => lower.includes(entry.match));
+  const resolvedCode =
+    code ??
+    matched?.code ??
+    name
+      .replace(/[^A-Za-z0-9가-힣]/g, "")
+      .slice(0, 2)
+      .toUpperCase();
+  const resolvedTone = tone ?? matched?.tone ?? "lilac";
+
+  const surfaceClass =
+    resolvedTone === "blush"
+      ? "surface-pastel-blush text-accent-primary"
+      : resolvedTone === "sage"
+      ? "surface-pastel-sage text-status-success"
+      : "surface-pastel-lilac text-accent-secondary";
+
+  const sizeClass =
+    size === "sm"
+      ? "w-8 h-8 rounded-xl text-xs"
+      : size === "lg"
+      ? "w-12 h-12 rounded-2xl text-sm"
+      : "w-10 h-10 rounded-xl text-xs";
+
+  return (
+    <span
+      aria-hidden="true"
+      className={`inline-flex items-center justify-center shrink-0 font-extrabold tracking-tight border border-[var(--separator)] select-none ${surfaceClass} ${sizeClass} ${className}`}
+    >
+      {resolvedCode}
+    </span>
+  );
+}
+
 export function RiskBadge({
   risk,
   size = "sm",
@@ -14,14 +91,14 @@ export function RiskBadge({
   risk: RiskLevelType;
   size?: "xs" | "sm" | "md";
 }) {
-  const textSize = size === "md" ? "text-xs" : "text-[11px]";
+  const textSize = size === "md" ? "text-[13px]" : "text-xs";
 
   if (risk === "tight") {
     return (
       <span
         className={`inline-flex items-center gap-1.5 font-bold whitespace-nowrap text-status-error ${textSize}`}
       >
-        <span className="w-1.5 h-1.5 rounded-full bg-error shrink-0" aria-hidden="true" />
+        <span className="w-2 h-2 rounded-full bg-error shrink-0" aria-hidden="true" />
         <span>공급 부족</span>
       </span>
     );
@@ -31,7 +108,7 @@ export function RiskBadge({
       <span
         className={`inline-flex items-center gap-1.5 font-bold whitespace-nowrap text-status-warning ${textSize}`}
       >
-        <span className="w-1.5 h-1.5 rounded-full bg-warning shrink-0" aria-hidden="true" />
+        <span className="w-2 h-2 rounded-full bg-warning shrink-0" aria-hidden="true" />
         <span>제한적</span>
       </span>
     );
@@ -40,7 +117,7 @@ export function RiskBadge({
     <span
       className={`inline-flex items-center gap-1.5 font-bold whitespace-nowrap text-status-success ${textSize}`}
     >
-      <span className="w-1.5 h-1.5 rounded-full bg-success shrink-0" aria-hidden="true" />
+      <span className="w-2 h-2 rounded-full bg-success shrink-0" aria-hidden="true" />
       <span>균형</span>
     </span>
   );
@@ -77,7 +154,7 @@ export function SignedDelta({
     <span
       className={`inline-flex items-center gap-1 tabular-nums font-bold ${colorClass} ${className}`}
     >
-      <span aria-hidden="true" className="text-[10px] leading-none">
+      <span aria-hidden="true" className="text-xs leading-none">
         {arrow}
       </span>
       <span>
@@ -100,12 +177,16 @@ export function SparklineSvg({
   label,
   width = 104,
   height = 30,
+  fluid = false,
+  className = "",
 }: {
   points: SparklinePoint[];
   tone?: "primary" | "secondary" | "warning" | "error" | "success";
   label: string;
   width?: number;
   height?: number;
+  fluid?: boolean;
+  className?: string;
 }) {
   const gradId = React.useId();
 
@@ -115,8 +196,8 @@ export function SparklineSvg({
   const minVal = Math.min(...vals);
   const maxVal = Math.max(...vals);
   const span = Math.max(1e-6, maxVal - minVal);
-  const padX = 4;
-  const padY = 4;
+  const padX = 6;
+  const padY = 6;
   const innerW = width - padX * 2;
   const innerH = height - padY * 2;
 
@@ -154,15 +235,15 @@ export function SparklineSvg({
   return (
     <svg
       viewBox={`0 0 ${width} ${height}`}
-      width={width}
-      height={height}
+      width={fluid ? undefined : width}
+      height={fluid ? undefined : height}
       role="img"
       aria-label={label}
-      className="overflow-visible shrink-0"
+      className={`overflow-visible shrink-0 ${fluid ? "w-full h-auto" : ""} ${className}`}
     >
       <defs>
         <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={strokeVar} stopOpacity="0.28" />
+          <stop offset="0%" stopColor={strokeVar} stopOpacity="0.26" />
           <stop offset="100%" stopColor={strokeVar} stopOpacity="0.02" />
         </linearGradient>
       </defs>
@@ -171,11 +252,20 @@ export function SparklineSvg({
         d={linePath}
         fill="none"
         stroke={strokeVar}
-        strokeWidth="2"
+        strokeWidth={fluid ? "2.4" : "2"}
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      <circle cx={last.x} cy={last.y} r="2.75" fill={strokeVar} />
+      {fluid && (
+        <circle
+          cx={last.x}
+          cy={last.y}
+          r="5.5"
+          fill={strokeVar}
+          fillOpacity="0.18"
+        />
+      )}
+      <circle cx={last.x} cy={last.y} r={fluid ? "3.2" : "2.75"} fill={strokeVar} />
     </svg>
   );
 }
@@ -201,7 +291,7 @@ export function SortableTh({
     <th
       scope="col"
       aria-sort={isSorted ? sortDirection : undefined}
-      className={`whitespace-nowrap px-3 py-3 text-xs font-bold text-base-content ${
+      className={`whitespace-nowrap px-4 py-3.5 text-xs font-bold text-base-content ${
         align === "end" ? "text-end" : "text-start"
       }`}
     >
@@ -211,18 +301,18 @@ export function SortableTh({
           triggerHaptic("light");
           onSort(columnKey);
         }}
-        className={`pst-press inline-flex items-center gap-1 rounded-xl px-2 py-1 hover:bg-base-content/8 transition-colors ${
+        className={`pst-press inline-flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 hover:bg-base-content/8 transition-colors ${
           align === "end" ? "flex-row-reverse" : ""
-        } ${isSorted ? "text-accent-primary bg-primary/8" : "text-base-content"}`}
+        } ${isSorted ? "text-accent-primary bg-primary/10" : "text-base-content"}`}
       >
         <span>{label}</span>
         <span aria-hidden="true" className="inline-flex items-center">
           {isSorted ? (
-            <span className="text-[10px] font-extrabold leading-none">
+            <span className="text-xs font-extrabold leading-none">
               {sortDirection === "ascending" ? "▲" : "▼"}
             </span>
           ) : (
-            <IconSort className="w-3.5 h-3.5 opacity-45" />
+            <IconSort className="w-3.5 h-3.5 opacity-65" />
           )}
         </span>
       </button>
@@ -242,13 +332,14 @@ export function EntityActionLinks({
   compact?: boolean;
 }) {
   return (
-    <div className="inline-flex items-center gap-1.5 shrink-0">
+    <div className="inline-flex items-center gap-2 shrink-0">
       <Button
         size="xs"
         variant="soft"
         opensModal
         onClick={onOpenModal}
         aria-label={`${entityLabel} 상세 모달 열기`}
+        className="rounded-full px-3"
       >
         {compact ? "요약" : "상세"}
       </Button>
@@ -256,7 +347,7 @@ export function EntityActionLinks({
         href={`/preview/${slug}`}
         onClick={() => triggerHaptic("selection")}
         aria-label={`${entityLabel} 전용 라우트 미리보기 열기`}
-        className="btn btn-xs btn-ghost rounded-2xl border border-base-content/20 pst-press font-semibold inline-flex items-center gap-1 text-base-content hover:border-primary/40 hover:text-accent-primary"
+        className="btn btn-xs btn-ghost rounded-full border border-[var(--border-control,var(--separator))] control-border pst-press font-semibold inline-flex items-center gap-1 px-3 text-base-content hover:border-primary hover:text-accent-primary"
       >
         <span>{compact ? "페이지" : "프리뷰"}</span>
         <IconArrowUpRight className="w-3.5 h-3.5 shrink-0" />

@@ -72,16 +72,19 @@ function buildModalMetrics(entity: FabnowEntity) {
         label: "월간 출하량",
         value: `${r.monthlyOutputValue.toLocaleString("ko-KR")} ${r.unitLabel}`,
         sub: `MoM ${formatSignedPercent(r.momDeltaPct)} · YoY ${formatSignedPercent(r.yoyDeltaPct)}`,
+        surfaceClass: "surface-pastel-blush",
       },
       {
         label: "가동률 / 수율",
         value: `${r.utilizationPct.toFixed(1)}% / ${r.yieldPct.toFixed(1)}%`,
         sub: `AI 할당 ${r.aiAllocationPct.toFixed(0)}% · 리드타임 ${r.leadTimeWeeks}주`,
+        surfaceClass: "surface-pastel-lilac",
       },
       {
         label: "주요 병목 공정",
         value: r.bottleneckStage,
         sub: r.primarySites,
+        surfaceClass: "surface-pastel-sage",
       },
     ];
   }
@@ -93,16 +96,19 @@ function buildModalMetrics(entity: FabnowEntity) {
         label: "월간 GPU 환산 수요",
         value: `${r.monthlyGpuEquivalentK.toLocaleString("ko-KR")}k GPUeq`,
         sub: `MoM ${formatSignedPercent(r.momDemandDeltaPct)} · 전력 ${r.committedPowerMW.toLocaleString("ko-KR")} MW`,
+        surfaceClass: "surface-pastel-blush",
       },
       {
         label: "HBM 수요 / 백로그",
         value: `${r.monthlyHbmDemandTB.toLocaleString("ko-KR")} TB / ${r.backlogMonths}개월`,
         sub: r.focusCompute,
+        surfaceClass: "surface-pastel-lilac",
       },
       {
         label: "미충족 수급 갭",
         value: formatSignedPercent(r.supplyGapPct),
         sub: `주요 공급 축: ${r.primarySuppliers.slice(0, 2).join(", ")}`,
+        surfaceClass: "surface-pastel-sage",
       },
     ];
   }
@@ -113,39 +119,42 @@ function buildModalMetrics(entity: FabnowEntity) {
       label: "공정 포화도",
       value: `${r.saturationPct.toFixed(1)}%`,
       sub: `도메인 ${r.domain.toUpperCase()} · 압력 ${formatSignedPercent(r.momPressureDeltaPct)}`,
+      surfaceClass: "surface-pastel-blush",
     },
     {
       label: "리드타임",
       value: `${r.leadTimeWeeks}주`,
       sub: `공급 축 ${r.primarySuppliers.slice(0, 2).join(", ")}`,
+      surfaceClass: "surface-pastel-lilac",
     },
     {
       label: "핵심 수요 동인",
       value: r.primaryDrivers[0] ?? r.stageName,
       sub: r.primaryDrivers.slice(1).join(", ") || r.stageNameKo,
+      surfaceClass: "surface-pastel-sage",
     },
   ];
 }
 
 function ModalSkeletonFallback() {
   return (
-    <div className="space-y-4 animate-pulse">
-      <div className="flex items-center justify-between">
-        <div className="space-y-2">
-          <div className="h-5 w-48 rounded-xl bg-base-content/10" />
-          <div className="h-3.5 w-32 rounded-xl bg-base-content/10" />
+    <div className="space-y-5 animate-pulse">
+      <div className="flex items-center justify-between gap-3">
+        <div className="space-y-2 min-w-0 flex-1">
+          <div className="h-5 w-48 max-w-full rounded-xl bg-base-200" />
+          <div className="h-4 w-32 rounded-xl bg-base-200" />
         </div>
-        <div className="h-11 w-11 rounded-2xl bg-base-content/10" />
+        <div className="h-11 w-11 rounded-full bg-base-200 shrink-0" />
       </div>
       <h2 id="modal-preview-title" className="sr-only">
         fabnow 엔티티 정보 불러오는 중
       </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-        <div className="h-20 rounded-2xl bg-base-content/10" />
-        <div className="h-20 rounded-2xl bg-base-content/10" />
-        <div className="h-20 rounded-2xl bg-base-content/10" />
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="h-24 rounded-[22px] bg-base-200" />
+        <div className="h-24 rounded-[22px] bg-base-200" />
+        <div className="h-24 rounded-[22px] bg-base-200" />
       </div>
-      <div className="h-24 rounded-2xl bg-base-content/10" />
+      <div className="h-28 rounded-[22px] bg-base-200" />
     </div>
   );
 }
@@ -162,7 +171,7 @@ async function ModalEntityContent({
     return (
       <div className="space-y-5">
         <div className="flex items-center justify-between gap-3">
-          <div>
+          <div className="min-w-0">
             <h2
               id="modal-preview-title"
               className="text-lg font-extrabold tracking-tight text-base-content"
@@ -170,7 +179,7 @@ async function ModalEntityContent({
               엔티티를 찾을 수 없습니다
             </h2>
             <p
-              className="text-xs font-medium mt-0.5"
+              className="text-xs sm:text-[13px] font-medium mt-1"
               style={{ color: "var(--label-secondary)" }}
             >
               요청한 식별자({id})에 해당하는 수급 데이터가 없습니다.
@@ -178,17 +187,20 @@ async function ModalEntityContent({
           </div>
           <PreviewModalCloseButton
             ariaLabel="모달 닫기"
-            className="btn btn-sm btn-ghost btn-circle rounded-2xl pst-press text-base-content"
+            className="btn btn-sm btn-ghost btn-circle rounded-full border border-[var(--border-control,var(--separator))] control-border pst-press text-base-content shrink-0"
           >
             <IconXMark className="w-5 h-5" aria-hidden="true" />
           </PreviewModalCloseButton>
         </div>
 
-        <div className="flex items-center justify-end gap-2 pt-2">
-          <PreviewModalCloseButton className="btn btn-ghost rounded-2xl pst-press font-semibold text-base-content">
+        <div className="flex flex-wrap items-center justify-end gap-2.5 pt-2">
+          <PreviewModalCloseButton className="btn btn-sm btn-ghost rounded-full border border-[var(--border-control,var(--separator))] control-border px-4 pst-press font-semibold text-base-content">
             닫기
           </PreviewModalCloseButton>
-          <Link href="/" className="btn btn-primary rounded-2xl pst-press font-semibold">
+          <Link
+            href="/"
+            className="btn btn-sm btn-primary text-primary-content rounded-full px-5 pst-press font-semibold"
+          >
             통합 수급 현황
           </Link>
         </div>
@@ -212,19 +224,19 @@ async function ModalEntityContent({
       : null;
 
   return (
-    <div className="space-y-4">
-      {/* Header */}
+    <div className="space-y-5">
+      {/* Sticky-Friendly Sheet Header */}
       <div
-        className="flex items-start justify-between gap-3 pb-3.5 border-b"
+        className="flex items-start justify-between gap-3 pb-4 border-b"
         style={{ borderColor: "var(--separator)" }}
       >
-        <div className="min-w-0 space-y-1.5">
+        <div className="min-w-0 space-y-2 flex-1">
           <div
-            className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs font-medium"
+            className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs font-semibold"
             style={{ color: "var(--label-secondary)" }}
           >
-            <span className={`inline-flex items-center gap-1.5 font-semibold ${riskMeta.textClass}`}>
-              <span className={`w-1.5 h-1.5 rounded-full ${riskMeta.dotClass}`} aria-hidden="true" />
+            <span className={`inline-flex items-center gap-1.5 font-bold ${riskMeta.textClass}`}>
+              <span className={`w-2 h-2 rounded-full ${riskMeta.dotClass} shrink-0`} aria-hidden="true" />
               {riskMeta.label}
             </span>
             <span aria-hidden="true">·</span>
@@ -234,12 +246,12 @@ async function ModalEntityContent({
           </div>
           <h2
             id="modal-preview-title"
-            className="text-lg sm:text-xl font-extrabold tracking-tight text-base-content break-keep"
+            className="text-lg sm:text-xl font-extrabold tracking-tight text-base-content break-keep leading-snug"
           >
             {entity.title}
           </h2>
           <p
-            className="text-xs font-medium break-keep"
+            className="text-xs sm:text-[13px] font-medium break-keep leading-relaxed"
             style={{ color: "var(--label-secondary)" }}
           >
             {entity.subtitle}
@@ -248,30 +260,30 @@ async function ModalEntityContent({
 
         <PreviewModalCloseButton
           ariaLabel="모달 닫기"
-          className="btn btn-sm btn-ghost rounded-2xl pst-press text-base-content shrink-0"
+          className="btn btn-sm btn-ghost btn-square rounded-full border border-[var(--border-control,var(--separator))] control-border pst-press text-base-content shrink-0"
         >
           <IconXMark className="w-5 h-5" aria-hidden="true" />
         </PreviewModalCloseButton>
       </div>
 
       {/* KPI Tiles */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {metrics.map((metric) => (
           <div
             key={metric.label}
-            className="material-regular rounded-2xl p-3.5 border border-base-content/10 space-y-1"
+            className={`${metric.surfaceClass} rounded-[22px] p-4 border border-[var(--separator)] space-y-1.5 min-w-0`}
           >
             <p
-              className="text-[11px] font-semibold break-keep"
+              className="text-xs font-bold break-keep"
               style={{ color: "var(--label-secondary)" }}
             >
               {metric.label}
             </p>
-            <p className="text-base font-extrabold tracking-tight text-base-content tabular-nums break-keep">
+            <p className="text-base sm:text-lg font-extrabold tracking-tight text-base-content tabular-nums break-keep">
               {metric.value}
             </p>
             <p
-              className="text-[11px] font-medium tabular-nums break-keep"
+              className="text-xs font-medium tabular-nums break-keep"
               style={{ color: "var(--label-secondary)" }}
             >
               {metric.sub}
@@ -281,39 +293,39 @@ async function ModalEntityContent({
       </div>
 
       {/* Intelligence Briefing */}
-      <div className="material-regular rounded-2xl p-4 border border-base-content/10 space-y-2">
-        <div className="flex items-center gap-2 text-xs font-bold text-accent-primary">
+      <div className="surface-pastel-lilac rounded-[22px] p-4 sm:p-5 border border-[var(--separator)] space-y-2.5">
+        <div className="flex items-center gap-2 text-xs sm:text-[13px] font-bold text-accent-primary">
           <IconLayers className="w-4 h-4 shrink-0" aria-hidden="true" />
           <span>수급 인텔리전스 브리핑</span>
         </div>
-        <p className="text-xs sm:text-sm font-medium leading-relaxed text-base-content/90 break-keep">
+        <p className="text-[13px] sm:text-sm font-medium leading-relaxed text-base-content break-keep">
           {summaryText}
         </p>
       </div>
 
       {/* Recent Quarters Compact Strip */}
       {recentQuarters && recentQuarters.length > 0 && (
-        <div className="material-regular rounded-2xl p-3.5 border border-base-content/10 space-y-2">
-          <div className="flex items-center gap-1.5 text-xs font-bold text-base-content">
-            <IconChart className="w-3.5 h-3.5 text-accent-primary shrink-0" aria-hidden="true" />
+        <div className="bg-base-100 rounded-[22px] p-4 sm:p-5 border border-[var(--separator)] space-y-3">
+          <div className="flex items-center gap-2 text-xs sm:text-[13px] font-bold text-base-content">
+            <IconChart className="w-4 h-4 text-accent-primary shrink-0" aria-hidden="true" />
             <span>최근 4개 분기 추이</span>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
             {recentQuarters.map((q) => (
               <div
                 key={q.quarter}
-                className="rounded-xl bg-base-100 border border-base-content/10 px-2.5 py-2 space-y-0.5"
+                className="rounded-xl bg-base-200 border border-[var(--separator)] px-3 py-2.5 space-y-1"
               >
                 <p
-                  className="text-[11px] font-semibold tabular-nums"
+                  className="text-xs font-semibold tabular-nums"
                   style={{ color: "var(--label-secondary)" }}
                 >
                   {q.quarter}
                 </p>
-                <p className="text-xs font-bold text-base-content tabular-nums">
+                <p className="text-sm font-extrabold text-base-content tabular-nums">
                   {q.shipmentOrDemand.toLocaleString("ko-KR")}
                 </p>
-                <p className="text-[11px] font-semibold text-accent-primary tabular-nums">
+                <p className="text-xs font-bold text-accent-primary tabular-nums">
                   {q.utilizationOrAllocationPct.toFixed(1)}%
                 </p>
               </div>
@@ -324,17 +336,17 @@ async function ModalEntityContent({
 
       {/* Linked Commitments Summary */}
       {entity.links.length > 0 && (
-        <div className="material-regular rounded-2xl p-3.5 border border-base-content/10 space-y-2">
-          <p className="text-xs font-bold text-base-content">
+        <div className="bg-base-100 rounded-[22px] p-4 sm:p-5 border border-[var(--separator)] space-y-3">
+          <p className="text-xs sm:text-[13px] font-bold text-base-content">
             연계 공급-수요 약정 ({entity.links.length}건)
           </p>
-          <ul className="space-y-1.5">
+          <ul className="space-y-2">
             {entity.links.slice(0, 3).map((link) => (
               <li
                 key={link.id}
-                className="flex flex-wrap items-center justify-between gap-2 text-xs rounded-xl bg-base-100 border border-base-content/10 px-3 py-2"
+                className="flex flex-wrap items-center justify-between gap-2 text-xs sm:text-[13px] rounded-xl bg-base-200 border border-[var(--separator)] px-3.5 py-2.5"
               >
-                <span className="font-semibold text-base-content break-keep">
+                <span className="font-bold text-base-content break-keep">
                   {link.supplierLabel} → {link.customerLabel}
                 </span>
                 <span className="tabular-nums font-semibold">
@@ -359,21 +371,24 @@ async function ModalEntityContent({
       )}
 
       {/* Footer Actions */}
-      <div className="flex flex-wrap items-center justify-between gap-2 pt-2">
+      <div
+        className="flex flex-wrap items-center justify-between gap-2.5 pt-3 border-t"
+        style={{ borderColor: "var(--separator)" }}
+      >
         <Link
           href={`/?section=${sectionId}`}
-          className="btn btn-ghost rounded-2xl pst-press font-semibold text-base-content"
+          className="btn btn-sm btn-ghost rounded-full px-3.5 pst-press font-semibold text-base-content"
         >
           {sectionLabel} 섹션으로 이동
         </Link>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <a
             href={`/preview/${entity.slug}`}
-            className="btn btn-outline rounded-2xl pst-press font-semibold"
+            className="btn btn-sm btn-outline rounded-full px-4 border-[var(--border-control,var(--separator))] control-border pst-press font-semibold text-base-content"
           >
             전체 리포트 열기
           </a>
-          <PreviewModalCloseButton className="btn btn-primary rounded-2xl pst-press font-semibold">
+          <PreviewModalCloseButton className="btn btn-sm btn-primary text-primary-content rounded-full px-5 pst-press font-semibold">
             닫기
           </PreviewModalCloseButton>
         </div>

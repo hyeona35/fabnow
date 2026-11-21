@@ -22,7 +22,7 @@ import {
 import { useModal } from "@/context/OverlayContext";
 import { triggerHaptic } from "@/lib/haptics";
 import { EntityDetailModalContent } from "./EntityDetailModalContent";
-import { RiskBadge, SignedDelta } from "./FabnowPrimitives";
+import { EntityMonogram, RiskBadge, SignedDelta } from "./FabnowPrimitives";
 
 type MatrixMode = "flow" | "mom" | "gap";
 
@@ -251,13 +251,13 @@ export function SupplyDemandMatrix({
     });
   };
 
-  // Fixed SVG coordinate system matching desktop rails (height: 560px)
+  // Fixed SVG coordinate system aligned to desktop rails (height: 600px)
   const SVG_W = 320;
-  const SVG_H = 560;
-  const getSupplierY = (idx: number) => 52 + idx * 114;
+  const SVG_H = 600;
+  const getSupplierY = (idx: number) => 54 + idx * 123;
   const getCustomerY = (idx: number, total: number) => {
     if (total <= 1) return SVG_H / 2;
-    const rowH = total <= 5 ? 98 : 50;
+    const rowH = total <= 5 ? 108 : 52;
     const gap = (SVG_H - total * rowH) / Math.max(1, total - 1);
     return rowH / 2 + idx * (rowH + gap);
   };
@@ -282,12 +282,15 @@ export function SupplyDemandMatrix({
   return (
     <section
       aria-labelledby="supply-demand-matrix-heading"
-      className="material-regular rounded-3xl p-4 sm:p-6 shadow-xs space-y-5"
+      className="material-regular rounded-[32px] p-6 sm:p-8 border border-[var(--separator)] shadow-xs space-y-6"
     >
       {/* Matrix Header + Controls */}
-      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 pb-4 border-b" style={{ borderColor: "var(--separator)" }}>
-        <div className="space-y-1 min-w-0 flex-1">
-          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+      <div
+        className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 pb-5 border-b"
+        style={{ borderColor: "var(--separator)" }}
+      >
+        <div className="space-y-1.5 min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
             <h2
               id="supply-demand-matrix-heading"
               className="text-lg sm:text-xl font-extrabold tracking-tight text-base-content"
@@ -295,19 +298,22 @@ export function SupplyDemandMatrix({
               글로벌 공급망 · AI 수요 할당 매트릭스
             </h2>
             <span
-              className="inline-flex items-center gap-1.5 text-xs font-medium"
+              className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 surface-pastel-sage border border-[var(--separator)] text-xs font-semibold"
               style={{ color: "var(--label-secondary)" }}
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" aria-hidden="true" />
+              <span className="w-2 h-2 rounded-full bg-primary shrink-0" aria-hidden="true" />
               {DATA_SYNC_LABEL}
             </span>
           </div>
-          <p className="text-xs sm:text-sm font-medium" style={{ color: "var(--label-secondary)" }}>
+          <p
+            className="text-xs sm:text-sm font-medium leading-relaxed"
+            style={{ color: "var(--label-secondary)" }}
+          >
             5대 파운드리·메모리 공급사(TSMC·SK하이닉스·삼성전자·마이크론·인텔)의 선단 노드 출하량과 10대 AI 수요처(프론티어 랩·네오클라우드) 간 할당 갭을 교차 추적합니다.
           </p>
         </div>
 
-        <div className="max-w-full overflow-x-auto pb-0.5 sm:pb-0 shrink-0">
+        <div className="w-full xl:w-auto max-w-full overflow-x-auto pb-1 xl:pb-0 min-w-0 shrink-0">
           <Tabs
             variant="segmented"
             size="sm"
@@ -321,14 +327,14 @@ export function SupplyDemandMatrix({
               { id: "mom", label: "MoM 변동률 (%)" },
               { id: "gap", label: "수급 갭 (Gap)" },
             ]}
-            className="min-w-[430px] sm:min-w-0 sm:w-[440px] shrink-0"
+            className="min-w-[420px] sm:min-w-0 sm:w-[440px] shrink-0"
           />
         </div>
       </div>
 
       {/* Customer Segment Filter & Selection Reset */}
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label="수요 세그먼트 필터">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-2" role="group" aria-label="수요 세그먼트 필터">
           {[
             { id: "all" as const, label: "전체 10대 수요처" },
             { id: "frontier-lab" as const, label: "프론티어 랩 (5)" },
@@ -346,10 +352,10 @@ export function SupplyDemandMatrix({
                   setSelectedCustomerId(null);
                   setHoveredLinkId(null);
                 }}
-                className={`btn btn-xs rounded-2xl pst-press font-semibold ${
+                className={`btn btn-xs rounded-full px-3.5 pst-press font-semibold ${
                   isActive
-                    ? "btn-primary"
-                    : "btn-ghost border border-base-content/20 text-base-content"
+                    ? "btn-primary text-primary-content"
+                    : "btn-ghost border border-[var(--border-control,var(--separator))] control-border text-base-content"
                 }`}
               >
                 {seg.label}
@@ -358,12 +364,18 @@ export function SupplyDemandMatrix({
           })}
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 text-xs">
-          <span className="inline-flex items-center gap-1.5 font-medium" style={{ color: "var(--label-secondary)" }}>
+        <div className="flex flex-wrap items-center gap-3 text-xs">
+          <span
+            className="inline-flex items-center gap-1.5 font-semibold"
+            style={{ color: "var(--label-secondary)" }}
+          >
             <span className="w-2.5 h-2.5 rounded-full bg-primary inline-block" aria-hidden="true" />
             <span>프론티어 랩</span>
           </span>
-          <span className="inline-flex items-center gap-1.5 font-medium" style={{ color: "var(--label-secondary)" }}>
+          <span
+            className="inline-flex items-center gap-1.5 font-semibold"
+            style={{ color: "var(--label-secondary)" }}
+          >
             <span className="w-2.5 h-2.5 rounded-full bg-secondary inline-block" aria-hidden="true" />
             <span>네오클라우드</span>
           </span>
@@ -376,7 +388,7 @@ export function SupplyDemandMatrix({
                 setSelectedCustomerId(null);
                 setHoveredLinkId(null);
               }}
-              className="btn btn-xs btn-ghost rounded-2xl border border-base-content/20 pst-press font-semibold text-base-content"
+              className="btn btn-xs btn-ghost rounded-full px-3 border border-[var(--border-control,var(--separator))] control-border pst-press font-semibold text-base-content"
             >
               전체 경로 보기
             </button>
@@ -385,9 +397,9 @@ export function SupplyDemandMatrix({
       </div>
 
       {/* Desktop Interactive 3-Column Topology (Suppliers | SVG Bezier Flow | Customers) */}
-      <div className="hidden lg:grid lg:grid-cols-[276px_minmax(180px,1fr)_296px] gap-0 items-stretch">
+      <div className="hidden lg:grid lg:grid-cols-[292px_minmax(180px,1fr)_308px] gap-4 items-stretch">
         {/* Left Rail: 5 Semiconductor Supply Companies */}
-        <div className="h-[560px] flex flex-col justify-between">
+        <div className="h-[600px] flex flex-col justify-between">
           {supplierNodes.map((sup) => {
             const isSelected = selectedSupplier === sup.company && !selectedCustomerId;
             const isConnected =
@@ -411,40 +423,55 @@ export function SupplyDemandMatrix({
                     prev === sup.company ? null : sup.company
                   );
                 }}
-                className={`h-[104px] w-full text-start rounded-2xl p-3 border transition-all duration-200 flex flex-col justify-between pst-press ${
+                className={`h-[108px] w-full text-start rounded-[22px] p-4 border transition-all duration-200 flex flex-col justify-between pst-press cursor-pointer ${
                   isSelected
-                    ? "bg-primary/12 border-primary shadow-sm ring-1 ring-primary/35"
+                    ? "surface-pastel-blush border-primary shadow-sm ring-2 ring-primary/25"
                     : isConnected
-                    ? "bg-base-100 border-base-content/18 hover:border-primary/45"
-                    : "bg-base-100 border-base-content/12"
-                } ${dimmed ? "opacity-45" : "opacity-100"}`}
+                    ? "bg-base-100 border-[var(--border-control,var(--separator))] control-border hover:border-primary"
+                    : "bg-base-100 border-[var(--separator)]"
+                } ${dimmed ? "opacity-50" : "opacity-100"}`}
               >
-                <div className="flex items-start justify-between gap-2">
-                  <div className="min-w-0">
-                    <p className="text-sm font-extrabold tracking-tight text-base-content truncate">
-                      {sup.company}
-                    </p>
-                    <p className="text-[11px] font-semibold truncate" style={{ color: "var(--label-secondary)" }}>
-                      {sup.techSummary}
-                    </p>
+                <div className="flex items-start justify-between gap-2.5 min-w-0">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <EntityMonogram name={sup.company} size="sm" />
+                    <div className="min-w-0">
+                      <p className="text-sm font-extrabold tracking-tight text-base-content truncate">
+                        {sup.company}
+                      </p>
+                      <p
+                        className="text-xs font-medium truncate"
+                        style={{ color: "var(--label-secondary)" }}
+                      >
+                        {sup.techSummary}
+                      </p>
+                    </div>
                   </div>
                   <RiskBadge risk={sup.worstRisk} size="xs" />
                 </div>
 
-                <div className="flex items-center justify-between gap-2 text-xs pt-1 border-t" style={{ borderColor: "var(--separator)" }}>
+                <div
+                  className="flex items-center justify-between gap-2 text-xs pt-2 border-t"
+                  style={{ borderColor: "var(--separator)" }}
+                >
                   {mode === "flow" && (
                     <>
                       <span className="tabular-nums font-bold text-base-content truncate">
                         {sup.totalOutputText}
                       </span>
-                      <span className="tabular-nums text-[11px] font-semibold" style={{ color: "var(--label-secondary)" }}>
+                      <span
+                        className="tabular-nums text-xs font-semibold shrink-0"
+                        style={{ color: "var(--label-secondary)" }}
+                      >
                         가동 {sup.weightedUtilPct.toFixed(1)}%
                       </span>
                     </>
                   )}
                   {mode === "mom" && (
                     <>
-                      <span className="text-[11px] font-semibold" style={{ color: "var(--label-secondary)" }}>
+                      <span
+                        className="text-xs font-semibold"
+                        style={{ color: "var(--label-secondary)" }}
+                      >
                         평균 MoM
                       </span>
                       <SignedDelta value={sup.avgMomPct} className="text-xs" />
@@ -452,13 +479,16 @@ export function SupplyDemandMatrix({
                   )}
                   {mode === "gap" && (
                     <>
-                      <span className="text-[11px] font-semibold" style={{ color: "var(--label-secondary)" }}>
+                      <span
+                        className="text-xs font-semibold"
+                        style={{ color: "var(--label-secondary)" }}
+                      >
                         {sup.outboundLinks.length > 0 ? "할당 충족 갭" : "다이버시피케이션"}
                       </span>
                       {sup.outboundLinks.length > 0 ? (
                         <SignedDelta value={sup.netGapPct} className="text-xs" />
                       ) : (
-                        <span className="text-[11px] font-bold text-status-info tabular-nums">
+                        <span className="text-xs font-bold text-status-info tabular-nums">
                           18A 램프업
                         </span>
                       )}
@@ -470,8 +500,8 @@ export function SupplyDemandMatrix({
           })}
         </div>
 
-        {/* Center Rail: Crisp Responsive SVG Bezier Ribbon Canvas */}
-        <div className="relative h-[560px] select-none">
+        {/* Center Rail: Calmer Responsive SVG Bezier Ribbon Canvas */}
+        <div className="relative h-[600px] select-none min-w-0">
           <svg
             viewBox={`0 0 ${SVG_W} ${SVG_H}`}
             preserveAspectRatio="none"
@@ -482,20 +512,20 @@ export function SupplyDemandMatrix({
             {/* Subtle vertical guide lines */}
             <line
               x1="0"
-              y1="16"
+              y1="20"
               x2="0"
-              y2={SVG_H - 16}
+              y2={SVG_H - 20}
               stroke="var(--separator)"
-              strokeDasharray="3 4"
+              strokeDasharray="4 6"
               strokeWidth="1"
             />
             <line
               x1={SVG_W}
-              y1="16"
+              y1="20"
               x2={SVG_W}
-              y2={SVG_H - 16}
+              y2={SVG_H - 20}
               stroke="var(--separator)"
-              strokeDasharray="3 4"
+              strokeDasharray="4 6"
               strokeWidth="1"
             />
 
@@ -517,10 +547,10 @@ export function SupplyDemandMatrix({
               );
               const strokeColor = getLinkStrokeColor(link, mode, isHighlighted);
 
-              // Scale ribbon stroke width smoothly by committed volume (2.5px to 9px)
+              // Calm ribbon stroke width scaled by committed volume (2px to 8px)
               const strokeW = Math.max(
-                2.5,
-                Math.min(9.5, link.monthlyCommittedUnits / 4.2)
+                2.2,
+                Math.min(8, link.monthlyCommittedUnits / 4.8)
               );
 
               const cp1x = SVG_W * 0.42;
@@ -534,7 +564,7 @@ export function SupplyDemandMatrix({
                   key={link.id}
                   className="cursor-pointer transition-opacity duration-200"
                   style={{
-                    opacity: isHighlighted ? 0.92 : hasSelection ? 0.14 : 0.45,
+                    opacity: isHighlighted ? 0.88 : hasSelection ? 0.08 : 0.34,
                   }}
                   onMouseEnter={() => setHoveredLinkId(link.id)}
                   onMouseLeave={() => setHoveredLinkId(null)}
@@ -560,21 +590,21 @@ export function SupplyDemandMatrix({
                     d={pathD}
                     fill="none"
                     stroke={strokeColor}
-                    strokeWidth={isHighlighted ? strokeW + 1.5 : strokeW}
+                    strokeWidth={isHighlighted ? strokeW + 1.2 : strokeW}
                     strokeLinecap="round"
                     strokeDasharray={
                       mode === "gap" && link.bottleneckRisk === "tight"
-                        ? "7 4"
+                        ? "7 5"
                         : undefined
                     }
                   />
                   {isHighlighted && (
                     <>
-                      <circle cx="4" cy={sy} r="4" fill={strokeColor} />
+                      <circle cx="4" cy={sy} r="4.5" fill={strokeColor} />
                       <circle
                         cx={SVG_W - 4}
                         cy={cy}
-                        r="4"
+                        r="4.5"
                         fill={strokeColor}
                       />
                     </>
@@ -586,9 +616,7 @@ export function SupplyDemandMatrix({
         </div>
 
         {/* Right Rail: Demand Customers (Frontier Labs & Neoclouds) */}
-        <div
-          className="h-[560px] flex flex-col justify-between"
-        >
+        <div className="h-[600px] flex flex-col justify-between">
           {visibleCustomers.map((cust) => {
             const isSelected = selectedCustomerId === cust.id;
             const isConnected =
@@ -598,8 +626,8 @@ export function SupplyDemandMatrix({
               Boolean(selectedCustomerId || hoveredLinkId || selectedSupplier) &&
               !isSelected &&
               !connectedCustomerIds.has(cust.id);
-            const rowHeightClass =
-              visibleCustomers.length <= 5 ? "h-[98px]" : "h-[50px]";
+            const isCompactList = visibleCustomers.length > 5;
+            const rowHeightClass = isCompactList ? "h-[52px]" : "h-[108px]";
 
             return (
               <button
@@ -614,33 +642,41 @@ export function SupplyDemandMatrix({
                     prev === cust.id ? null : cust.id
                   );
                 }}
-                className={`${rowHeightClass} w-full text-start rounded-2xl px-3 py-1.5 border transition-all duration-200 flex items-center justify-between gap-2 pst-press ${
+                className={`${rowHeightClass} w-full text-start rounded-[22px] ${
+                  isCompactList ? "px-3.5 py-2" : "p-4"
+                } border transition-all duration-200 flex items-center justify-between gap-2.5 pst-press cursor-pointer ${
                   isSelected
-                    ? "bg-secondary/14 border-secondary shadow-sm ring-1 ring-secondary/40"
+                    ? "surface-pastel-lilac border-secondary shadow-sm ring-2 ring-secondary/25"
                     : isConnected
-                    ? "bg-base-100 border-base-content/18 hover:border-secondary/45"
-                    : "bg-base-100 border-base-content/12"
-                } ${dimmed ? "opacity-45" : "opacity-100"}`}
+                    ? "bg-base-100 border-[var(--border-control,var(--separator))] control-border hover:border-secondary"
+                    : "bg-base-100 border-[var(--separator)]"
+                } ${dimmed ? "opacity-50" : "opacity-100"}`}
               >
-                <div className="min-w-0">
-                  <div className="flex items-center gap-1.5">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2 min-w-0">
                     <span
-                      className={`w-2 h-2 rounded-full shrink-0 ${
+                      className={`w-2.5 h-2.5 rounded-full shrink-0 ${
                         cust.segment === "frontier-lab"
                           ? "bg-primary"
                           : "bg-secondary"
                       }`}
                       aria-hidden="true"
                     />
-                    <span className="text-xs font-extrabold text-base-content truncate">
+                    <span className="text-[13px] font-extrabold text-base-content truncate">
                       {cust.name}
                     </span>
-                    <span className="text-[11px] font-medium truncate hidden xl:inline" style={{ color: "var(--label-secondary)" }}>
+                    <span
+                      className="text-xs font-medium truncate hidden xl:inline"
+                      style={{ color: "var(--label-secondary)" }}
+                    >
                       {cust.nameKo}
                     </span>
                   </div>
-                  {visibleCustomers.length <= 5 && (
-                    <p className="text-[11px] font-medium truncate mt-1" style={{ color: "var(--label-secondary)" }}>
+                  {!isCompactList && (
+                    <p
+                      className="text-xs font-medium truncate mt-1.5"
+                      style={{ color: "var(--label-secondary)" }}
+                    >
                       {cust.focusCompute}
                     </p>
                   )}
@@ -665,13 +701,16 @@ export function SupplyDemandMatrix({
         </div>
       </div>
 
-      {/* Mobile & Tablet (< lg) Responsive Matrix (Zero Horizontal Overflow) */}
-      <div className="lg:hidden space-y-4">
+      {/* Mobile & Tablet (< lg) Responsive Matrix (Zero Horizontal Overflow at 375px) */}
+      <div className="lg:hidden space-y-5">
         <div>
-          <p className="text-xs font-bold mb-2" style={{ color: "var(--label-secondary)" }}>
+          <p
+            className="text-xs font-bold mb-2.5"
+            style={{ color: "var(--label-secondary)" }}
+          >
             1. 반도체 공급사 선택
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {supplierNodes.map((sup) => {
               const isSelected = selectedSupplier === sup.company && !selectedCustomerId;
               return (
@@ -687,19 +726,25 @@ export function SupplyDemandMatrix({
                       prev === sup.company ? null : sup.company
                     );
                   }}
-                  className={`text-start rounded-2xl p-3 border transition-all pst-press flex items-center justify-between gap-2 ${
+                  className={`text-start rounded-[20px] p-3.5 border transition-all pst-press flex items-center justify-between gap-2.5 min-w-0 cursor-pointer ${
                     isSelected
-                      ? "bg-primary/12 border-primary ring-1 ring-primary/35"
-                      : "bg-base-100 border-base-content/15"
+                      ? "surface-pastel-blush border-primary ring-2 ring-primary/25"
+                      : "bg-base-100 border-[var(--border-control,var(--separator))] control-border"
                   }`}
                 >
-                  <div className="min-w-0">
-                    <p className="text-sm font-extrabold text-base-content truncate">
-                      {sup.company}
-                    </p>
-                    <p className="text-[11px] font-medium truncate" style={{ color: "var(--label-secondary)" }}>
-                      {sup.techSummary}
-                    </p>
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <EntityMonogram name={sup.company} size="sm" />
+                    <div className="min-w-0">
+                      <p className="text-sm font-extrabold text-base-content truncate">
+                        {sup.company}
+                      </p>
+                      <p
+                        className="text-xs font-medium truncate"
+                        style={{ color: "var(--label-secondary)" }}
+                      >
+                        {sup.techSummary}
+                      </p>
+                    </div>
                   </div>
                   <div className="text-end shrink-0">
                     {mode === "mom" ? (
@@ -707,7 +752,7 @@ export function SupplyDemandMatrix({
                     ) : mode === "gap" && sup.outboundLinks.length > 0 ? (
                       <SignedDelta value={sup.netGapPct} className="text-xs" />
                     ) : (
-                      <span className="text-xs tabular-nums font-bold">
+                      <span className="text-xs tabular-nums font-bold text-base-content">
                         {sup.weightedUtilPct.toFixed(0)}% 가동
                       </span>
                     )}
@@ -719,10 +764,13 @@ export function SupplyDemandMatrix({
         </div>
 
         <div>
-          <p className="text-xs font-bold mb-2" style={{ color: "var(--label-secondary)" }}>
+          <p
+            className="text-xs font-bold mb-2.5"
+            style={{ color: "var(--label-secondary)" }}
+          >
             2. AI 수요처 선택 ({visibleCustomers.length}곳)
           </p>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 min-[420px]:grid-cols-2 gap-2.5">
             {visibleCustomers.map((cust) => {
               const isSelected = selectedCustomerId === cust.id;
               return (
@@ -738,24 +786,34 @@ export function SupplyDemandMatrix({
                       prev === cust.id ? null : cust.id
                     );
                   }}
-                  className={`text-start rounded-2xl p-2.5 border transition-all pst-press flex items-center justify-between gap-1.5 ${
+                  className={`text-start rounded-[18px] p-3.5 border transition-all pst-press flex items-center justify-between gap-2 min-w-0 cursor-pointer ${
                     isSelected
-                      ? "bg-secondary/14 border-secondary ring-1 ring-secondary/40"
-                      : "bg-base-100 border-base-content/15"
+                      ? "surface-pastel-lilac border-secondary ring-2 ring-secondary/25"
+                      : "bg-base-100 border-[var(--border-control,var(--separator))] control-border"
                   }`}
                 >
-                  <span className="text-xs font-bold text-base-content truncate">
-                    {cust.name}
-                  </span>
-                  {mode === "gap" ? (
-                    <SignedDelta value={cust.supplyGapPct} className="text-[11px]" />
-                  ) : mode === "mom" ? (
-                    <SignedDelta value={cust.momDemandDeltaPct} className="text-[11px]" />
-                  ) : (
-                    <span className="text-[11px] tabular-nums font-bold">
-                      {cust.monthlyGpuEquivalentK}k
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span
+                      className={`w-2 h-2 rounded-full shrink-0 ${
+                        cust.segment === "frontier-lab" ? "bg-primary" : "bg-secondary"
+                      }`}
+                      aria-hidden="true"
+                    />
+                    <span className="text-[13px] font-bold text-base-content truncate">
+                      {cust.name}
                     </span>
-                  )}
+                  </div>
+                  <div className="shrink-0">
+                    {mode === "gap" ? (
+                      <SignedDelta value={cust.supplyGapPct} className="text-xs" />
+                    ) : mode === "mom" ? (
+                      <SignedDelta value={cust.momDemandDeltaPct} className="text-xs" />
+                    ) : (
+                      <span className="text-xs tabular-nums font-bold text-base-content">
+                        {cust.monthlyGpuEquivalentK}k
+                      </span>
+                    )}
+                  </div>
                 </button>
               );
             })}
@@ -764,38 +822,42 @@ export function SupplyDemandMatrix({
       </div>
 
       {/* Bottom Interactive Inspector Card */}
-      <div className="bg-base-100 rounded-3xl p-4 sm:p-5 border border-base-content/15 space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-2">
-                <h3 className="text-sm sm:text-base font-extrabold text-base-content truncate">
-                  {inspectedTitle}
-                </h3>
-                {hoveredLinkObj && (
-                  <RiskBadge risk={hoveredLinkObj.bottleneckRisk} size="xs" />
-                )}
-                {!hoveredLinkObj && selectedCustomerNode && (
-                  <RiskBadge risk={getCustomerRisk(selectedCustomerNode)} size="xs" />
-                )}
-                {!hoveredLinkObj && !selectedCustomerNode && selectedSupplierNode && (
-                  <RiskBadge risk={selectedSupplierNode.worstRisk} size="xs" />
-                )}
-              </div>
-              <p className="text-xs font-medium mt-0.5" style={{ color: "var(--label-secondary)" }}>
-                {hoveredLinkObj
-                  ? `${hoveredLinkObj.technologyLabel} · 약정 ${hoveredLinkObj.monthlyCommittedUnits} → 실제 출하 ${hoveredLinkObj.monthlyActualShippedUnits} ${hoveredLinkObj.unitLabel}`
-                  : selectedCustomerNode
-                  ? `${selectedCustomerNode.focusCompute} · 수주 잔고 ${selectedCustomerNode.backlogMonths.toFixed(1)}개월 · 약정 전력 ${selectedCustomerNode.committedPowerMW.toLocaleString("en-US")}MW`
-                  : selectedSupplierNode
-                  ? `${selectedSupplierNode.lines.length}개 핵심 팹 라인 (${selectedSupplierNode.techSummary}) · ${activeLinks.length}건 AI 고객 할당 연결`
-                  : `총 ${activeLinks.length}개 주요 공급-수요 연결 경로가 활성화되어 있습니다.`}
-              </p>
+      <div className="surface-pastel-lilac rounded-[24px] p-5 sm:p-6 border border-[var(--separator)] space-y-5 min-w-0">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 min-w-0">
+          <div className="min-w-0 space-y-1">
+            <div className="flex flex-wrap items-center gap-2.5">
+              <h3 className="text-base font-extrabold text-base-content break-keep">
+                {inspectedTitle}
+              </h3>
+              {hoveredLinkObj && (
+                <RiskBadge risk={hoveredLinkObj.bottleneckRisk} size="sm" />
+              )}
+              {!hoveredLinkObj && selectedCustomerNode && (
+                <RiskBadge risk={getCustomerRisk(selectedCustomerNode)} size="sm" />
+              )}
+              {!hoveredLinkObj && !selectedCustomerNode && selectedSupplierNode && (
+                <RiskBadge risk={selectedSupplierNode.worstRisk} size="sm" />
+              )}
+            </div>
+            <p
+              className="text-xs sm:text-[13px] font-medium leading-relaxed"
+              style={{ color: "var(--label-secondary)" }}
+            >
+              {hoveredLinkObj
+                ? `${hoveredLinkObj.technologyLabel} · 약정 ${hoveredLinkObj.monthlyCommittedUnits} → 실제 출하 ${hoveredLinkObj.monthlyActualShippedUnits} ${hoveredLinkObj.unitLabel}`
+                : selectedCustomerNode
+                ? `${selectedCustomerNode.focusCompute} · 수주 잔고 ${selectedCustomerNode.backlogMonths.toFixed(1)}개월 · 약정 전력 ${selectedCustomerNode.committedPowerMW.toLocaleString("en-US")}MW`
+                : selectedSupplierNode
+                ? `${selectedSupplierNode.lines.length}개 핵심 팹 라인 (${selectedSupplierNode.techSummary}) · ${activeLinks.length}건 AI 고객 할당 연결`
+                : `총 ${activeLinks.length}개 주요 공급-수요 연결 경로가 활성화되어 있습니다.`}
+            </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2 shrink-0">
             <Button
               size="sm"
               variant="soft"
+              className="rounded-full px-4"
               opensModal
               onClick={() => handleOpenEntityModal(inspectedSlug, inspectedTitle)}
             >
@@ -804,7 +866,7 @@ export function SupplyDemandMatrix({
             <Link
               href={`/preview/${inspectedSlug}`}
               onClick={() => triggerHaptic("selection")}
-              className="btn btn-sm btn-primary rounded-2xl pst-press font-semibold inline-flex items-center gap-1"
+              className="btn btn-sm btn-primary text-primary-content rounded-full px-4 pst-press font-semibold inline-flex items-center gap-1.5"
             >
               <span>전체 프리뷰</span>
               <IconArrowUpRight className="w-4 h-4 shrink-0" />
@@ -814,7 +876,7 @@ export function SupplyDemandMatrix({
 
         {/* Active Links Mini Grid */}
         {activeLinks.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2.5">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3.5">
             {activeLinks.slice(0, 6).map((link) => {
               const fulfillmentPct = Math.min(
                 100,
@@ -840,36 +902,60 @@ export function SupplyDemandMatrix({
                       );
                     }
                   }}
-                  className="text-start rounded-2xl p-3 bg-base-200/70 hover:bg-base-200 border border-base-content/10 hover:border-primary/35 transition-all pst-press space-y-2"
+                  className="text-start rounded-[18px] p-4 bg-base-100 border border-[var(--border-control,var(--separator))] control-border hover:border-primary transition-all pst-press space-y-2.5 min-w-0 cursor-pointer"
                 >
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs font-bold text-base-content truncate">
+                  <div className="flex items-center justify-between gap-2 min-w-0">
+                    <span className="text-[13px] font-extrabold text-base-content truncate">
                       {link.supplierLabel} → {link.customerLabel}
                     </span>
-                    <SignedDelta value={link.gapPct} className="text-xs" />
+                    <SignedDelta value={link.gapPct} className="text-xs shrink-0" />
                   </div>
-                  <p className="text-[11px] font-medium truncate" style={{ color: "var(--label-secondary)" }}>
+                  <p
+                    className="text-xs font-medium truncate"
+                    style={{ color: "var(--label-secondary)" }}
+                  >
                     {link.technologyLabel}
                   </p>
-                  <div className="flex items-center justify-between gap-2 text-[11px] tabular-nums">
-                    <span>
-                      실출하 {link.monthlyActualShippedUnits} / 약정 {link.monthlyCommittedUnits} {link.unitLabel}
-                    </span>
-                    <span className="font-bold">{fulfillmentPct}%</span>
+                  <div className="space-y-1.5">
+                    <div className="w-full h-1.5 rounded-full bg-base-200 overflow-hidden" aria-hidden="true">
+                      <div
+                        className={`h-full rounded-full ${
+                          link.bottleneckRisk === "tight"
+                            ? "bg-error"
+                            : link.bottleneckRisk === "constrained"
+                            ? "bg-warning"
+                            : "bg-success"
+                        }`}
+                        style={{ width: `${fulfillmentPct}%` }}
+                      />
+                    </div>
+                    <div
+                      className="flex items-center justify-between gap-2 text-xs tabular-nums"
+                      style={{ color: "var(--label-secondary)" }}
+                    >
+                      <span>
+                        실출하 {link.monthlyActualShippedUnits} / 약정 {link.monthlyCommittedUnits} {link.unitLabel}
+                      </span>
+                      <span className="font-bold text-base-content">{fulfillmentPct}%</span>
+                    </div>
                   </div>
                 </button>
               );
             })}
           </div>
         ) : (
-          <div className="rounded-2xl p-3.5 bg-base-200/60 border border-base-content/10 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
-            <span className="font-medium" style={{ color: "var(--label-secondary)" }}>
+          <div className="rounded-[18px] p-4 bg-base-100 border border-[var(--separator)] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs sm:text-[13px]">
+            <span
+              className="font-medium leading-relaxed"
+              style={{ color: "var(--label-secondary)" }}
+            >
               Intel Foundry(18A · Foveros/EMIB-T)는 현재 AWS Custom Fabric, Microsoft Maia-Next 등 하이퍼스케일러 다이버시피케이션 물량으로 램프업 중입니다.
             </span>
             {onSelectSection && (
               <Button
-                size="xs"
+                size="sm"
                 variant="outline"
+                className="rounded-full shrink-0"
                 onClick={() => onSelectSection("fabs")}
               >
                 팹 출하표에서 확인

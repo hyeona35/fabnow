@@ -18,6 +18,7 @@ import { triggerHaptic } from "@/lib/haptics";
 import { EntityDetailModalContent } from "./EntityDetailModalContent";
 import {
   EntityActionLinks,
+  EntityMonogram,
   SignedDelta,
   SortableTh,
 } from "./FabnowPrimitives";
@@ -52,23 +53,23 @@ const SERIES_STYLES = [
 function DeploymentBadge({ status }: { status: DeploymentStatus }) {
   if (status === "backlog-capped") {
     return (
-      <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-status-error whitespace-nowrap">
-        <span className="w-1.5 h-1.5 rounded-full bg-error shrink-0" aria-hidden="true" />
+      <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-status-error whitespace-nowrap">
+        <span className="w-2 h-2 rounded-full bg-error shrink-0" aria-hidden="true" />
         수주 상한 제약
       </span>
     );
   }
   if (status === "ramping") {
     return (
-      <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-status-warning whitespace-nowrap">
-        <span className="w-1.5 h-1.5 rounded-full bg-warning shrink-0" aria-hidden="true" />
+      <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-status-warning whitespace-nowrap">
+        <span className="w-2 h-2 rounded-full bg-warning shrink-0" aria-hidden="true" />
         급속 램프업
       </span>
     );
   }
   return (
-    <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-status-success whitespace-nowrap">
-      <span className="w-1.5 h-1.5 rounded-full bg-success shrink-0" aria-hidden="true" />
+    <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-status-success whitespace-nowrap">
+      <span className="w-2 h-2 rounded-full bg-success shrink-0" aria-hidden="true" />
       대규모 증설 중
     </span>
   );
@@ -221,11 +222,11 @@ export function DemandTrackersPanel({
   };
 
   const SVG_W = 680;
-  const SVG_H = 220;
-  const PAD_L = 52;
-  const PAD_R = 20;
-  const PAD_T = 16;
-  const PAD_B = 34;
+  const SVG_H = 232;
+  const PAD_L = 58;
+  const PAD_R = 24;
+  const PAD_T = 18;
+  const PAD_B = 38;
   const PLOT_W = SVG_W - PAD_L - PAD_R;
   const PLOT_H = SVG_H - PAD_T - PAD_B;
 
@@ -239,15 +240,15 @@ export function DemandTrackersPanel({
   return (
     <section
       aria-labelledby="demand-trackers-heading"
-      className="material-regular rounded-3xl p-4 sm:p-6 shadow-xs space-y-5"
+      className="material-regular rounded-[32px] p-6 sm:p-8 border border-[var(--separator)] shadow-xs space-y-6"
     >
       {/* Header */}
       <div
-        className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 pb-4 border-b"
+        className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 pb-5 border-b"
         style={{ borderColor: "var(--separator)" }}
       >
-        <div className="space-y-1 min-w-0 flex-1">
-          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+        <div className="space-y-1.5 min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
             <h2
               id="demand-trackers-heading"
               className="text-lg sm:text-xl font-extrabold tracking-tight text-base-content"
@@ -255,21 +256,21 @@ export function DemandTrackersPanel({
               {headingTitle}
             </h2>
             <span
-              className="text-xs font-semibold tabular-nums"
+              className="rounded-full px-3 py-1 surface-pastel-lilac border border-[var(--separator)] text-xs font-bold tabular-nums"
               style={{ color: "var(--label-secondary)" }}
             >
               {aggregateStats.count}개 기관
             </span>
           </div>
           <p
-            className="text-xs sm:text-sm font-medium"
+            className="text-xs sm:text-sm font-medium leading-relaxed"
             style={{ color: "var(--label-secondary)" }}
           >
             월간 GPU 환산 수요, HBM 탑재 대역폭, 데이터센터 약정 전력(MW), 수주 잔고 및 실리콘 인도 지연에 따른 미충족 수급 갭을 추적합니다.
           </p>
         </div>
 
-        <div className="max-w-full overflow-x-auto pb-0.5 sm:pb-0 shrink-0">
+        <div className="w-full xl:w-auto max-w-full overflow-x-auto pb-1 xl:pb-0 min-w-0 shrink-0">
           <Tabs
             variant="segmented"
             size="sm"
@@ -284,57 +285,81 @@ export function DemandTrackersPanel({
               { id: "frontier-lab", label: "프론티어 랩 (5)" },
               { id: "neocloud", label: "네오클라우드 (5)" },
             ]}
-            className="min-w-[380px] sm:min-w-0 sm:w-[400px] shrink-0"
+            className="min-w-[360px] sm:min-w-0 sm:w-[400px] shrink-0"
           />
         </div>
       </div>
 
       {/* Aggregate Segment Summary Bar */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <div className="bg-base-100 rounded-2xl p-3.5 border border-base-content/12">
-          <span className="text-[11px] font-semibold block" style={{ color: "var(--label-secondary)" }}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="surface-pastel-blush rounded-[22px] p-4 sm:p-5 border border-[var(--separator)] space-y-1 min-w-0">
+          <span
+            className="text-xs font-bold block"
+            style={{ color: "var(--label-secondary)" }}
+          >
             월간 GPU 환산 총수요
           </span>
-          <strong className="text-lg font-extrabold tabular-nums text-base-content">
+          <strong className="text-xl sm:text-2xl font-extrabold tabular-nums text-base-content block">
             {aggregateStats.totalGpuK.toLocaleString("en-US")}k
           </strong>
-          <span className="text-[11px] font-medium block mt-0.5" style={{ color: "var(--label-secondary)" }}>
+          <span
+            className="text-xs font-medium block"
+            style={{ color: "var(--label-tertiary)" }}
+          >
             GPU-eq units / month
           </span>
         </div>
 
-        <div className="bg-base-100 rounded-2xl p-3.5 border border-base-content/12">
-          <span className="text-[11px] font-semibold block" style={{ color: "var(--label-secondary)" }}>
+        <div className="surface-pastel-lilac rounded-[22px] p-4 sm:p-5 border border-[var(--separator)] space-y-1 min-w-0">
+          <span
+            className="text-xs font-bold block"
+            style={{ color: "var(--label-secondary)" }}
+          >
             월간 HBM 소요량
           </span>
-          <strong className="text-lg font-extrabold tabular-nums text-base-content">
+          <strong className="text-xl sm:text-2xl font-extrabold tabular-nums text-base-content block">
             {(aggregateStats.totalHbmTB / 1000).toFixed(1)} PB
           </strong>
-          <span className="text-[11px] tabular-nums font-medium block mt-0.5" style={{ color: "var(--label-secondary)" }}>
+          <span
+            className="text-xs tabular-nums font-medium block"
+            style={{ color: "var(--label-tertiary)" }}
+          >
             {aggregateStats.totalHbmTB.toLocaleString("en-US")} TB/mo
           </span>
         </div>
 
-        <div className="bg-base-100 rounded-2xl p-3.5 border border-base-content/12">
-          <span className="text-[11px] font-semibold block" style={{ color: "var(--label-secondary)" }}>
+        <div className="surface-pastel-sage rounded-[22px] p-4 sm:p-5 border border-[var(--separator)] space-y-1 min-w-0">
+          <span
+            className="text-xs font-bold block"
+            style={{ color: "var(--label-secondary)" }}
+          >
             약정 전력 · 평균 잔고
           </span>
-          <strong className="text-lg font-extrabold tabular-nums text-base-content">
+          <strong className="text-xl sm:text-2xl font-extrabold tabular-nums text-base-content block">
             {(aggregateStats.totalPowerMW / 1000).toFixed(2)} GW
           </strong>
-          <span className="text-[11px] tabular-nums font-medium block mt-0.5" style={{ color: "var(--label-secondary)" }}>
+          <span
+            className="text-xs tabular-nums font-medium block"
+            style={{ color: "var(--label-tertiary)" }}
+          >
             평균 {aggregateStats.avgBacklog.toFixed(1)}개월 백로그
           </span>
         </div>
 
-        <div className="bg-base-100 rounded-2xl p-3.5 border border-base-content/12">
-          <span className="text-[11px] font-semibold block" style={{ color: "var(--label-secondary)" }}>
+        <div className="bg-base-100 rounded-[22px] p-4 sm:p-5 border border-[var(--separator)] space-y-1 min-w-0">
+          <span
+            className="text-xs font-bold block"
+            style={{ color: "var(--label-secondary)" }}
+          >
             가중 평균 수급 갭
           </span>
-          <div className="text-lg pt-0.5">
+          <div className="text-xl sm:text-2xl pt-0.5">
             <SignedDelta value={aggregateStats.weightedGap} />
           </div>
-          <span className="text-[11px] font-medium block mt-0.5" style={{ color: "var(--label-secondary)" }}>
+          <span
+            className="text-xs font-medium block"
+            style={{ color: "var(--label-tertiary)" }}
+          >
             공급 제약 미충족 비율
           </span>
         </div>
@@ -342,34 +367,39 @@ export function DemandTrackersPanel({
 
       {/* Quarterly Ramp Multi-Series SVG Chart */}
       {chartSeries.length > 0 && (
-        <div className="bg-base-100 rounded-3xl p-4 sm:p-5 border border-base-content/12 space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div className="min-w-0 flex-1">
-              <h3 className="text-sm font-extrabold text-base-content">
+        <div className="bg-base-100 rounded-[24px] p-5 sm:p-6 border border-[var(--separator)] space-y-5 min-w-0">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5">
+            <div className="min-w-0 flex-1 space-y-1">
+              <h3 className="text-sm sm:text-base font-extrabold text-base-content">
                 2025 Q1 – 2026 Q2 분기별 수요 램프업 궤적 (상위 {chartSeries.length}개)
               </h3>
-              <p className="text-xs font-medium" style={{ color: "var(--label-secondary)" }}>
+              <p
+                className="text-xs font-medium"
+                style={{ color: "var(--label-secondary)" }}
+              >
                 범례를 클릭하면 해당 기관의 분기 추이선을 강조하여 비교할 수 있습니다.
               </p>
             </div>
-            <Tabs
-              variant="segmented"
-              size="xs"
-              activeId={chartMetric}
-              onChange={(id) => {
-                triggerHaptic("light");
-                setChartMetric(id as "gpu" | "hbm");
-              }}
-              items={[
-                { id: "gpu", label: "GPU 환산 (k-units)" },
-                { id: "hbm", label: "HBM 수요 (TB)" },
-              ]}
-              className="w-full sm:w-[340px] shrink-0"
-            />
+            <div className="w-full sm:w-[340px] max-w-full shrink-0">
+              <Tabs
+                variant="segmented"
+                size="xs"
+                activeId={chartMetric}
+                onChange={(id) => {
+                  triggerHaptic("light");
+                  setChartMetric(id as "gpu" | "hbm");
+                }}
+                items={[
+                  { id: "gpu", label: "GPU 환산 (k-units)" },
+                  { id: "hbm", label: "HBM 수요 (TB)" },
+                ]}
+                className="w-full"
+              />
+            </div>
           </div>
 
           {/* Legend Pills */}
-          <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label="차트 계열 선택">
+          <div className="flex flex-wrap items-center gap-2" role="group" aria-label="차트 계열 선택">
             {chartSeries.map(({ customer, style }) => {
               const isSelected = highlightedId === customer.id;
               return (
@@ -383,10 +413,10 @@ export function DemandTrackersPanel({
                       prev === customer.id ? null : customer.id
                     );
                   }}
-                  className={`btn btn-xs rounded-2xl pst-press font-semibold inline-flex items-center gap-1.5 ${
+                  className={`btn btn-xs rounded-full px-3.5 pst-press font-semibold inline-flex items-center gap-2 border ${
                     isSelected
-                      ? "bg-primary/14 text-accent-primary border border-primary/40"
-                      : "btn-ghost border border-base-content/18 text-base-content"
+                      ? "bg-primary/14 text-accent-primary border-primary"
+                      : "btn-ghost border-[var(--border-control,var(--separator))] control-border text-base-content"
                   }`}
                 >
                   <svg width="16" height="6" viewBox="0 0 16 6" aria-hidden="true">
@@ -409,7 +439,7 @@ export function DemandTrackersPanel({
           <div className="w-full overflow-hidden">
             <svg
               viewBox={`0 0 ${SVG_W} ${SVG_H}`}
-              className="w-full h-auto max-h-[240px]"
+              className="w-full h-auto max-h-[260px]"
               role="img"
               aria-label="분기별 AI 컴퓨팅 수요 램프업 다중 선형 차트"
             >
@@ -432,7 +462,8 @@ export function DemandTrackersPanel({
                       x={PAD_L - 8}
                       y={y + 4}
                       textAnchor="end"
-                      fontSize="10"
+                      fontSize="12"
+                      fontWeight="600"
                       fill="var(--label-secondary)"
                       className="tabular-nums"
                     >
@@ -453,9 +484,9 @@ export function DemandTrackersPanel({
                   <text
                     key={q}
                     x={x}
-                    y={SVG_H - 8}
+                    y={SVG_H - 10}
                     textAnchor="middle"
-                    fontSize="10"
+                    fontSize="12"
                     fontWeight="600"
                     fill="var(--label-secondary)"
                   >
@@ -507,7 +538,7 @@ export function DemandTrackersPanel({
                         key={`${customer.id}-${c.quarter}`}
                         cx={c.x}
                         cy={c.y}
-                        r={highlightedId === customer.id ? 4 : 3}
+                        r={highlightedId === customer.id ? 4.5 : 3.2}
                         fill={style.color}
                       >
                         <title>
@@ -540,6 +571,7 @@ export function DemandTrackersPanel({
             <Button
               size="sm"
               variant="primary"
+              className="rounded-full px-4"
               onClick={() => {
                 setSegment("all");
               }}
@@ -553,14 +585,14 @@ export function DemandTrackersPanel({
           tabIndex={0}
           role="region"
           aria-labelledby="demand-trackers-heading"
-          className="overflow-x-auto rounded-2xl border border-base-content/12 bg-base-100 focus-visible:outline-2 focus-visible:outline-primary"
+          className="fabnow-table-region overflow-x-auto rounded-[22px] border border-[var(--border-control,var(--separator))] control-border bg-base-100 focus-visible:outline-2 focus-visible:outline-primary"
         >
-          <table className="table table-sm sm:table-md w-full">
+          <table className="table table-sm sm:table-md fabnow-table w-full">
             <caption className="sr-only">
               프론티어 AI 랩 및 네오클라우드 기관별 GPU 환산 수요, HBM 수요량, MoM 변동률, 수주 잔고, 약정 전력 및 미충족 수급 갭 비교표
             </caption>
             <thead
-              className="bg-base-200/75 border-b"
+              className="bg-base-200 border-b"
               style={{ borderColor: "var(--separator)" }}
             >
               <tr>
@@ -571,7 +603,7 @@ export function DemandTrackersPanel({
                   sortDirection={sortDirection}
                   onSort={handleSort}
                 />
-                <th scope="col" className="whitespace-nowrap px-3 py-3 text-xs font-bold text-base-content">
+                <th scope="col" className="whitespace-nowrap px-4 py-3.5 text-xs font-bold text-base-content">
                   주력 클러스터 · 선호 노드
                 </th>
                 <SortableTh
@@ -622,107 +654,116 @@ export function DemandTrackersPanel({
                   onSort={handleSort}
                   align="end"
                 />
-                <th scope="col" className="whitespace-nowrap px-3 py-3 text-xs font-bold text-base-content text-end">
+                <th scope="col" className="whitespace-nowrap px-4 py-3.5 text-xs font-bold text-base-content text-end">
                   상세 보기
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-base-content/10">
+            <tbody className="[&>tr:not(:last-child)]:border-b [&>tr]:border-[var(--separator)]">
               {filteredAndSorted.map((cust) => {
                 const quote = getQuoteForEntity(cust.name);
                 return (
-                <tr
-                  key={cust.id}
-                  className="hover:bg-base-content/4 transition-colors"
-                >
-                  <td className="px-3 py-3 align-middle min-w-[175px]">
-                    <div className="space-y-1">
-                      <div className="flex flex-wrap items-center gap-1.5">
-                        <span
-                          className={`w-2 h-2 rounded-full shrink-0 ${
-                            cust.segment === "frontier-lab"
-                              ? "bg-primary"
-                              : "bg-secondary"
-                          }`}
-                          aria-hidden="true"
-                        />
-                        <span className="font-extrabold text-sm text-base-content">
-                          {cust.name}
-                        </span>
-                        <span className="text-[11px] font-medium" style={{ color: "var(--label-secondary)" }}>
-                          {cust.nameKo}
-                        </span>
+                  <tr
+                    key={cust.id}
+                    className="hover:bg-base-content/4 transition-colors"
+                  >
+                    <td className="px-4 py-3.5 align-middle min-w-[205px]">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <EntityMonogram name={cust.name} size="sm" />
+                        <div className="space-y-1 min-w-0">
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            <span
+                              className={`w-2 h-2 rounded-full shrink-0 ${
+                                cust.segment === "frontier-lab"
+                                  ? "bg-primary"
+                                  : "bg-secondary"
+                              }`}
+                              aria-hidden="true"
+                            />
+                            <span className="font-extrabold text-sm text-base-content">
+                              {cust.name}
+                            </span>
+                            <span
+                              className="text-xs font-medium"
+                              style={{ color: "var(--label-secondary)" }}
+                            >
+                              {cust.nameKo}
+                            </span>
+                          </div>
+                          <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
+                            <DeploymentBadge status={cust.deploymentStatus} />
+                            {quote && quote.status === "live" && quote.dayChangePct !== null && (
+                              <span
+                                className={`text-xs font-semibold tabular-nums ${
+                                  quote.dayChangePct >= 0
+                                    ? "text-status-success"
+                                    : "text-status-error"
+                                }`}
+                                title={`${quote.symbol} 연동 시장 지표`}
+                              >
+                                {quote.symbol} {quote.dayChangePct >= 0 ? "+" : ""}
+                                {quote.dayChangePct.toFixed(1)}%
+                              </span>
+                            )}
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
-                        <DeploymentBadge status={cust.deploymentStatus} />
-                        {quote && quote.status === "live" && quote.dayChangePct !== null && (
-                          <span
-                            className={`text-[11px] font-semibold tabular-nums ${
-                              quote.dayChangePct >= 0
-                                ? "text-status-success"
-                                : "text-status-error"
-                            }`}
-                            title={`${quote.symbol} 연동 시장 지표`}
-                          >
-                            {quote.symbol} {quote.dayChangePct >= 0 ? "+" : ""}
-                            {quote.dayChangePct.toFixed(1)}%
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </td>
+                    </td>
 
-                  <td className="px-3 py-3 align-middle min-w-[210px]">
-                    <p className="text-xs font-bold text-base-content">
-                      {cust.focusCompute}
-                    </p>
-                    <p className="text-[11px] font-medium mt-0.5" style={{ color: "var(--label-secondary)" }}>
-                      {cust.preferredNodes.slice(0, 3).join(" · ")} |{" "}
-                      {cust.primarySuppliers.join(", ")}
-                    </p>
-                  </td>
+                    <td className="px-4 py-3.5 align-middle min-w-[225px]">
+                      <p className="text-[13px] font-bold text-base-content">
+                        {cust.focusCompute}
+                      </p>
+                      <p
+                        className="text-xs font-medium mt-0.5"
+                        style={{ color: "var(--label-secondary)" }}
+                      >
+                        {cust.preferredNodes.slice(0, 3).join(" · ")} |{" "}
+                        {cust.primarySuppliers.join(", ")}
+                      </p>
+                    </td>
 
-                  <td className="px-3 py-3 align-middle text-end whitespace-nowrap tabular-nums">
-                    <span className="text-sm font-extrabold text-base-content">
-                      {cust.monthlyGpuEquivalentK}k
-                    </span>
-                  </td>
+                    <td className="px-4 py-3.5 align-middle text-end whitespace-nowrap tabular-nums">
+                      <span className="text-sm font-extrabold text-base-content">
+                        {cust.monthlyGpuEquivalentK}k
+                      </span>
+                    </td>
 
-                  <td className="px-3 py-3 align-middle text-end whitespace-nowrap tabular-nums">
-                    <span className="text-xs font-bold text-base-content">
-                      {cust.monthlyHbmDemandTB.toLocaleString("en-US")}
-                    </span>
-                  </td>
+                    <td className="px-4 py-3.5 align-middle text-end whitespace-nowrap tabular-nums">
+                      <span className="text-[13px] font-bold text-base-content">
+                        {cust.monthlyHbmDemandTB.toLocaleString("en-US")}
+                      </span>
+                    </td>
 
-                  <td className="px-3 py-3 align-middle text-end whitespace-nowrap">
-                    <SignedDelta value={cust.momDemandDeltaPct} className="text-xs" />
-                  </td>
+                    <td className="px-4 py-3.5 align-middle text-end whitespace-nowrap">
+                      <SignedDelta value={cust.momDemandDeltaPct} className="text-xs" />
+                    </td>
 
-                  <td className="px-3 py-3 align-middle text-end whitespace-nowrap tabular-nums">
-                    <span className="text-xs font-bold text-base-content">
-                      {cust.backlogMonths.toFixed(1)}개월
-                    </span>
-                  </td>
+                    <td className="px-4 py-3.5 align-middle text-end whitespace-nowrap tabular-nums">
+                      <span className="text-[13px] font-bold text-base-content">
+                        {cust.backlogMonths.toFixed(1)}개월
+                      </span>
+                    </td>
 
-                  <td className="px-3 py-3 align-middle text-end whitespace-nowrap tabular-nums">
-                    <span className="text-xs font-bold text-base-content">
-                      {cust.committedPowerMW.toLocaleString("en-US")} MW
-                    </span>
-                  </td>
+                    <td className="px-4 py-3.5 align-middle text-end whitespace-nowrap tabular-nums">
+                      <span className="text-[13px] font-bold text-base-content">
+                        {cust.committedPowerMW.toLocaleString("en-US")} MW
+                      </span>
+                    </td>
 
-                  <td className="px-3 py-3 align-middle text-end whitespace-nowrap">
-                    <SignedDelta value={cust.supplyGapPct} className="text-xs" />
-                  </td>
+                    <td className="px-4 py-3.5 align-middle text-end whitespace-nowrap">
+                      <SignedDelta value={cust.supplyGapPct} className="text-xs" />
+                    </td>
 
-                  <td className="px-3 py-3 align-middle text-end whitespace-nowrap">
-                    <EntityActionLinks
-                      slug={cust.slug}
-                      entityLabel={cust.name}
-                      onOpenModal={() => openCustomerModal(cust)}
-                      compact
-                    />
-                  </td>
-                </tr>
+                    <td className="px-4 py-3.5 align-middle text-end whitespace-nowrap">
+                      <EntityActionLinks
+                        slug={cust.slug}
+                        entityLabel={cust.name}
+                        onOpenModal={() => openCustomerModal(cust)}
+                        compact
+                      />
+                    </td>
+                  </tr>
                 );
               })}
             </tbody>

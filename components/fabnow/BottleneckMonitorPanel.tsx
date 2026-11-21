@@ -67,35 +67,35 @@ export function BottleneckMonitorPanel() {
   return (
     <section
       aria-labelledby="bottleneck-monitor-heading"
-      className="material-regular rounded-3xl p-4 sm:p-6 shadow-xs space-y-5"
+      className="bg-base-100 rounded-[32px] p-6 sm:p-8 border border-[var(--separator)] shadow-xs space-y-6"
     >
       {/* Header */}
       <div
-        className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 pb-4 border-b"
+        className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 pb-5 border-b"
         style={{ borderColor: "var(--separator)" }}
       >
-        <div className="space-y-1 min-w-0 flex-1">
-          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+        <div className="space-y-1.5 min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
             <h2
               id="bottleneck-monitor-heading"
               className="text-lg sm:text-xl font-extrabold tracking-tight text-base-content"
             >
               공정 병목 포화도 · 리드타임 모니터
             </h2>
-            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-status-error tabular-nums">
-              <span className="w-1.5 h-1.5 rounded-full bg-error shrink-0" aria-hidden="true" />
+            <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 surface-pastel-blush border border-[var(--separator)] text-xs font-bold text-status-error tabular-nums">
+              <span className="w-2 h-2 rounded-full bg-error shrink-0" aria-hidden="true" />
               긴급 병목 {BOTTLENECK_STAGES.filter((b) => b.riskLevel === "tight").length}건
             </span>
           </div>
           <p
-            className="text-xs sm:text-sm font-medium"
+            className="text-xs sm:text-sm font-medium leading-relaxed"
             style={{ color: "var(--label-secondary)" }}
           >
             CoWoS-L, HBM3E 12-Hi, HBM4 베이스 다이, N2/N3P EUV 노광, ABF/글래스 기판 및 액체냉각 랙 전력 구간의 포화율과 월간 압력 변화를 점검합니다.
           </p>
         </div>
 
-        <div className="max-w-full overflow-x-auto pb-0.5 xl:pb-0 shrink-0">
+        <div className="w-full xl:w-auto max-w-full overflow-x-auto pb-1 xl:pb-0 min-w-0 shrink-0">
           <Tabs
             variant="segmented"
             size="sm"
@@ -137,6 +137,7 @@ export function BottleneckMonitorPanel() {
             <Button
               size="sm"
               variant="primary"
+              className="rounded-full px-4"
               onClick={() => {
                 setDomainFilter("all");
               }}
@@ -146,7 +147,7 @@ export function BottleneckMonitorPanel() {
           }
         />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
           {filteredStages.map((bn) => {
             const colorVariant =
               bn.riskLevel === "tight"
@@ -154,6 +155,13 @@ export function BottleneckMonitorPanel() {
                 : bn.riskLevel === "constrained"
                 ? "warning"
                 : "success";
+
+            const pastelTintClass =
+              bn.riskLevel === "tight"
+                ? "surface-pastel-blush"
+                : bn.riskLevel === "constrained"
+                ? "surface-pastel-lilac"
+                : "surface-pastel-sage";
 
             return (
               <Card
@@ -163,7 +171,7 @@ export function BottleneckMonitorPanel() {
                 subtitle={`${DOMAIN_LABELS[bn.domain]} · ${bn.stageNameKo}`}
                 actions={
                   <div className="w-full flex items-center justify-between gap-2">
-                    <RiskBadge risk={bn.riskLevel} size="xs" />
+                    <RiskBadge risk={bn.riskLevel} size="sm" />
                     <EntityActionLinks
                       slug={bn.slug}
                       entityLabel={bn.stageName}
@@ -177,22 +185,32 @@ export function BottleneckMonitorPanel() {
                   <div className="flex items-center justify-between gap-4">
                     <RadialProgress
                       value={bn.saturationPct}
-                      sizeRem={5}
-                      thicknessPx={7}
+                      sizeRem={5.25}
+                      thicknessPx={7.5}
                       color={colorVariant}
                       label="캐파 포화도"
                     />
-                    <div className="flex-1 space-y-2.5">
-                      <div className="bg-base-200/70 rounded-2xl p-2.5 border border-base-content/10">
-                        <span className="text-[11px] font-medium block" style={{ color: "var(--label-secondary)" }}>
+                    <div className="flex-1 min-w-0 space-y-2.5">
+                      <div
+                        className={`${pastelTintClass} rounded-[18px] p-3 border border-[var(--separator)]`}
+                      >
+                        <span
+                          className="text-xs font-semibold block"
+                          style={{ color: "var(--label-secondary)" }}
+                        >
                           평균 리드타임
                         </span>
                         <strong className="text-base font-extrabold tabular-nums text-base-content">
                           {bn.leadTimeWeeks}주
                         </strong>
                       </div>
-                      <div className="bg-base-200/70 rounded-2xl p-2.5 border border-base-content/10">
-                        <span className="text-[11px] font-medium block" style={{ color: "var(--label-secondary)" }}>
+                      <div
+                        className={`${pastelTintClass} rounded-[18px] p-3 border border-[var(--separator)]`}
+                      >
+                        <span
+                          className="text-xs font-semibold block"
+                          style={{ color: "var(--label-secondary)" }}
+                        >
                           MoM 병목 압력
                         </span>
                         <SignedDelta
@@ -211,13 +229,19 @@ export function BottleneckMonitorPanel() {
                     color={colorVariant}
                   />
 
-                  <div className="space-y-2.5">
-                    <p className="text-xs leading-relaxed text-base-content">
+                  <div className="space-y-3">
+                    <p className="text-[13px] leading-relaxed text-base-content">
                       {bn.mitigationKo}
                     </p>
-                    <dl className="pt-2 border-t border-base-content/10 space-y-1 text-[11px]">
+                    <dl
+                      className="pt-2.5 border-t space-y-1.5 text-xs"
+                      style={{ borderColor: "var(--separator)" }}
+                    >
                       <div className="flex items-baseline justify-between gap-2">
-                        <dt className="font-semibold shrink-0" style={{ color: "var(--label-secondary)" }}>
+                        <dt
+                          className="font-semibold shrink-0"
+                          style={{ color: "var(--label-secondary)" }}
+                        >
                           핵심 공급
                         </dt>
                         <dd className="font-semibold text-base-content text-end truncate">
@@ -225,10 +249,16 @@ export function BottleneckMonitorPanel() {
                         </dd>
                       </div>
                       <div className="flex items-baseline justify-between gap-2">
-                        <dt className="font-semibold shrink-0" style={{ color: "var(--label-secondary)" }}>
+                        <dt
+                          className="font-semibold shrink-0"
+                          style={{ color: "var(--label-secondary)" }}
+                        >
                           수요 동인
                         </dt>
-                        <dd className="font-medium text-end truncate" style={{ color: "var(--label-secondary)" }}>
+                        <dd
+                          className="font-medium text-end truncate"
+                          style={{ color: "var(--label-secondary)" }}
+                        >
                           {bn.primaryDrivers.join(" · ")}
                         </dd>
                       </div>

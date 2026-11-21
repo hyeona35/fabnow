@@ -21,6 +21,7 @@ import { triggerHaptic } from "@/lib/haptics";
 import { EntityDetailModalContent } from "./EntityDetailModalContent";
 import {
   EntityActionLinks,
+  EntityMonogram,
   RiskBadge,
   SignedDelta,
   SortableTh,
@@ -187,12 +188,15 @@ export function FabShipmentsPanel() {
   return (
     <section
       aria-labelledby="fab-shipments-heading"
-      className="material-regular rounded-3xl p-4 sm:p-6 shadow-xs space-y-5"
+      className="material-regular rounded-[32px] p-6 sm:p-8 border border-[var(--separator)] shadow-xs space-y-6"
     >
       {/* Header + Export Actions */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b" style={{ borderColor: "var(--separator)" }}>
-        <div className="space-y-1 min-w-0 flex-1">
-          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+      <div
+        className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b"
+        style={{ borderColor: "var(--separator)" }}
+      >
+        <div className="space-y-1.5 min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
             <h2
               id="fab-shipments-heading"
               className="text-lg sm:text-xl font-extrabold tracking-tight text-base-content"
@@ -200,21 +204,25 @@ export function FabShipmentsPanel() {
               파운드리 · HBM 메모리 · 어드밴스드 패키징 출하 지표
             </h2>
             <span
-              className="text-xs font-semibold tabular-nums"
+              className="rounded-full px-3 py-1 surface-pastel-sage border border-[var(--separator)] text-xs font-bold tabular-nums"
               style={{ color: "var(--label-secondary)" }}
             >
               {filteredAndSorted.length}/{FAB_SHIPMENTS.length}개 라인
             </span>
           </div>
-          <p className="text-xs sm:text-sm font-medium" style={{ color: "var(--label-secondary)" }}>
+          <p
+            className="text-xs sm:text-sm font-medium leading-relaxed"
+            style={{ color: "var(--label-secondary)" }}
+          >
             글로벌 5대 제조사의 AI 핵심 라인별 월간 출하 규모, MoM/QoQ 증감, 팹 가동률, 양산 수율 및 납기(Lead Time)를 비교합니다.
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 shrink-0">
+        <div className="flex flex-wrap items-center gap-2.5 shrink-0">
           <Button
             size="sm"
             variant="outline"
+            className="rounded-full px-4 border-[var(--border-control,var(--separator))] control-border"
             leadingIcon={<IconDownload className="w-4 h-4" />}
             onClick={handleDownloadCsv}
           >
@@ -223,6 +231,7 @@ export function FabShipmentsPanel() {
           <Button
             size="sm"
             variant="soft"
+            className="rounded-full px-4"
             leadingIcon={<IconDownload className="w-4 h-4" />}
             onClick={handleDownloadJson}
           >
@@ -232,8 +241,8 @@ export function FabShipmentsPanel() {
       </div>
 
       {/* Category Segmented Switcher & Supplier Filter Pills */}
-      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3">
-        <div className="max-w-full overflow-x-auto pb-0.5 xl:pb-0 shrink-0">
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3.5">
+        <div className="w-full xl:w-auto max-w-full overflow-x-auto pb-1 xl:pb-0 min-w-0 shrink-0">
           <Tabs
             variant="segmented"
             size="sm"
@@ -248,14 +257,14 @@ export function FabShipmentsPanel() {
               { id: "memory", label: CATEGORY_LABELS.memory },
               { id: "packaging", label: CATEGORY_LABELS.packaging },
             ]}
-            className="min-w-[430px] sm:min-w-0 sm:w-full xl:w-[480px] shrink-0"
+            className="min-w-[420px] sm:min-w-0 sm:w-full xl:w-[480px] shrink-0"
           />
         </div>
 
         <div
           role="group"
           aria-label="반도체 제조사 필터"
-          className="flex flex-wrap items-center gap-1.5"
+          className="flex flex-wrap items-center gap-2"
         >
           {COMPANY_OPTIONS.map((comp) => {
             const isActive = selectedCompany === comp;
@@ -268,10 +277,10 @@ export function FabShipmentsPanel() {
                   triggerHaptic("light");
                   setSelectedCompany(comp);
                 }}
-                className={`btn btn-xs rounded-2xl pst-press font-semibold ${
+                className={`btn btn-xs rounded-full px-3.5 pst-press font-semibold ${
                   isActive
-                    ? "btn-primary"
-                    : "btn-ghost border border-base-content/20 text-base-content"
+                    ? "btn-primary text-primary-content"
+                    : "btn-ghost border border-[var(--border-control,var(--separator))] control-border text-base-content"
                 }`}
               >
                 {comp === "all" ? "전체 제조사" : comp}
@@ -296,6 +305,7 @@ export function FabShipmentsPanel() {
             <Button
               size="sm"
               variant="primary"
+              className="rounded-full px-4"
               onClick={() => {
                 setSelectedCategory("all");
                 setSelectedCompany("all");
@@ -310,13 +320,16 @@ export function FabShipmentsPanel() {
           tabIndex={0}
           role="region"
           aria-labelledby="fab-shipments-heading"
-          className="overflow-x-auto rounded-2xl border border-base-content/12 bg-base-100 focus-visible:outline-2 focus-visible:outline-primary"
+          className="fabnow-table-region overflow-x-auto rounded-[22px] border border-[var(--border-control,var(--separator))] control-border bg-base-100 focus-visible:outline-2 focus-visible:outline-primary"
         >
-          <table className="table table-sm sm:table-md w-full">
+          <table className="table table-sm sm:table-md fabnow-table w-full">
             <caption className="sr-only">
               글로벌 반도체 파운드리, HBM 메모리, 어드밴스드 패키징 라인별 월간 출하량, 변동률, 가동률, 수율, 리드타임 비교표
             </caption>
-            <thead className="bg-base-200/75 border-b" style={{ borderColor: "var(--separator)" }}>
+            <thead
+              className="bg-base-200 border-b"
+              style={{ borderColor: "var(--separator)" }}
+            >
               <tr>
                 <SortableTh
                   label="공급사 / 라인"
@@ -325,7 +338,7 @@ export function FabShipmentsPanel() {
                   sortDirection={sortDirection}
                   onSort={handleSort}
                 />
-                <th scope="col" className="whitespace-nowrap px-3 py-3 text-xs font-bold text-base-content">
+                <th scope="col" className="whitespace-nowrap px-4 py-3.5 text-xs font-bold text-base-content">
                   공정 · 제품 노드
                 </th>
                 <SortableTh
@@ -376,15 +389,15 @@ export function FabShipmentsPanel() {
                   onSort={handleSort}
                   align="end"
                 />
-                <th scope="col" className="whitespace-nowrap px-3 py-3 text-xs font-bold text-base-content text-center">
+                <th scope="col" className="whitespace-nowrap px-4 py-3.5 text-xs font-bold text-base-content text-center">
                   분기 추이
                 </th>
-                <th scope="col" className="whitespace-nowrap px-3 py-3 text-xs font-bold text-base-content text-end">
+                <th scope="col" className="whitespace-nowrap px-4 py-3.5 text-xs font-bold text-base-content text-end">
                   상태 · 상세
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-base-content/10">
+            <tbody className="[&>tr:not(:last-child)]:border-b [&>tr]:border-[var(--separator)]">
               {filteredAndSorted.map((fab) => {
                 const quote = getQuoteForEntity(fab.company);
                 const sparkTone =
@@ -399,75 +412,93 @@ export function FabShipmentsPanel() {
                     key={fab.id}
                     className="hover:bg-base-content/4 transition-colors"
                   >
-                    <td className="px-3 py-3 align-middle min-w-[200px]">
-                      <div className="space-y-0.5">
-                        <div className="flex flex-wrap items-center gap-1.5">
-                          <span className="font-extrabold text-sm text-base-content">
-                            {fab.company}
-                          </span>
-                          <span className="text-[11px] font-medium" style={{ color: "var(--label-secondary)" }}>
-                            {fab.companyKo}
-                          </span>
-                          {quote && quote.status === "live" && quote.dayChangePct !== null && (
-                            <span
-                              className={`text-[11px] font-semibold tabular-nums ${
-                                quote.dayChangePct >= 0
-                                  ? "text-status-success"
-                                  : "text-status-error"
-                              }`}
-                              title={`${quote.symbol} 실시간 시세 변동`}
-                            >
-                              {quote.symbol} {quote.dayChangePct >= 0 ? "+" : ""}
-                              {quote.dayChangePct.toFixed(1)}%
+                    <td className="px-4 py-3.5 align-middle min-w-[220px]">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <EntityMonogram name={fab.company} size="sm" />
+                        <div className="space-y-0.5 min-w-0">
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            <span className="font-extrabold text-sm text-base-content">
+                              {fab.company}
                             </span>
-                          )}
+                            <span
+                              className="text-xs font-medium"
+                              style={{ color: "var(--label-secondary)" }}
+                            >
+                              {fab.companyKo}
+                            </span>
+                            {quote && quote.status === "live" && quote.dayChangePct !== null && (
+                              <span
+                                className={`text-xs font-semibold tabular-nums ${
+                                  quote.dayChangePct >= 0
+                                    ? "text-status-success"
+                                    : "text-status-error"
+                                }`}
+                                title={`${quote.symbol} 실시간 시세 변동`}
+                              >
+                                {quote.symbol} {quote.dayChangePct >= 0 ? "+" : ""}
+                                {quote.dayChangePct.toFixed(1)}%
+                              </span>
+                            )}
+                          </div>
+                          <p
+                            className="text-xs font-medium truncate max-w-[220px]"
+                            style={{ color: "var(--label-secondary)" }}
+                          >
+                            {fab.lineName}
+                          </p>
                         </div>
-                        <p className="text-xs font-medium truncate max-w-[220px]" style={{ color: "var(--label-secondary)" }}>
-                          {fab.lineName}
-                        </p>
                       </div>
                     </td>
 
-                    <td className="px-3 py-3 align-middle min-w-[160px]">
+                    <td className="px-4 py-3.5 align-middle min-w-[175px]">
                       <div className="space-y-1">
-                        <span className="font-bold text-xs text-base-content block">
+                        <span className="font-bold text-[13px] text-base-content block">
                           {fab.nodeOrProduct}
                         </span>
-                        <span className="text-[11px] font-medium block" style={{ color: "var(--label-secondary)" }}>
+                        <span
+                          className="text-xs font-medium block"
+                          style={{ color: "var(--label-secondary)" }}
+                        >
                           AI 배정 {fab.aiAllocationPct}% · {fab.primarySites}
                         </span>
                       </div>
                     </td>
 
-                    <td className="px-3 py-3 align-middle text-end whitespace-nowrap tabular-nums">
+                    <td className="px-4 py-3.5 align-middle text-end whitespace-nowrap tabular-nums">
                       <span className="text-sm font-extrabold text-base-content">
                         {fab.monthlyOutputValue.toLocaleString("en-US")}
                       </span>{" "}
-                      <span className="text-[11px] font-semibold" style={{ color: "var(--label-secondary)" }}>
+                      <span
+                        className="text-xs font-semibold"
+                        style={{ color: "var(--label-secondary)" }}
+                      >
                         {fab.unitLabel}
                       </span>
                     </td>
 
-                    <td className="px-3 py-3 align-middle text-end whitespace-nowrap">
+                    <td className="px-4 py-3.5 align-middle text-end whitespace-nowrap">
                       <SignedDelta value={fab.momDeltaPct} className="text-xs" />
                     </td>
 
-                    <td className="px-3 py-3 align-middle text-end whitespace-nowrap">
+                    <td className="px-4 py-3.5 align-middle text-end whitespace-nowrap">
                       <SignedDelta value={fab.qoqDeltaPct} className="text-xs" />
                     </td>
 
-                    <td className="px-3 py-3 align-middle text-end whitespace-nowrap tabular-nums">
-                      <span className="text-xs font-bold text-base-content">
+                    <td className="px-4 py-3.5 align-middle text-end whitespace-nowrap tabular-nums">
+                      <span className="text-[13px] font-bold text-base-content">
                         {fab.utilizationPct.toFixed(1)}%
                       </span>
                     </td>
 
-                    <td className="px-3 py-3 align-middle text-end whitespace-nowrap tabular-nums">
-                      <div className="inline-flex flex-col items-end">
-                        <span className="text-xs font-bold text-base-content">
+                    <td className="px-4 py-3.5 align-middle text-end whitespace-nowrap tabular-nums">
+                      <div className="inline-flex flex-col items-end gap-0.5">
+                        <span className="text-[13px] font-bold text-base-content">
                           {fab.yieldPct.toFixed(1)}%
                         </span>
-                        <span className="text-[10px] font-semibold" style={{ color: "var(--label-secondary)" }}>
+                        <span
+                          className="text-xs font-semibold"
+                          style={{ color: "var(--label-secondary)" }}
+                        >
                           {fab.yieldTrend === "improving"
                             ? "개선 중"
                             : fab.yieldTrend === "ramping"
@@ -477,13 +508,13 @@ export function FabShipmentsPanel() {
                       </div>
                     </td>
 
-                    <td className="px-3 py-3 align-middle text-end whitespace-nowrap tabular-nums">
-                      <span className="text-xs font-bold text-base-content">
+                    <td className="px-4 py-3.5 align-middle text-end whitespace-nowrap tabular-nums">
+                      <span className="text-[13px] font-bold text-base-content">
                         {fab.leadTimeWeeks}주
                       </span>
                     </td>
 
-                    <td className="px-3 py-3 align-middle text-center">
+                    <td className="px-4 py-3.5 align-middle text-center">
                       <div className="inline-flex items-center justify-center">
                         <SparklineSvg
                           points={fab.quarterlyHistory.map((pt) => ({
@@ -498,8 +529,8 @@ export function FabShipmentsPanel() {
                       </div>
                     </td>
 
-                    <td className="px-3 py-3 align-middle text-end whitespace-nowrap">
-                      <div className="inline-flex items-center gap-2">
+                    <td className="px-4 py-3.5 align-middle text-end whitespace-nowrap">
+                      <div className="inline-flex items-center gap-2.5">
                         <RiskBadge risk={fab.riskLevel} size="xs" />
                         <EntityActionLinks
                           slug={fab.slug}

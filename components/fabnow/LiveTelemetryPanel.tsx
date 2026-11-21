@@ -118,28 +118,28 @@ export function LiveTelemetryPanel() {
   return (
     <section
       aria-label="실시간 시장 시세 및 공시·뉴스 자동 동기화"
-      className="material-regular rounded-3xl p-4 sm:p-5 shadow-xs space-y-4"
+      className="material-regular rounded-[32px] p-6 sm:p-8 border border-[var(--separator)] shadow-xs space-y-6"
     >
       {/* Top Auto-Refresh Sync Header */}
       <div
-        className="flex flex-col xl:flex-row xl:items-center justify-between gap-3 pb-3.5 border-b"
+        className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 pb-5 border-b"
         style={{ borderColor: "var(--separator)" }}
       >
-        <div className="space-y-1 min-w-0">
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-            <h2 className="text-sm sm:text-base font-extrabold tracking-tight text-base-content">
+        <div className="space-y-1.5 min-w-0">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+            <h2 className="text-base sm:text-lg font-extrabold tracking-tight text-base-content">
               시장 시세 · 공시·뉴스 자동 동기화
             </h2>
             <span
-              className={`inline-flex items-center gap-1.5 text-xs font-bold tabular-nums ${statusSummary.textClass}`}
+              className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 bg-base-100 border border-[var(--separator)] text-xs font-bold tabular-nums ${statusSummary.textClass}`}
             >
-              <span className={`w-1.5 h-1.5 rounded-full ${statusSummary.dotClass}`} aria-hidden="true" />
+              <span className={`w-2 h-2 rounded-full ${statusSummary.dotClass} shrink-0`} aria-hidden="true" />
               <span>{statusSummary.label}</span>
             </span>
           </div>
 
           <div
-            className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs font-medium tabular-nums"
+            className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs sm:text-[13px] font-medium tabular-nums"
             style={{ color: "var(--label-secondary)" }}
           >
             <span>마지막 동기화 {formatLocalTime(lastSyncedAt)}</span>
@@ -153,9 +153,9 @@ export function LiveTelemetryPanel() {
         </div>
 
         {/* Cadence Controls + Instant Manual Sync */}
-        <div className="flex flex-wrap items-center gap-2 shrink-0">
+        <div className="flex flex-wrap items-center gap-2.5 shrink-0">
           <div
-            className="inline-flex items-center rounded-2xl p-1 bg-base-200/75 border border-base-content/10"
+            className="inline-flex flex-wrap items-center rounded-2xl sm:rounded-full p-1 bg-base-200 border border-[var(--border-control,var(--separator))] control-border gap-0.5"
             role="group"
             aria-label="자동 갱신 주기 선택"
           >
@@ -170,10 +170,10 @@ export function LiveTelemetryPanel() {
                     setIntervalSec(opt.value);
                   }}
                   aria-pressed={active}
-                  className={`min-h-[44px] px-2.5 sm:px-3 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap inline-flex items-center justify-center ${
+                  className={`min-h-[44px] px-3 sm:px-3.5 rounded-xl sm:rounded-full text-xs font-bold transition-all cursor-pointer whitespace-nowrap inline-flex items-center justify-center ${
                     active
                       ? "bg-primary text-primary-content shadow-xs"
-                      : "text-base-content/75 hover:text-base-content hover:bg-base-content/5"
+                      : "text-base-content hover:bg-base-content/5"
                   }`}
                 >
                   {opt.label}
@@ -185,6 +185,7 @@ export function LiveTelemetryPanel() {
           <Button
             size="sm"
             variant="soft"
+            className="rounded-full px-4"
             leadingIcon={<IconArrowPath className="w-4 h-4" />}
             isLoading={isRefreshing}
             loadingLabel="갱신 중…"
@@ -199,9 +200,9 @@ export function LiveTelemetryPanel() {
       </div>
 
       {/* Live Equity & Benchmark Signals Grid */}
-      <div className="space-y-2.5">
-        <div className="flex items-center justify-between gap-2">
-          <p className="text-xs font-bold text-base-content">
+      <div className="space-y-3.5">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <p className="text-[13px] font-bold text-base-content">
             공급사·AI 인프라 실시간 시장 지표 (1일 / 1개월 변동)
           </p>
           {(liveData?.quotes.length ?? 0) > 6 && (
@@ -211,7 +212,7 @@ export function LiveTelemetryPanel() {
                 triggerHaptic("light");
                 setShowAllQuotes((prev) => !prev);
               }}
-              className="min-h-[44px] text-xs font-bold text-accent-primary hover:underline cursor-pointer px-2.5 inline-flex items-center"
+              className="min-h-[44px] text-xs font-bold text-accent-primary hover:underline cursor-pointer px-3 rounded-full inline-flex items-center"
             >
               {showAllQuotes ? "주요 6종만 보기" : `전체 ${liveData?.quotes.length ?? 0}종 보기`}
             </button>
@@ -219,38 +220,41 @@ export function LiveTelemetryPanel() {
         </div>
 
         {visibleQuotes.length === 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 rounded-2xl overflow-hidden border border-base-content/10 divide-x divide-y divide-base-content/8 bg-base-100">
+          <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3.5">
             {Array.from({ length: 6 }).map((_, idx) => (
-              <div key={idx} className="p-3.5 h-20 animate-pulse" />
+              <div
+                key={idx}
+                className="rounded-[20px] p-4 h-24 bg-base-100 border border-[var(--separator)] animate-pulse"
+              />
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 rounded-2xl overflow-hidden border border-base-content/12 divide-x divide-y divide-base-content/10 bg-base-100">
+          <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3.5">
             {visibleQuotes.map((q) => {
               const dayUp = typeof q.dayChangePct === "number" && q.dayChangePct >= 0;
               const monthUp = typeof q.monthChangePct === "number" && q.monthChangePct >= 0;
               return (
                 <div
                   key={q.symbol}
-                  className="p-3 flex flex-col justify-between gap-1.5 transition-colors hover:bg-base-content/[0.025]"
+                  className="rounded-[20px] p-4 bg-base-100 border border-[var(--separator)] flex flex-col justify-between gap-2.5 min-w-0"
                 >
                   <div className="flex items-baseline justify-between gap-1.5 min-w-0">
                     <span className="text-xs font-extrabold text-base-content truncate">
                       {q.displayNameKo}
                     </span>
                     <span
-                      className="text-[11px] font-semibold shrink-0 tabular-nums"
+                      className="text-xs font-semibold shrink-0 tabular-nums"
                       style={{ color: "var(--label-secondary)" }}
                     >
                       {q.symbol}
                     </span>
                   </div>
 
-                  <div className="text-[15px] font-extrabold text-base-content tabular-nums leading-snug">
+                  <div className="text-base font-extrabold text-base-content tabular-nums leading-snug">
                     {formatQuotePrice(q)}
                   </div>
 
-                  <div className="flex items-center justify-between gap-1.5 text-[10.5px] sm:text-[11px] font-bold tabular-nums whitespace-nowrap">
+                  <div className="flex flex-wrap items-center justify-between gap-1.5 text-xs font-bold tabular-nums">
                     {q.dayChangePct !== null ? (
                       <span
                         className={`inline-flex items-center gap-0.5 shrink-0 ${
@@ -258,21 +262,27 @@ export function LiveTelemetryPanel() {
                         }`}
                       >
                         {dayUp ? (
-                          <IconTrendUp className="w-3 h-3 shrink-0" />
+                          <IconTrendUp className="w-3.5 h-3.5 shrink-0" />
                         ) : (
-                          <IconTrendDown className="w-3 h-3 shrink-0" />
+                          <IconTrendDown className="w-3.5 h-3.5 shrink-0" />
                         )}
                         {dayUp ? "+" : ""}
                         {q.dayChangePct.toFixed(2)}%
                       </span>
                     ) : (
-                      <span className="shrink-0" style={{ color: "var(--label-secondary)" }}>대기</span>
+                      <span className="shrink-0" style={{ color: "var(--label-secondary)" }}>
+                        대기
+                      </span>
                     )}
 
                     {q.monthChangePct !== null && (
                       <span
                         className="shrink-0 whitespace-nowrap"
-                        style={{ color: monthUp ? "var(--status-success-text)" : "var(--label-secondary)" }}
+                        style={{
+                          color: monthUp
+                            ? "var(--status-success-text)"
+                            : "var(--label-secondary)",
+                        }}
                       >
                         1M {monthUp ? "+" : ""}
                         {q.monthChangePct.toFixed(1)}%
@@ -288,14 +298,14 @@ export function LiveTelemetryPanel() {
 
       {/* Live Industry RSS News & SEC Filings */}
       <div
-        className="pt-3 border-t space-y-2.5"
+        className="pt-5 border-t space-y-4"
         style={{ borderColor: "var(--separator)" }}
       >
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <p className="text-xs font-bold text-base-content">
+        <div className="flex flex-wrap items-center justify-between gap-2.5">
+          <p className="text-[13px] font-bold text-base-content">
             최신 반도체·AI 인프라 뉴스 및 SEC 공시 피드
           </p>
-          <div className="flex items-center gap-1" role="group" aria-label="피드 유형 필터">
+          <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label="피드 유형 필터">
             {[
               { id: "all" as const, label: "전체" },
               { id: "news" as const, label: "뉴스 RSS" },
@@ -311,10 +321,10 @@ export function LiveTelemetryPanel() {
                     setFeedFilter(tab.id);
                   }}
                   aria-pressed={active}
-                  className={`min-h-[44px] px-3 rounded-xl text-xs font-bold cursor-pointer transition-colors inline-flex items-center ${
+                  className={`min-h-[44px] px-3.5 rounded-full text-xs font-bold cursor-pointer transition-colors inline-flex items-center border ${
                     active
-                      ? "bg-primary/14 text-accent-primary"
-                      : "text-base-content/70 hover:bg-base-content/5"
+                      ? "bg-primary/14 text-accent-primary border-primary"
+                      : "bg-base-100 border-[var(--border-control,var(--separator))] control-border text-base-content hover:bg-base-content/5"
                   }`}
                 >
                   {tab.label}
@@ -331,25 +341,25 @@ export function LiveTelemetryPanel() {
             description="오프라인 상태이거나 외부 RSS 응답이 지연된 경우에도 기준 수급 데이터는 계속 유지됩니다."
           />
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 rounded-2xl overflow-hidden border border-base-content/12 divide-y md:divide-x divide-base-content/10 bg-base-100">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
             {filteredHeadlines.map((item) => (
               <a
                 key={item.id}
                 href={item.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-4 py-3 hover:bg-base-content/[0.03] transition-colors flex items-start justify-between gap-3 group"
+                className="rounded-[20px] p-4 bg-base-100 border border-[var(--border-control,var(--separator))] control-border hover:border-primary transition-all flex items-start justify-between gap-3 group min-w-0"
               >
-                <div className="min-w-0 space-y-1">
+                <div className="min-w-0 space-y-1.5">
                   <div
-                    className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-[11px] font-semibold tabular-nums"
+                    className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs font-semibold tabular-nums"
                     style={{ color: "var(--label-secondary)" }}
                   >
                     <span
                       className={
                         item.kind === "filing"
                           ? "text-accent-secondary font-bold"
-                          : "font-bold text-base-content/75"
+                          : "font-bold text-base-content"
                       }
                     >
                       {item.source}
@@ -365,12 +375,12 @@ export function LiveTelemetryPanel() {
                       </>
                     )}
                   </div>
-                  <p className="text-xs sm:text-[13px] font-bold text-base-content group-hover:text-primary transition-colors line-clamp-2 break-keep leading-snug">
+                  <p className="text-[13px] sm:text-sm font-bold text-base-content group-hover:text-accent-primary transition-colors line-clamp-2 break-keep leading-snug">
                     {item.title}
                   </p>
                 </div>
                 <IconExternalLink
-                  className="w-3.5 h-3.5 shrink-0 mt-1 opacity-45 group-hover:opacity-100 text-primary transition-opacity"
+                  className="w-4 h-4 shrink-0 mt-1 opacity-70 group-hover:opacity-100 text-accent-primary transition-opacity"
                   aria-hidden="true"
                 />
               </a>
